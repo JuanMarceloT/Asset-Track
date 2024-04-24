@@ -11,6 +11,28 @@ const client = new Client({
   port: 5439 // Default port for PostgreSQL
 });
 
+
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (async () => {
   try {
     await client.connect();
@@ -22,14 +44,48 @@ const client = new Client({
     CriarTabelaTransaçõess();
     //const res = await client.query(query);
     //const users = res.rows; // Array of objects containing retrieved data
+    const app = express();
+const port = 3300;
+app.use(cors()); 
+app.use(bodyParser.json());
 
-    CriaUsuario("Juan");
-    await Nova_Tranasção(16, 6, 'BUY', 100, 600.64, formatDate(2024, 1, 5));
+// API endpoint to get all users
+app.get('/users', async (req, res) => {
+  res.json(SelectUsers());
+});
+
+// API endpoint to create a new user
+app.post('/users', async (req, res) => {
+  const { nome } = req.body;
+  const id = await CriaUsuario(nome); 
+  res.status(201).json(id);
+});
+
+// API endpoint to get all transactions
+app.get('/transactions', async (req, res) => {
+  const result = await client.query('SELECT * FROM transacoes');
+  res.json(result.rows);
+});
+
+// API endpoint to create a new transaction
+app.post('/transactions', async (req, res) => {
+  const { user_id, stock_id, type, units, price, year,month,day} = req.body;
+  res.status(201).json(await Nova_Tranasção(user_id,stock_id,type,units,price, formatDate(year,month,day)));
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+
+
+
+    //CriaUsuario("Juan");
+    //await Nova_Tranasção(16, 6, 'BUY', 100, 600.64, formatDate(2024, 1, 5));
     //InsertStock(2,5,24,2,formatDate(2021,2,1));
     //SelectStocks();
 
     //SelectUsers();
-    SelectUser(16);
+    //SelectUser(16);
 
 
     //console.log(users);
@@ -39,6 +95,8 @@ const client = new Client({
     console.error('Connection error:', error);
   }
 })();
+
+
 
 
 async function DeleteAllTables() {
@@ -68,7 +126,8 @@ async function DeleteAllTables() {
 async function CriarTabelaUsuarios() {
   const query = `CREATE TABLE IF NOT EXISTS USUARIO (
     ID SERIAL PRIMARY KEY,
-    NAME VARCHAR(255) NOT NULL
+    NAME VARCHAR(255) NOT NULL,
+    BALANCE DECIMAL(10,2)
   ) WITH (OIDS=FALSE);  -- Avoid Object Identifier bloat
   
   ALTER TABLE USUARIO
@@ -132,7 +191,8 @@ async function Nova_Tranasção(user_id, stock_id, transaction_type, units, pric
 async function SelectUsers() {
   const query = `select * from USUARIO;`;
   const result = await executeQuery(query);
-  console.log(result);
+  //console.log(result);
+  return result;
 }
 
 async function SelectStocks() {
@@ -182,6 +242,7 @@ async function SelectUser(id) {
     };
 
     console.log(userWithTransactions);
+    return userWithTransactions;
   } catch (error) {
     console.error('Error selecting user with transactions:', error);
   }

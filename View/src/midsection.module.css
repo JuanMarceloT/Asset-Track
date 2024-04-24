@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  height: 50vh;
+}
+
+.lateralsection{
+  flex:2
+}
+
+.graph {
+  flex: 6;
+  /* This will take up 3/4 of the space */
+  background-color: lightcoral;
+}
+
+.balance { 
+  flex: 3;
+  /* This will take up 1/4 of the space */
+  background-color: lightblue;
+}
