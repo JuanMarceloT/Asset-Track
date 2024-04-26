@@ -1,42 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import MID_SECTION from './Mid_Section';
+import StockInput from './Stock_input';
+import { GetUser, Create_New_Transaction, createNewUser} from './bff.js';
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function App() {
-  const [data, setData] = useState(null);
+  const id = 15;
+
+  const [Username,setusername] = useState(null);
+  const [stocks, setstocks] = useState(null);
+  const [transactions, settransacitons] = useState(null);
+  const [updateFlag, setUpdateFlag] = useState(0);
+  const [StocksLoading, SetStocksLoading] = useState(0);
+
+  function HandleNewTransaction (args) {
+    Create_New_Transaction(args);
+    setUpdateFlag(1);
+  };
+
+  const Inicializer = async () => {
+    try {
+      const data = await GetUser(id);
+      setusername(data.name);
+      setstocks(data.stocks);
+      settransacitons(data.transactions);
+      return data;
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
+  
+  const updateTransactionsAndStocks = async () => {
+    try {
+      console.log("s");
+      const data = await GetUser(id);
+      setstocks(data.transactions);
+      settransacitons(data.transactions);
+      console.log(transactions);
+      console.log(stocks);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+    }
+  };
 
   useEffect(() => {
-    fetch('http://localhost:3300/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ nome: 'Juan' }), // Substitua 'Juan' pelo nome que você quer enviar
-    })
-      .then(async response => {
-        if (!response.ok) {
-          throw new Error('Failed to create user');
-        }
-        const result = await response.json();
-        const id = result[0].id;
-        console.log(id); 
-        setData(id);
-        return id;
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      })
-      .then(data => {
-        console.log('User created:', data);
-      })
-      .catch(error => {
-        console.error('Error creating user:', error);
-      });
-  }, []); // Empty dependency array to fetch data only once on component mount
+    Inicializer().then((user) => {
+      console.log(user);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (updateFlag === 1) {
+      SetStocksLoading(true);
+      // Perform your update operations here, e.g., fetch transactions and stocks
+      updateTransactionsAndStocks()
+        .then(() => SetStocksLoading(false))
+        .catch(() => SetStocksLoading(false));
+    }
+  }, [updateFlag]);
+  
+
+
+
 
   return (
     <React.StrictMode>
-      <MID_SECTION data={ data }/>
+      <MID_SECTION data={id} />
+      <StockInput user_id={id} HandleNewTransaction={HandleNewTransaction}/>
     </React.StrictMode>
   );
 }

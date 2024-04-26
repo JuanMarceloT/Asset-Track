@@ -3,6 +3,8 @@ import styles from './midsection.module.css'; // Assuming the CSS file exists
 import LateralSection from './Lateral_bar';
 
 
+
+
 function MidSection({ data }) {
     return (
       <div className={styles.container}>
@@ -13,7 +15,6 @@ function MidSection({ data }) {
           <h2>{data}</h2>
         </div>
         <div className={styles.balance}>
-          <h2>murri</h2>
         </div>
       </div>
     );
