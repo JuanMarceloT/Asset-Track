@@ -6,11 +6,11 @@ const cors = require('cors');
 
 
 const app = express();
-const port = 3300;
+const port = 3330;
 app.use(cors()); 
 app.use(bodyParser.json());
 
-const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate} = require('./repository');
+const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate, GetMontlyAsset} = require('./repository');
 
 
 
@@ -31,12 +31,26 @@ app.get('/GetUser', async (req, res) => {
     console.log(req.query);
     const { user_id } = req.query;
     const user = await SelectUser(user_id);
+    const Graph = await GetMontlyAsset(user_id);
+    //console.log(Graph);
     res.json(user);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.get('/GetGraph', async(req,res)=>{
+  try{
+    const {user_id} = req.query;
+    const Graph = await GetMontlyAsset(user_id);
+    console.log(Graph);
+    res.json(Graph);
+  }catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
 
 
 // API endpoint to create a new user

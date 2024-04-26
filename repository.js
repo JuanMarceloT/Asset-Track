@@ -124,6 +124,65 @@ async function DeleteAllTables() {
     const result = await executeQuery(query);
     console.log(result);
   }
+
+
+  async function GetUserTransactions(id){
+    const transactionsQuery = `
+        SELECT id, user_id, stock_id, transaction_type, units, ROUND(price::numeric / 100, 2) AS price_in_Real, timestamp
+        FROM transactions
+        WHERE user_id = $1;
+      `;
+      const transactionsResult = await executeQuery(transactionsQuery, [id]);
+      return transactionsResult;
+  }
+
+
+  async function GetUserStocks(id){
+    const StocksQuery = `
+        SELECT ROUND(avg_price::numeric / 100, 2) as avg_price_in_Real, stock_id, stock_name, units
+        FROM stocks
+        WHERE user_id = $1;
+      `;
+      const StocksValues = [id];
+      const StocksResult = await executeQuery(StocksQuery, StocksValues);
+      return StocksResult;
+  }
+
+
+  async function GetMontlyAsset(id) {
+    const assetByMonth = {};
+    try {
+      const transactionsResult = await GetUserTransactions(id);
+      transactionsResult.forEach(transaction => {
+          const stock_id = transaction.stock_id;
+            const date = new Date(transaction.timestamp);
+            const monthYear = `${date.getFullYear()}-${date.getMonth()}`;
+            if (!assetByMonth[monthYear]) {
+                assetByMonth[monthYear] = {
+                    monthYear,
+                    assets: {}
+                };
+            }
+            if (!assetByMonth[monthYear].assets[transaction.stock_id]) {
+              assetByMonth[monthYear].assets[transaction.stock_id] = { stock_id: transaction.stock_id, qtd: 0 };
+            }
+            if (transaction.transaction_type === 'BUY') {
+              assetByMonth[monthYear].assets[transaction.stock_id].qtd += transaction.units;
+            } else {
+                assetByMonth[monthYear].assets[transaction.stock_id].qtd -= transaction.units;
+            }
+            //console.log(assetByMonth[monthYear].assets[transaction.stock_id]);
+            //console.log(monthYear);
+        });
+        if(assetByMonth['2024-3']){
+          console.log(assetByMonth['2024-3'].assets[2]);
+        }
+    } catch (error) {
+        console.error("error " + error);
+    }
+}
+
+
   
   async function SelectUser(id) {
     const userQuery = `
@@ -142,21 +201,11 @@ async function DeleteAllTables() {
   
       const user = userResult[0];
   
-      const transactionsQuery = `
-        SELECT id, user_id, stock_id, transaction_type, units, ROUND(price::numeric / 100, 2) AS price_in_Real, timestamp
-        FROM transactions
-        WHERE user_id = $1;
-      `;
-      const transactionsValues = [id];
-      const transactionsResult = await executeQuery(transactionsQuery, transactionsValues);
+      
+      const StocksResult = await GetUserStocks(id);
+
+      const transactionsResult = await GetUserTransactions(id);
   
-      const StocksQuery = `
-        SELECT ROUND(avg_price::numeric / 100, 2) as avg_price_in_Real, stock_id, stock_name, units
-        FROM stocks
-        WHERE user_id = $1;
-      `;
-      const StocksValues = [id];
-      const StocksResult = await executeQuery(StocksQuery, StocksValues);
   
       const userWithTransactions = {
         id: user.id,
@@ -248,11 +297,21 @@ async function DeleteAllTables() {
         let new_avg_price = CheckStock[0].avg_price;
         if(TYPE == 'BUY'){
           new_avg_price = ((CheckStock[0].units * CheckStock[0].avg_price) + (units * price)) / (CheckStock[0].units + units);
+          const updateResult = await executeQuery(updateQuery, [(CheckStock[0].units + units), new_avg_price.toFixed(), user_id, stock_id]); // esse to fixed é gambiarra
         }
         if(TYPE == 'SELL'){
           new_avg_price = ((CheckStock[0].units * CheckStock[0].avg_price) - (units * price)) / (CheckStock[0].units - units);
+          let FInalUnits = (CheckStock[0].units - units);
+          if(FInalUnits > 0){
+            const updateResult = await executeQuery(updateQuery, [FInalUnits, new_avg_price.toFixed(), user_id, stock_id]); // esse to fixed é gambiarra
+          }else{
+            const REMOVE_STOCK = `DELETE FROM stocks
+            WHERE user_id = $1 AND stock_id = $2
+            RETURNING *;
+            `;
+            const updateResult = await executeQuery(REMOVE_STOCK, [user_id, stock_id]);
+          }
         }
-        const updateResult = await executeQuery(updateQuery, [(CheckStock[0].units + units), new_avg_price.toFixed(), user_id, stock_id]); // esse to fixed é gambiarra
       } else {
          const createStockQuery = `
           INSERT INTO stocks (user_id, stock_id, STOCK_NAME, units, avg_price)
@@ -270,4 +329,4 @@ async function DeleteAllTables() {
 
 
   
-module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate };
+module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario, Nova_Tranasção, formatDate, GetMontlyAsset};

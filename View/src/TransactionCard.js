@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './TransactionCard.module.css';
 
 const TransactionCard = ({ transactions }) => {
-    //console.log(transactions);
     
     if(transactions){
         return (
@@ -16,6 +15,7 @@ const TransactionCard = ({ transactions }) => {
                         <th>Ação</th>
                         <th>Preço</th>
                         <th>Qtd</th>
+                        <th>Tipo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,6 +23,7 @@ const TransactionCard = ({ transactions }) => {
                         <td>{transaction.stock_id}</td>
                         <td>R${transaction.price_in_real}</td>
                         <td>{transaction.units}</td>
+                        <td>{transaction.transaction_type}</td>
                     </tr>
                 </tbody>
             </table>

@@ -8,7 +8,7 @@ import StocksCard from './StocksCard';
 import ScrollableDivs from './ScrollableDivs';
 
 function App() {
-  const id = 39;
+  const id = 109;
 
   const [Username,setusername] = useState(null);
   const [stocks, setstocks] = useState(null);

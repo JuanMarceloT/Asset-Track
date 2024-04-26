@@ -1,4 +1,4 @@
-const api = 'http://localhost:3300';
+const api = 'http://localhost:3330';
 
 async function createNewUser(Username){
   let result = CallEndpointPost('user', {nome: `${Username}`});

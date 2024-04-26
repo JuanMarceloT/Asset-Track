@@ -5,6 +5,7 @@ function StockInput({ user_id, HandleNewTransaction }) {
   const [units, setUnits] = useState('');
   const [price, setPrice] = useState('');
   const [date, setDate] = useState('');
+  const [tipo, settipo] = useState('');
 
   const handleStockNameChange = (event) => {
     setstock_id(event.target.value);
@@ -30,7 +31,7 @@ function StockInput({ user_id, HandleNewTransaction }) {
       console.log("Coloque data");
     }else{
 
-      const type = 'BUY';
+      const type = tipo;
       let year = date.split('-')[0];
       let month = date.split('-')[1];
       let day = date.split('-')[2];
@@ -68,7 +69,8 @@ function StockInput({ user_id, HandleNewTransaction }) {
         Date:
         <input type="date" value={date} onChange={handleDateChange} />
       </label>
-      <button type="submit">Submit</button>
+      <button type="submit" onClick={()=> settipo('BUY')}>Comprar</button>
+      <button type="submit" onClick={()=> settipo('SELL')}>Vender</button>
     </form>
   );
 }
