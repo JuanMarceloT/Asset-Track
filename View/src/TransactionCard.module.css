@@ -1,0 +1,31 @@
+.container{
+    max-width: 20vw;
+    min-width: 15vw;
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #007aeb;
+    border-radius: 15px;
+    font-family: 'Arial';
+    color: white;
+}
+span {
+    font-weight: 600;
+}
+.card {
+    padding: 20px;
+    display: flex;
+}
+
+
+th:first-child,
+td:first-child {
+  flex: 2;
+}
+
+th:nth-child(2),
+td:nth-child(2),
+th:nth-child(3),
+td:nth-child(3) {
+  flex: 1;
+  text-align: center;
+}

@@ -5,10 +5,9 @@ function LateralSection() { // Corrected casing for consistency
   return (
     <div className={styles.container}>
       <div className={styles.textContainer}>
-        <h1>locura</h1>
+        <h1>Test</h1>
         <h2>Dashboard</h2>
         <h2>Portfolio</h2>
-        <h2>Tutorial</h2>
       </div>
     </div>
   );

@@ -5,9 +5,10 @@ import StockInput from './Stock_input';
 import { GetUser, Create_New_Transaction, createNewUser} from './bff.js';
 import TransactionCard from './TransactionCard';
 import StocksCard from './StocksCard';
+import ScrollableDivs from './ScrollableDivs';
 
 function App() {
-  const id = 7;
+  const id = 39;
 
   const [Username,setusername] = useState(null);
   const [stocks, setstocks] = useState(null);
@@ -38,7 +39,7 @@ function App() {
       setstocks(data.stocks);
       settransacitons(data.transactions);
       //console.log(transactions);
-      console.log(stocks);
+      //console.log(stocks);
     } catch (error) {
       console.error("Error fetching user:", error);
     }
@@ -51,14 +52,27 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (updateFlag === 1) {
-      SetStocksLoading(true);
-      // Perform your update operations here, e.g., fetch transactions and stocks
-      updateTransactionsAndStocks()
-      .then(() => SetStocksLoading(false))
-      .catch(() => SetStocksLoading(false));
-      setUpdateFlag(0);
-    }
+    const fetchData = async () => {
+      if (updateFlag === 1) {
+          SetStocksLoading(true);
+          try {
+              await updateTransactionsAndStocks();
+              SetStocksLoading(false);
+              setUpdateFlag(0);
+          } catch (error) {
+              console.error('Failed to update transactions and stocks:', error);
+              SetStocksLoading(false);
+          }
+      }else{  //gambiarra da braba, pq ele não tava esperando o updatetransactions terminar e acabava que só atualizava na proxima chamada
+        try {
+            await updateTransactionsAndStocks();
+          } catch (error) {
+              console.error('Failed to update transactions and stocks:', error);
+          }
+      }
+  };
+
+  fetchData();
   }, [updateFlag]);
   
 
@@ -69,7 +83,9 @@ function App() {
     <React.StrictMode>
       <MID_SECTION data={id} />
       <StockInput user_id={id} HandleNewTransaction={HandleNewTransaction}/>
-      <TransactionCard transactions={transactions}/>
+      <ScrollableDivs maxHeight={200}>
+        <TransactionCard transactions={transactions}/>
+      </ScrollableDivs>
       <StocksCard stocks={stocks}/>
     </React.StrictMode>
   );
