@@ -1,7 +1,6 @@
 import React from 'react';
 
 const TransactionCard = ({ transactions }) => {
-    console.log("transaçõse");
     console.log(transactions);
     
     if(transactions){
@@ -9,9 +8,9 @@ const TransactionCard = ({ transactions }) => {
             <div>
               {transactions.map((transaction, index) => (
                 <div key={index} className="card">
-                  <div>Stock ID: {transaction.stockId}</div>
-                  <div>Price: {transaction.price}</div>
-                  <div>Units: {transaction.units}</div>
+                  <div>Stock ID: {transaction.stock_id}</div>
+                  <div>Preço: R${transaction.price_in_real}</div>
+                  <div>Qtd: {transaction.units}</div>
                 </div>
               ))}
             </div>

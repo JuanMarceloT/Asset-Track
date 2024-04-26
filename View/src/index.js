@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import MID_SECTION from './Mid_Section';
 import StockInput from './Stock_input';
 import { GetUser, Create_New_Transaction, createNewUser} from './bff.js';
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import TransactionCard from './TransactionCard';
+import StocksCard from './StocksCard';
 
 function App() {
-  const id = 15;
+  const id = 7;
 
   const [Username,setusername] = useState(null);
   const [stocks, setstocks] = useState(null);
@@ -33,11 +34,10 @@ function App() {
   
   const updateTransactionsAndStocks = async () => {
     try {
-      console.log("s");
       const data = await GetUser(id);
-      setstocks(data.transactions);
+      setstocks(data.stocks);
       settransacitons(data.transactions);
-      console.log(transactions);
+      //console.log(transactions);
       console.log(stocks);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -55,8 +55,9 @@ function App() {
       SetStocksLoading(true);
       // Perform your update operations here, e.g., fetch transactions and stocks
       updateTransactionsAndStocks()
-        .then(() => SetStocksLoading(false))
-        .catch(() => SetStocksLoading(false));
+      .then(() => SetStocksLoading(false))
+      .catch(() => SetStocksLoading(false));
+      setUpdateFlag(0);
     }
   }, [updateFlag]);
   
@@ -68,6 +69,8 @@ function App() {
     <React.StrictMode>
       <MID_SECTION data={id} />
       <StockInput user_id={id} HandleNewTransaction={HandleNewTransaction}/>
+      <TransactionCard transactions={transactions}/>
+      <StocksCard stocks={stocks}/>
     </React.StrictMode>
   );
 }

@@ -12,7 +12,6 @@ async function Create_New_Transaction(args){
 
 
 async function CallEndpointPost(endpoint, bodyjson){
-  console.log(bodyjson);
   fetch(api + `/${endpoint}`, {
     method: 'POST',
     headers: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './midsection.module.css'; // Assuming the CSS file exists
+import styles from './midsection.module.css'; 
 import LateralSection from './Lateral_bar';
 
 
