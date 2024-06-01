@@ -1,0 +1,34 @@
+.container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    font-size: 25px;
+    background-color: rgb(255, 255, 255);
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0px 1vw;
+  }
+  
+  .textContainer{
+    color: #838188;
+    font-size: 10px;
+    margin-top: 20px;
+  }
+  
+  .options {
+    display: flex;
+    flex-direction: column;
+    font-size: 15px;
+    align-items: left;
+  }
+  
+  .options h2 {
+    padding: 0.75vw  1vw;
+    border-radius: 10px;
+  }
+
+  .options h2:hover{
+    color: #632bf8;
+    background-color:#622bf833;
+    cursor: pointer;
+  }
+  

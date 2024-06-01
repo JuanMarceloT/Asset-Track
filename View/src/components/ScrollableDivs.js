@@ -8,11 +8,12 @@ const ScrollableDivs = ({ children, maxHeight }) => {
         const container = containerRef.current;
         if (container) {
             setIsScrollable(container.scrollHeight > maxHeight);
+            console.log(container);
         }
     }, [maxHeight]);
 
     return (
-        <div style={{ maxHeight, maxWidth: 'max-content', overflowY: isScrollable ? 'scroll' : 'auto' }} ref={containerRef}>
+        <div style={{ maxHeight: maxHeight + "vh", padding: '0px 30px', overflowY: isScrollable ? 'scroll' : 'auto' , overflowX: 'hidden'}} ref={containerRef}>
             {children}
         </div>
     );

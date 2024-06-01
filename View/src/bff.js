@@ -1,12 +1,17 @@
 const api = 'http://localhost:3330';
 
 async function createNewUser(Username){
-  let result = CallEndpointPost('user', {nome: `${Username}`});
+  let result = await CallEndpointPost('user', {nome: `${Username}`});
   return result;
 }
 
 async function Create_New_Transaction(args){
   CallEndpointPost("transactions", args);
+}
+
+async function Get_Graph_Params(id){
+  let param = await CallEndpointGet(`GetGraph?user_id=${id}`);
+  return param;
 }
 
 
@@ -63,4 +68,4 @@ async function GetUser(id) {
 
 
 
-module.exports = { GetUser, Create_New_Transaction, createNewUser};
+module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params};

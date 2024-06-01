@@ -1,20 +1,17 @@
 .container {
   display: flex;
-  height: 50vh;
+  height: 70vh;
+}
+body {
+  margin: 0px;
 }
 
-.lateralsection{
-  flex:2
+.lateralSection{
+  flex:1
 }
 
-.graph {
-  flex: 6;
-  /* This will take up 3/4 of the space */
-  background-color: lightcoral;
+.content {
+  flex: 5;
+  display: flex;
 }
 
-.balance { 
-  flex: 3;
-  /* This will take up 1/4 of the space */
-  background-color: lightblue;
-}

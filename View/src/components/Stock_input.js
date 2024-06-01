@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styles from './Stock_input.module.css';  
 
 function StockInput({ user_id, HandleNewTransaction }) {
   const [stock_id, setstock_id] = useState('');

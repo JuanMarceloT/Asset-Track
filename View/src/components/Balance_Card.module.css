@@ -1,0 +1,76 @@
+.container{
+
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    margin: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+}
+.card h1 {
+    margin: 4px;
+    font-weight: 400;
+    font-size:25px;
+}
+.balance{
+    display: flex;
+    margin: 0;
+}
+
+.balance #balance_num, .balance #variacao {
+    background-color: aquamarine;
+    margin: 0;
+    border-radius: 10px;
+    font-size: 17px;
+    padding: 15px;
+}
+
+.balance #balance_num{
+    font-weight: 600;
+    background-color: #632bf8;
+    width: 100%;
+    margin-right: 5px;
+    color: white;
+}
+.balance #variacao {
+    background-color: #c7ffaa;
+    width: max-content;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+.invested{
+    display: flex;
+    margin: 0;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    background-color: #303030;
+    color: white;
+    padding: 5px;
+    height: max-content;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 7px;
+}
+
+.invested button {
+    height: 100%;
+    padding: 10px;
+    background-color: #632bf8;
+    border: 0;
+    color: white;
+    border-radius: 5px;
+}
+
+p {
+    margin: 0 10px;
+}

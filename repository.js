@@ -174,9 +174,7 @@ async function DeleteAllTables() {
             //console.log(assetByMonth[monthYear].assets[transaction.stock_id]);
             //console.log(monthYear);
         });
-        if(assetByMonth['2024-3']){
-          console.log(assetByMonth['2024-3'].assets[2]);
-        }
+        return assetByMonth;
     } catch (error) {
         console.error("error " + error);
     }
@@ -214,7 +212,7 @@ async function DeleteAllTables() {
         transactions: transactionsResult
       };
   
-      console.log(userWithTransactions);
+      //console.log(userWithTransactions);
       return userWithTransactions;
     } catch (error) {
       console.error('Error selecting user with transactions:', error);

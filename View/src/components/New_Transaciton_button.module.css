@@ -1,0 +1,13 @@
+.container button {
+    width: 20vw;
+    height: 5vh;
+    margin: 20px;
+    font-size: 100%;
+    border: 0px;
+    border-radius: 1vb;
+    background-color: aqua;
+}
+
+.container button:hover {
+    background-color: beige;
+}

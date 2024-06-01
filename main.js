@@ -28,11 +28,9 @@ app.get('/users', async (req, res) => {
 // API endpoint to get user info
 app.get('/GetUser', async (req, res) => {
   try {
-    console.log(req.query);
+    //console.log(req.query);
     const { user_id } = req.query;
-    const user = await SelectUser(user_id);
-    const Graph = await GetMontlyAsset(user_id);
-    //console.log(Graph);
+    const user = await SelectUser(user_id);;
     res.json(user);
   } catch (error) {
     console.error('Error:', error);

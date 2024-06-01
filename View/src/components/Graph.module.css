@@ -1,0 +1,26 @@
+.graph-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    
+}
+
+canvas {
+    width: 100% !important; /* Ensure the canvas takes up the full width */
+    height: auto !important; /* Maintain aspect ratio */
+    background-color: rgb(255, 255, 255);
+}
+
+@media (max-width: 600px) {
+    .graph-container {
+        padding: 0.5rem; /* Reduce padding on smaller screens */
+    }
+
+    canvas {
+        font-size: 0.8rem; /* Adjust font size for better readability */
+    }
+}
