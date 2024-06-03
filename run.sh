@@ -20,11 +20,11 @@ kill_terminals() {
 trap 'kill_terminals' EXIT
 
 echo "executing database"
-gnome-terminal -- bash -c "docker compose up" &
+gnome-terminal -- bash -c "cd repo;docker compose up;" &
 add_pid $!
 
 echo "executing node"
-gnome-terminal -- bash -c "nodemon main.js" &
+gnome-terminal -- bash -c "cd controller;nodemon main.js;" &
 add_pid $!
 
 echo "executing React"

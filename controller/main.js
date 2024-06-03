@@ -10,9 +10,18 @@ const port = 3330;
 app.use(cors()); 
 app.use(bodyParser.json());
 
-const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate, GetMontlyAsset} = require('./repository');
+const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate, GetMontlyAsset, get_stock_close_price} = require('../repo/repository');
 
 
+async function test() {
+  let result = await get_stock_close_price('ITUB4', '2024-04-01');
+  console.log(result);
+  //console.log(Graph);
+}
+
+(async () => {
+  let opa = await test();
+})();
 
 // API endpoint to get all users
 app.get('/users', async (req, res) => {

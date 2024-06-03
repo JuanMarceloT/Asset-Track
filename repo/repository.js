@@ -1,13 +1,14 @@
 
 const { type } = require('os');
 const pool = require('./db');
+const { get } = require('https');
 
 
 
 async function inicializarDb(){
     try {
       await pool.connect();
-      console.log('Connected to PostgreSQL database!');
+      //console.log('Connected to PostgreSQL database!');
   
       //DeleteAllTables();
       await CriarTabelaUsuarios();
@@ -17,7 +18,7 @@ async function inicializarDb(){
       //const res = await pool.query(query);
       //const users = res.rows; // Array of objects containing retrieved data
     }catch(ex){
-        console.log(ex);
+        //console.log(ex);
     }
 }
 
@@ -36,10 +37,10 @@ async function DeleteAllTables() {
       for (const table of tablesResult) {
         const dropTableQuery = `DROP TABLE IF EXISTS "${table.table_name}" CASCADE;`;
         await executeQuery(dropTableQuery);
-        console.log(`Table ${table.table_name} deleted successfully.`);
+        //console.log(`Table ${table.table_name} deleted successfully.`);
       }
   
-      console.log('All tables deleted successfully.');
+      //console.log('All tables deleted successfully.');
     } catch (error) {
       console.error('Error deleting tables:', error);
       throw error;
@@ -102,7 +103,7 @@ async function DeleteAllTables() {
   
     try {
       await executeQuery(query, values);
-      //console.log('Transaction inserted successfully.');
+      ////console.log('Transaction inserted successfully.');
     } catch (error) {
       console.error('Error inserting transaction:', error);
     }
@@ -115,22 +116,24 @@ async function DeleteAllTables() {
   async function SelectUsers() {
     const query = `select * from USUARIO;`;
     const result = await executeQuery(query);
-    //console.log(result);
+    ////console.log(result);
     return result;
   }
   
   async function SelectStocks() {
     const query = `select * from stocks;`;
     const result = await executeQuery(query);
-    console.log(result);
+    //console.log(result);
   }
 
 
   async function GetUserTransactions(id){
     const transactionsQuery = `
-        SELECT id, user_id, stock_id, transaction_type, units, ROUND(price::numeric / 100, 2) AS price_in_Real, timestamp
+        SELECT id, stock_id, transaction_type, units, ROUND(price::numeric / 100, 2) AS price_in_Real, timestamp
         FROM transactions
-        WHERE user_id = $1;
+        WHERE user_id = $1
+        ORDER BY 
+        timestamp ASC;;
       `;
       const transactionsResult = await executeQuery(transactionsQuery, [id]);
       return transactionsResult;
@@ -148,13 +151,12 @@ async function DeleteAllTables() {
       return StocksResult;
   }
 
-
+/*
   async function GetMontlyAsset(id) {
     const assetByMonth = {};
     try {
       const transactionsResult = await GetUserTransactions(id);
       transactionsResult.forEach(transaction => {
-          const stock_id = transaction.stock_id;
             const date = new Date(transaction.timestamp);
             const monthYear = `${date.getFullYear()}-${date.getMonth()}`;
             if (!assetByMonth[monthYear]) {
@@ -171,15 +173,89 @@ async function DeleteAllTables() {
             } else {
                 assetByMonth[monthYear].assets[transaction.stock_id].qtd -= transaction.units;
             }
-            //console.log(assetByMonth[monthYear].assets[transaction.stock_id]);
-            //console.log(monthYear);
+            ////console.log(assetByMonth[monthYear].assets[transaction.stock_id]);
+            ////console.log(monthYear);
         });
         return assetByMonth;
     } catch (error) {
         console.error("error " + error);
     }
 }
+*/
+async function GetMontlyAsset(id) {
+  const assetByMonth = {};
+  try {
+    const transactionsResult = await GetUserTransactions(id);
+    //console.log("result");
 
+
+    for (let i = 0; i < transactionsResult.length - 1; i++) {
+      const transaction = transactionsResult[i];
+      const nextIndex = i + 1;
+      let current_date = new Date(transaction.timestamp);
+      console.log(current_date);
+      const monthYear = `${current_date.getFullYear()}-${current_date.getMonth()}`;
+          if (!assetByMonth[monthYear]) {
+              assetByMonth[monthYear] = {
+                  monthYear,
+                  assets: {}
+              };
+          }
+          if (!assetByMonth[monthYear].assets[transaction.stock_id]) {
+            assetByMonth[monthYear].assets[transaction.stock_id] = { stock_id: transaction.stock_id, qtd: 0 };
+          }
+          if (transaction.transaction_type === 'BUY') {
+            assetByMonth[monthYear].assets[transaction.stock_id].qtd += transaction.units;
+          } else {
+              assetByMonth[monthYear].assets[transaction.stock_id].qtd -= transaction.units;
+          }
+
+      while(getNextMonth(current_date) < new Date(transactionsResult[nextIndex].timestamp)){
+        current_date = getNextMonth(current_date);
+        console.log(`${current_date.getFullYear()}-${current_date.getMonth()}`);
+        const monthYear = `${current_date.getFullYear()}-${current_date.getMonth()}`;
+          if (!assetByMonth[monthYear]) {
+              assetByMonth[monthYear] = {
+                  monthYear,
+                  assets: {}
+              };
+          }
+      }
+          
+          ////console.log(assetByMonth[monthYear].assets[transaction.stock_id]);
+          ////console.log(monthYear);
+      };
+      return assetByMonth;
+  } catch (error) {
+      console.error("error " + error);
+  }
+}
+
+function get_stock_close_price(stockName, date){
+  fetch(`http://localhost:5000/stock/${stockName}.SA/${date}`)
+      .then(response => response.json())
+      .then(data => {
+
+          return(data.Close)
+      })
+      .catch(error => console.error('Error:', error));
+
+}
+
+function getNextMonth(date){
+  if (date.getMonth() == 11) {
+    var new_date = new Date(date.getFullYear() + 1, 0, 1);
+  } else {
+      var new_date = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+  }
+
+  return new_date;
+}
+
+
+async function Consolidação(){
+
+} 
 
   
   async function SelectUser(id) {
@@ -212,7 +288,7 @@ async function DeleteAllTables() {
         transactions: transactionsResult
       };
   
-      //console.log(userWithTransactions);
+      ////console.log(userWithTransactions);
       return userWithTransactions;
     } catch (error) {
       console.error('Error selecting user with transactions:', error);
@@ -230,7 +306,7 @@ async function DeleteAllTables() {
     try {
       const result = await executeQuery(query);
       const userId = result; // Assuming 'id' is the returned column name
-      console.log(userId);
+      //console.log(userId);
       return userId;
     } catch (error) {
       console.error('Error creating user:', error);
@@ -283,7 +359,7 @@ async function DeleteAllTables() {
         ;
         ` ;
       const CheckStock = await executeQuery(FindSameStockQuery, [user_id, stock_id]);
-      //console.log(CheckStock[0].units);
+      ////console.log(CheckStock[0].units);
   
       if (CheckStock.length > 0) {
         const updateQuery = `
@@ -327,4 +403,4 @@ async function DeleteAllTables() {
 
 
   
-module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario, Nova_Tranasção, formatDate, GetMontlyAsset};
+module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario, Nova_Tranasção, formatDate, GetMontlyAsset, get_stock_close_price};
