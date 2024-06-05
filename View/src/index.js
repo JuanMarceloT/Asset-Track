@@ -12,7 +12,7 @@ import Dashboard_Section from './Dashboard_Section';
 import New_Transaciton_button from './components/New_Transaction_button';
 
 function App() {
-  const id = 26;
+  const id = 5;
 
   const [Username,setusername] = useState(null);
   const [stocks, setstocks] = useState(null);

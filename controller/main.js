@@ -12,16 +12,20 @@ app.use(bodyParser.json());
 
 const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate, GetMontlyAsset, get_stock_close_price} = require('../repo/repository');
 
-
-async function test() {
-  let result = await get_stock_close_price('ITUB4', '2024-04-01');
-  console.log(result);
-  //console.log(Graph);
+async function delay(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-(async () => {
-  let opa = await test();
-})();
+async function main() {
+  const Graph = await get_stock_close_price("PETR4", "2023-20-10");
+  console.log("Starting delay...");
+  await delay(1000); // Waits for 5 seconds
+  console.log("5 seconds have passed.");
+  console.log(Graph);
+}
+
+main();
+
 
 // API endpoint to get all users
 app.get('/users', async (req, res) => {
@@ -48,10 +52,11 @@ app.get('/GetUser', async (req, res) => {
 });
 
 app.get('/GetGraph', async(req,res)=>{
+
   try{
     const {user_id} = req.query;
     const Graph = await GetMontlyAsset(user_id);
-    console.log(Graph);
+    
     res.json(Graph);
   }catch (error) {
     console.error('Error:', error);

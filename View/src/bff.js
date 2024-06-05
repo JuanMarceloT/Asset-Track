@@ -10,8 +10,7 @@ async function Create_New_Transaction(args){
 }
 
 async function Get_Graph_Params(id){
-  let param = await CallEndpointGet(`GetGraph?user_id=${id}`);
-  return param;
+  return await CallEndpointGet(`GetGraph?user_id=${id}`);
 }
 
 

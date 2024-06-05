@@ -39,7 +39,9 @@ function FormatToGraphData(Params){
         let price = 0;
         let stock_price = 2;
         {Object.keys(value.assets).map(key => {
-            price += +value.assets[key].qtd * stock_price;
+            console.log(value.assets[key].price);
+            price += +value.assets[key].qtd * value.assets[key].price;
+            console.log(value.assets[key]);
         })}
         ValueUntilNow += price;
         data.labels.push(key);

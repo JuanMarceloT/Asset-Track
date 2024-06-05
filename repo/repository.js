@@ -2,6 +2,7 @@
 const { type } = require('os');
 const pool = require('./db');
 const { get } = require('https');
+const { promises } = require('dns');
 
 
 
@@ -184,61 +185,89 @@ async function DeleteAllTables() {
 */
 async function GetMontlyAsset(id) {
   const assetByMonth = {};
+  const promises = [];
+  
   try {
     const transactionsResult = await GetUserTransactions(id);
-    //console.log("result");
-
 
     for (let i = 0; i < transactionsResult.length - 1; i++) {
       const transaction = transactionsResult[i];
       const nextIndex = i + 1;
       let current_date = new Date(transaction.timestamp);
-      console.log(current_date);
-      const monthYear = `${current_date.getFullYear()}-${current_date.getMonth()}`;
-          if (!assetByMonth[monthYear]) {
-              assetByMonth[monthYear] = {
-                  monthYear,
-                  assets: {}
-              };
-          }
-          if (!assetByMonth[monthYear].assets[transaction.stock_id]) {
-            assetByMonth[monthYear].assets[transaction.stock_id] = { stock_id: transaction.stock_id, qtd: 0 };
-          }
-          if (transaction.transaction_type === 'BUY') {
-            assetByMonth[monthYear].assets[transaction.stock_id].qtd += transaction.units;
-          } else {
-              assetByMonth[monthYear].assets[transaction.stock_id].qtd -= transaction.units;
-          }
 
-      while(getNextMonth(current_date) < new Date(transactionsResult[nextIndex].timestamp)){
-        current_date = getNextMonth(current_date);
-        console.log(`${current_date.getFullYear()}-${current_date.getMonth()}`);
-        const monthYear = `${current_date.getFullYear()}-${current_date.getMonth()}`;
-          if (!assetByMonth[monthYear]) {
-              assetByMonth[monthYear] = {
-                  monthYear,
-                  assets: {}
-              };
-          }
+      const monthYear = `${current_date.getFullYear()}-${current_date.getMonth()}`;
+
+      console.log(transaction);
+
+      if (!assetByMonth[monthYear]) {
+        assetByMonth[monthYear] = {
+          monthYear,
+          assets: {}
+        };
       }
-          
-          ////console.log(assetByMonth[monthYear].assets[transaction.stock_id]);
-          ////console.log(monthYear);
-      };
-      return assetByMonth;
+
+      if (!assetByMonth[monthYear].assets[transaction.stock_id]) {
+        let year_month_day = `${current_date.getFullYear()}-${current_date.getMonth() + 1}-${current_date.getDay()}`;
+        console.log(year_month_day);
+        let stock;
+
+        switch(transaction.stock_id){
+            case 2:
+                stock = "VALE3";
+                break;
+            case 1:
+                stock = "PETR4";
+                break;
+            default:
+                stock = "CASH3";
+                break;
+        }
+
+
+
+        const pricePromise = await get_stock_close_price(stock, year_month_day);
+
+        assetByMonth[monthYear].assets[transaction.stock_id] = { stock_id: transaction.stock_id, qtd: 0, price: pricePromise };
+      }
+
+      if (transaction.transaction_type === 'BUY') {
+        assetByMonth[monthYear].assets[transaction.stock_id].qtd += transaction.units;
+      } else {
+        assetByMonth[monthYear].assets[transaction.stock_id].qtd -= transaction.units;
+      }
+
+      while (getNextMonth(current_date) < new Date(transactionsResult[nextIndex].timestamp)) {
+        current_date = getNextMonth(current_date);
+        const monthYear = `${current_date.getFullYear()}-${current_date.getMonth()}`;
+        if (!assetByMonth[monthYear]) {
+          assetByMonth[monthYear] = {
+            monthYear,
+            assets: {}
+          };
+        }
+      }
+    }
+
+
+    return assetByMonth;
   } catch (error) {
-      console.error("error " + error);
+    console.error("error " + error);
   }
 }
 
-function get_stock_close_price(stockName, date){
-  fetch(`http://localhost:5000/stock/${stockName}.SA/${date}`)
-      .then(response => response.json())
-      .then(data => {
+async function get_stock_close_price(stockName, date){
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/stock/${stockName}.SA/${date}`);
+    if (!response.ok) {
+      return undefined;
+    }
+    const data = await response.json();
 
-          return(data.Close)
-      })
-      .catch(error => console.error('Error:', error));
+    return data[0]?.Close ?? 0; 
+    
+} catch (error) {
+    console.error('Error:', error);
+}
 
 }
 
