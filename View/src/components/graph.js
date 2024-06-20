@@ -33,24 +33,16 @@ function FormatToGraphData(Params){
         values: []
     }
 
-    let ValueUntilNow = 0;
     Object.keys(Params).map(key => {
-        const value = Params[key];
-        let price = 0;
-        let stock_price = 2;
-        {Object.keys(value.assets).map(key => {
-            console.log(value.assets[key].price);
-            price += +value.assets[key].qtd * value.assets[key].price;
-            console.log(value.assets[key]);
-        })}
-        ValueUntilNow += price;
-        data.labels.push(key);
-        data.values.push(ValueUntilNow);
-        
+
+        if(Params[key].assets_values > -1){
+            data.labels.push(`${Params[key].year}-${Params[key].month}`);
+            data.values.push(Params[key].assets_values);
+        }
         //return <div key={key}>{value.monthYear} = ${price} </div>;
     })
 
-    //console.log(data);
+    console.log(data);
     return data;
 }
 

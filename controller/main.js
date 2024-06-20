@@ -12,16 +12,11 @@ app.use(bodyParser.json());
 
 const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate, GetMontlyAsset, get_stock_close_price} = require('../repo/repository');
 
-async function delay(milliseconds) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
 
 async function main() {
-  const Graph = await get_stock_close_price("PETR4", "2023-20-10");
-  console.log("Starting delay...");
-  await delay(1000); // Waits for 5 seconds
-  console.log("5 seconds have passed.");
-  console.log(Graph);
+  const Graph = await GetMontlyAsset(5);
+  //console.log("Starting delay...");
+  //console.log(Graph);
 }
 
 main();
