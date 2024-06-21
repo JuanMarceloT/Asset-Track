@@ -87,6 +87,17 @@ function get_stock_code_by_id(id){
   }
 }
 
+function get_stock_img_by_id(id){
+  switch(id){
+    case 1:
+      return "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/1011px-Banco_Ita%C3%BA_logo.svg.png";
+    case 2:
+      return "https://cdn.worldvectorlogo.com/logos/petrobras-8.svg";
+    default:
+      return 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png'
+  }
+}
 
 
-module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id};
+
+module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id};
