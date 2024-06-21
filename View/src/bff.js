@@ -65,6 +65,28 @@ async function GetUser(id) {
   }
 }
 
+function get_stock_name_by_id(id){
+  switch(id){
+    case 1:
+      return "Itáu";
+    case 2:
+      return "Petrobrás";
+    default:
+      return "Non sei";
+  }
+}
+
+function get_stock_code_by_id(id){
+  switch(id){
+    case 1:
+      return "ITUB4";
+    case 2:
+      return "PETR4";
+    default:
+      return "Non sei";
+  }
+}
 
 
-module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params};
+
+module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id};
