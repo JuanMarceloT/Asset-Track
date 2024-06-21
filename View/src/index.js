@@ -3,13 +3,10 @@ import ReactDOM from 'react-dom';
 import MID_SECTION from './Mid_Section';
 import StockInput from './components/Stock_input';
 import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params} from './bff.js';
-import TransactionCard from './components/TransactionCard';
-import StocksCard from './components/StocksCard';
-import ScrollableDivs from './components/ScrollableDivs';
-import Graph from './components/graph';
 
 import Dashboard_Section from './Dashboard_Section';
-import New_Transaciton_button from './components/New_Transaction_button';
+import Top_Cards from './components/Top_Cards';
+import Top_Menu from './components/Top_Menu';
 
 function App() {
   const id = 92;
@@ -44,8 +41,8 @@ function App() {
       const data = await GetUser(id);
       setstocks(data.stocks);
       settransacitons(data.transactions);
-      //console.log(transactions);
-      //console.log(stocks);
+      ////console.log(transactions);
+      ////console.log(stocks);
     } catch (error) {
       console.error("Error fetching user:", error);
     }
@@ -55,7 +52,7 @@ function App() {
     try {
       const data = await Get_Graph_Params(id);
       setGraph(data);
-      console.log(data);
+      //console.log(data);
       
     } catch (error) {
       console.error("Error fetching graph:", error);
@@ -99,10 +96,11 @@ function App() {
 
   return (
     <React.StrictMode>
+      <Top_Menu/>
+      <Top_Cards/>
       <MID_SECTION>
-      <Dashboard_Section graph={graph} stocks={stocks}/>
+      <Dashboard_Section graph={graph} stocks={stocks} HandleNewTransaction={HandleNewTransaction} id={id}/>
       </MID_SECTION>
-      <StockInput user_id={id} HandleNewTransaction={HandleNewTransaction}/>
     </React.StrictMode>
   );
   /*<Graph Params={graph}/>
@@ -120,6 +118,6 @@ function App() {
 ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
+// to log results (for example: reportWebVitals(//console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 //reportWebVitals();

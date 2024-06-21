@@ -2,24 +2,27 @@ import React, { useEffect, useRef } from 'react';
 
 import styles from './Dashboard_Section.module.css';
 import ScrollableDivs from './components/ScrollableDivs';
+import Selectable_menu from './components/Selectable_menu'
 import Graph from './components/graph';
-import Balance_Card from './components/Balance_Card';
-import Simple_stock_card from './components/Simple_stock_card';
-function Dashboard_Section ({graph, stocks}) {
-    return <>  
+
+import { useState } from 'react';
+import Stock_input from './components/Stock_input';
+
+
+
+function Dashboard_Section({ graph, stocks, id, HandleNewTransaction }) {
+
+
+    return <>
         <div className={styles.container}>
             <div className={styles.graph}>
-            <Graph Params={graph}/>
+                <Graph Params={graph} />
             </div>
             <div className={styles.stocks}>
-            <Balance_Card/>
-            <ScrollableDivs>
-                <Simple_stock_card/>
-                <Simple_stock_card/>
-                <Simple_stock_card/>
-                <Simple_stock_card/>
-                <Simple_stock_card/>
-            </ScrollableDivs>
+                <div className={styles.menu}>
+                    <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks}/>
+                </div>
+
             </div>
         </div>
     </>

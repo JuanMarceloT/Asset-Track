@@ -1,0 +1,54 @@
+.menu{
+    display: flex;
+    width: 100%;
+}
+
+.card {
+    width: 100%;
+}
+.buttons {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    width: 100%;
+    background-color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    text-align: center;
+    
+}
+
+.content {
+    height: 100%;
+}
+.assetMenu{
+    display: flex;
+    flex-direction: column;
+    align-content: space-between; /* Distribui os itens verticalmente */
+    justify-content: space-between;
+    height: 95%;
+}
+
+.closeButton{
+  position: relative;
+  top: 10px;
+  right: -90%;
+  width: 30px;
+  height: 30px;
+  background: none;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid #ccc;
+  font-size: 20px;
+  cursor: pointer;
+}
+#selected {
+    background-color: #7F16E8;
+    color: white;
+}
+.button {
+    margin: 10px;
+}
+.stockinput{
+    height: 100%;
+    background-color: aquamarine;
+}

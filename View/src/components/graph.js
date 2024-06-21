@@ -25,8 +25,6 @@ return null; // or any other fallback if Params is falsy
 
 */
 
-
-
 function FormatToGraphData(Params){
     const data = {
         labels: [],
@@ -42,7 +40,7 @@ function FormatToGraphData(Params){
         //return <div key={key}>{value.monthYear} = ${price} </div>;
     })
 
-    console.log(data);
+    //console.log(data);
     return data;
 }
 

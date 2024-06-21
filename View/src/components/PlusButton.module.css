@@ -1,0 +1,27 @@
+.plus {
+  width: 90%;
+  height: 50px; /* Adjust height as needed */
+  font-size: 44px;
+  text-align: center;
+  line-height: 50px; /* Same as height to center the plus sign vertically */
+  border-radius: 10px;
+  border: none;
+  background-color: #7F16E8;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  justify-content: center;
+  outline: none;
+  }
+  
+  .plus:hover {
+    background-color: #7514d6;
+  }
+  
+  .plus:active {
+    background-color: #7514d6;
+  }
+  

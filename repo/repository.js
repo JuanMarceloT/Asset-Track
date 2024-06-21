@@ -276,14 +276,16 @@ function Get_Stock_Code(stock_id){
 }
 
 async function get_stock_close_price(stockName, date) {
+
+  return 1;
   try {
     const response = await fetch(`http://127.0.0.1:5000/stock/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`);
     //console.log(date);
-    const data = await response.json();
-
     if (!response.ok) {
       return undefined;
     }
+    const data = await response.json();
+
     return data[0]?.Close ?? 0;
 
   } catch (error) {

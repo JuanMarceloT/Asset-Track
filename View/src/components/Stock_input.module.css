@@ -4,14 +4,13 @@
 form { 
     display: grid;
     font-family: Arial, sans-serif;
-    gap: 2rem;
-    max-width: 500px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 0.5rem 2rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
     font-size: 20px;
+    height: 90%;
 }
 
 input {

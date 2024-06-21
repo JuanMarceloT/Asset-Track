@@ -3,22 +3,31 @@
     width: 100%;
     
     background-color: #f7f6f9;
+    margin: 2vw;
 }
 
+.menu{
+    display: flex;
+    width: 100%;
+    height: 100%;
+
+}
+.opa {
+    width: 1000px;
+    background-color: rgb(219, 16, 16);
+}
 .graph{
-    margin: 2vw;
+    margin: 0.5vw;
     display: flex;
     justify-content: center;
     flex: 2;
 
 }
 .stocks {
-    margin: 2vw;
+    margin: 0.5vw;
     flex:1 ;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    background-color: white;
 }
 
