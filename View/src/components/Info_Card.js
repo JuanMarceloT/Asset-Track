@@ -1,12 +1,16 @@
 import React from 'react';
 import styles from './Info_Card.module.css'; 
 
-function Info_Card() {
+function Info_Card({content}) {
+
+  if(!content)
+    return
+
   return (
     <div className={styles.container}>
-      <span id={styles.title}>Investido</span>
-      <span id={styles.content}>$45,678.90</span>
-      <span id={styles.subcontent}>+20% month over month</span>
+      <span id={styles.title}>{content.title}</span>
+      <span id={styles.content}>{content.content}</span>
+      <span id={styles.subcontent}>{content.subcontent}</span>
     </div>
   );
 }
