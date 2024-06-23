@@ -98,6 +98,17 @@ function get_stock_img_by_id(id){
   }
 }
 
+function get_stock_price_by_id(id){
+  switch(id){
+    case 1:
+      return 25.45;
+    case 2:
+      return 18.16;
+    default:
+      return 7.15;
+  }
+}
 
 
-module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id};
+
+module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id, get_stock_price_by_id};

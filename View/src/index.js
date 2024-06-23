@@ -103,16 +103,6 @@ function App() {
       </MID_SECTION>
     </React.StrictMode>
   );
-  /*<Graph Params={graph}/>
-  <ScrollableDivs maxHeight={50}>
-    <StocksCard stocks={stocks}/>
-  </ScrollableDivs>
-  <New_Transaciton_button/>
-      <ScrollableDivs maxHeight={30}>
-        <TransactionCard transactions={transactions}/>
-        </ScrollableDivs>
-  
-        */
   }
 
 ReactDOM.render(<App />, document.getElementById('root'));

@@ -13,6 +13,7 @@ const Selectable_menu = ({id, HandleNewTransaction, stocks}) => {
     setSelected(index);
     setIsTabMenu(1);
   };
+  console.log(stocks);
 
   let content;
 
@@ -22,7 +23,7 @@ const Selectable_menu = ({id, HandleNewTransaction, stocks}) => {
         <ScrollableDivs>
         {
           stocks && stocks.map((stock) => (
-            <Simple_stock_card stock_id={stock.stock_id}/>
+            <Simple_stock_card stock_id={stock.stock_id} Avg_price={stock.avg_price_in_real}/>
           ))
         }
         </ScrollableDivs>

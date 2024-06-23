@@ -1,9 +1,13 @@
 import React from 'react';
 import styles from './simple_stock_card.module.css';
-import { get_stock_code_by_id, get_stock_img_by_id, get_stock_name_by_id } from '../bff';
+import { get_stock_code_by_id, get_stock_img_by_id, get_stock_name_by_id, get_stock_price_by_id } from '../bff';
 
 
-function Simple_stock_card ({stock_id}){
+function Simple_stock_card ({stock_id, Avg_price}){
+
+      let stock_price = get_stock_price_by_id(stock_id);
+      let stock_variation = (stock_price * 100 / parseFloat(Avg_price)) - 100; 
+      stock_variation = parseInt(stock_variation);
 
 
         return (
@@ -16,8 +20,8 @@ function Simple_stock_card ({stock_id}){
                   <p>{get_stock_code_by_id(stock_id)}</p>
                 </div>
                 <div className={styles.stock_price}>
-                  <h1>$102.25</h1>
-                  <span id={styles.positive}>+0.32</span>
+                  <h1>R$ {stock_price}</h1>
+                  <span id={stock_variation > 0 ? styles.positive : styles.negative}>{stock_variation}%</span>
                 </div>
 
               </div>
