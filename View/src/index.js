@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import MID_SECTION from './Mid_Section';
-import StockInput from './components/Stock_input';
+import Selectable_menu from './components/Selectable_menu'
+import Graph from './components/graph';
 import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params} from './bff.js';
 
 import Dashboard_Section from './Dashboard_Section';
@@ -98,9 +98,10 @@ function App() {
     <React.StrictMode>
       <Top_Menu/>
       <Top_Cards/>
-      <MID_SECTION>
-      <Dashboard_Section graph={graph} stocks={stocks} HandleNewTransaction={HandleNewTransaction} id={id}/>
-      </MID_SECTION>
+      <Dashboard_Section>
+        <Graph Params={graph} />
+        <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks}/>
+      </Dashboard_Section>
     </React.StrictMode>
   );
   }
