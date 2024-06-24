@@ -33,9 +33,9 @@ function FormatToGraphData(Params){
 
     Object.keys(Params).map(key => {
 
-        if(Params[key].assets_values > -1){
+        if(Params[key].assets_value > -1){
             data.labels.push(`${Params[key].year}-${Params[key].month}`);
-            data.values.push(Params[key].assets_values);
+            data.values.push(Params[key].assets_value);
         }
         //return <div key={key}>{value.monthYear} = ${price} </div>;
     })
