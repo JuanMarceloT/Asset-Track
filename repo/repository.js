@@ -219,7 +219,7 @@ async function getMonthlyAsset(userId) {
 
   try {
     const stocksByMonth = await Stocks_aggregated_by_month(92);
-    const monthsSince = getLastWeekdaysSince(stocksByMonth[0].month - 1, stocksByMonth[0].year);
+    const monthsSince = getLastWeekdaysSince(stocksByMonth[0].month, stocksByMonth[0].year);
     let currentIndex = 0;
 
     for (const month of monthsSince) {
@@ -229,7 +229,6 @@ async function getMonthlyAsset(userId) {
       assetByMonth.push({
         year: month.getFullYear(),
         month: month.getMonth() + 1,
-        stocks: stocksByMonth[currentIndex].stocks,
         assets_value: assetsValue
       });
     }
@@ -289,7 +288,7 @@ async function get_stock_close_price(stockName, date) {
 
 
 function getLastWeekdaysSince(month, year) {
-  let startDate = new Date(year, month);
+  let startDate = new Date(year, month - 1);
   let currentDate = new Date();
   let result = [];
 
@@ -301,6 +300,8 @@ function getLastWeekdaysSince(month, year) {
       }
       if(lastDay < currentDate){
         result.push(new Date(lastDay));
+      }else {
+        result.push(currentDate);
       }
 
       startDate.setMonth(startDate.getMonth() + 1);

@@ -8,8 +8,6 @@ function Simple_stock_card ({stock_id, Avg_price}){
       let stock_price = get_stock_price_by_id(stock_id);
       let stock_variation = (stock_price * 100 / parseFloat(Avg_price)) - 100; 
       stock_variation = parseInt(stock_variation);
-
-
         return (
           
             <div className={styles.container}>

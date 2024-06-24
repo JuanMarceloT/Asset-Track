@@ -13,7 +13,7 @@ const Selectable_menu = ({id, HandleNewTransaction, stocks}) => {
     setSelected(index);
     setIsTabMenu(1);
   };
-  console.log(stocks);
+  //console.log(stocks);
 
   let content;
 

@@ -20,11 +20,27 @@ function App() {
   const [updateFlag, setUpdateFlag] = useState(0);
   const [StocksLoading, SetStocksLoading] = useState(0);
   const [graph, setGraph] = useState({});
+  const [Invested, setInvested] = useState(0); 
+  const [variation, setVariation] = useState(0);
+
 
   function HandleNewTransaction (args) {
     Create_New_Transaction(args);
     setUpdateFlag(1);
   };
+
+  function GetInvestedValues(graph){
+    let this_month = graph[graph.length - 1].assets_value;
+    console.log("oasd");
+    console.log(graph);
+    setInvested(this_month);
+  }
+
+  function GetVariation(graph){
+    let this_month = graph[graph.length - 1].assets_value;
+    let last_month = graph[graph.length - 2].assets_value;
+    setVariation(this_month - last_month);
+  }
 
   const Inicializer = async () => {
     try {
@@ -56,6 +72,8 @@ function App() {
       const data = await Get_Graph_Params(id);
       setGraph(data);
       //console.log(data);
+      GetInvestedValues(data);
+      GetVariation(data);
       
     } catch (error) {
       console.error("Error fetching graph:", error);
@@ -101,8 +119,8 @@ function App() {
     <React.StrictMode>
       <Top_Menu/>
       <Top_Cards>
-        <Info_Card content={{title: "Investido", content:"R$42.543,21", subcontent:"+20% comparado ao ultimo mes"}}/>
-        <Info_Card content={{title: "Variação", content:"+ R$1.234,56", subcontent:"+20% comparado ao ultimo mes"}}/>
+        <Info_Card content={{title: "Investido", content:`R$ ${Invested}`, subcontent:"+20% comparado ao ultimo mes"}}/>
+        <Info_Card content={{title: "Variação", content:`R$ ${variation}`, subcontent:"+20% comparado ao ultimo mes"}}/>
         <Info_Card content={{title: "Dividendos deste ano", content:"R$240,87", subcontent:"+20% comparado ao ultimo ano"}}/>
       </Top_Cards>
       <Dashboard_Section>
