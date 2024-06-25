@@ -8,7 +8,7 @@ const ScrollableDivs = ({ children }) => {
     const calculateMaxHeight = () => {
         const container = containerRef.current;
         if (container) {
-            const viewportHeight = window.innerHeight * .85;
+            const viewportHeight = window.innerHeight * .90;
             const containerTop = container.getBoundingClientRect().top;
             const availableHeight = viewportHeight - containerTop;
             setMaxHeight(availableHeight);
@@ -31,7 +31,6 @@ const ScrollableDivs = ({ children }) => {
         <div
             style={{
                 maxHeight: maxHeight + "px",
-                padding: '0px 30px',
                 overflowY: isScrollable ? 'scroll' : 'auto',
                 overflowX: 'hidden'
             }}

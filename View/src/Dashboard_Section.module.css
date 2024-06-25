@@ -1,7 +1,7 @@
 .container {
     display: flex;
-    background-color: #f7f6f9;
     margin: 0 3vw;
+    justify-content: space-between;
 }
 
 
@@ -16,4 +16,10 @@
     flex:1 ;
     display: flex;
 }
-
+.stocks, .graph{
+    background-color: var(--card-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    border: 1px solid #ccc;
+}

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import Selectable_menu from './components/Selectable_menu';
-
 import Info_Card from './components/Info_Card';
-
+import './index.css';
 import Graph from './components/graph';
 import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params} from './bff.js';
 
@@ -119,13 +118,13 @@ function App() {
     <React.StrictMode>
       <Top_Menu/>
       <Top_Cards>
-        <Info_Card content={{title: "Investido", content:`R$ ${Invested}`, subcontent:"+20% comparado ao ultimo mes"}}/>
-        <Info_Card content={{title: "Variação", content:`R$ ${variation}`, subcontent:"+20% comparado ao ultimo mes"}}/>
-        <Info_Card content={{title: "Dividendos deste ano", content:"R$240,87", subcontent:"+20% comparado ao ultimo ano"}}/>
+        <Info_Card content={{title: "Investido", content:`R$ ${Invested}`, subcontent:""}}/>
+        <Info_Card content={{title: "Variação", content:`R$ ${variation}`, subcontent:""}}/>
+        <Info_Card content={{title: "Dividendos deste ano", content:"R$240,87", subcontent:""}}/>
       </Top_Cards>
       <Dashboard_Section>
         <Graph Params={graph} />
-        <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks}/>
+        <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks} transactions={transactions}/>
       </Dashboard_Section>
     </React.StrictMode>
   );

@@ -3,10 +3,10 @@
   height: 50px; /* Adjust height as needed */
   font-size: 44px;
   text-align: center;
-  line-height: 50px; /* Same as height to center the plus sign vertically */
+  line-height: 50px; 
   border-radius: 10px;
   border: none;
-  background-color: #7F16E8;
+  background-color: var(--button-color);
   color: white;
   cursor: pointer;
   user-select: none;
@@ -18,10 +18,10 @@
   }
   
   .plus:hover {
-    background-color: #7514d6;
+    background-color:  var(--hover-button-color);
   }
   
   .plus:active {
-    background-color: #7514d6;
+    background-color: var(--hover-button-color);
   }
   
