@@ -10,8 +10,8 @@ function Transactions_menu({ transactions }) {
             {transactions != null && (<table>
                 <thead>
                     <tr>
-                        <th></th>
-                        <th>Stock</th>
+                        <th colSpan={2}>Stock</th>
+                        <th>Date</th>
                         <th>Type</th>
                         <th>Price</th>
                         <th>Units</th>
@@ -20,7 +20,7 @@ function Transactions_menu({ transactions }) {
                 <tbody>
                     {
                         transactions && transactions.map((transaction) => (
-                            <TransactionCard transaction={{ type: transaction.transaction_type, units: transaction.units, price: transaction.price_in_real, stock_id: transaction.stock_id }} />
+                            <TransactionCard transaction={{ type: transaction.transaction_type, date: transaction.timestamp, units: transaction.units, price: transaction.price_in_real, stock_id: transaction.stock_id }} />
                         ))
                     }
                 </tbody>

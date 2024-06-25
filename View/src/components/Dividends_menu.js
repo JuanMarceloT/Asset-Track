@@ -9,8 +9,7 @@ function Dividends_menu({dividends}){
             {dividends != null && (<table>
                 <thead>
                     <tr>
-                        <th></th>
-                        <th>Stock</th>
+                        <th colSpan={2}>Stock</th>
                         <th>Data</th>
                         <th>Div. per share</th>
                     </tr>
