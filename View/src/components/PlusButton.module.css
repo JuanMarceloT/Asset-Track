@@ -1,0 +1,27 @@
+.plus {
+  width: 90%;
+  height: 50px; /* Adjust height as needed */
+  font-size: 44px;
+  text-align: center;
+  line-height: 50px; 
+  border-radius: 10px;
+  border: none;
+  background-color: var(--button-color);
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+  justify-content: center;
+  outline: none;
+  }
+  
+  .plus:hover {
+    background-color:  var(--hover-button-color);
+  }
+  
+  .plus:active {
+    background-color: var(--hover-button-color);
+  }
+  

@@ -10,13 +10,13 @@ const port = 3330;
 app.use(cors()); 
 app.use(bodyParser.json());
 
-const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate, GetMontlyAsset, get_stock_close_price} = require('../repo/repository');
+const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate, getMonthlyAsset, get_stock_close_price} = require('../repo/repository');
 
 
 async function main() {
-  const Graph = await GetMontlyAsset(5);
+  const Graph = await getMonthlyAsset(5);
   //console.log("Starting delay...");
-  //console.log(Graph);
+  console.log(Graph);
 }
 
 main();
@@ -50,7 +50,7 @@ app.get('/GetGraph', async(req,res)=>{
 
   try{
     const {user_id} = req.query;
-    const Graph = await GetMontlyAsset(user_id);
+    const Graph = await getMonthlyAsset(user_id);
     
     res.json(Graph);
   }catch (error) {

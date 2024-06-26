@@ -1,29 +1,23 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 import styles from './Dashboard_Section.module.css';
-import ScrollableDivs from './components/ScrollableDivs';
-import Graph from './components/graph';
-import Balance_Card from './components/Balance_Card';
-import Simple_stock_card from './components/Simple_stock_card';
-function Dashboard_Section ({graph, stocks}) {
-    return <>  
+
+function Dashboard_Section({ children }) {
+    const childrenArray = React.Children.toArray(children);
+    const firstChild = childrenArray[0];
+    const secondChild = childrenArray[1];
+
+    return (
         <div className={styles.container}>
             <div className={styles.graph}>
-            <Graph Params={graph}/>
+                {firstChild}
             </div>
             <div className={styles.stocks}>
-            <Balance_Card/>
-            <ScrollableDivs>
-                <Simple_stock_card/>
-                <Simple_stock_card/>
-                <Simple_stock_card/>
-                <Simple_stock_card/>
-                <Simple_stock_card/>
-            </ScrollableDivs>
+                {secondChild}
             </div>
         </div>
-    </>
-};
+    );
+}
 
 
 /*

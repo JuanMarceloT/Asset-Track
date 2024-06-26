@@ -25,8 +25,6 @@ return null; // or any other fallback if Params is falsy
 
 */
 
-
-
 function FormatToGraphData(Params){
     const data = {
         labels: [],
@@ -35,14 +33,14 @@ function FormatToGraphData(Params){
 
     Object.keys(Params).map(key => {
 
-        if(Params[key].assets_values > -1){
+        if(Params[key].assets_value > -1){
             data.labels.push(`${Params[key].year}-${Params[key].month}`);
-            data.values.push(Params[key].assets_values);
+            data.values.push(Params[key].assets_value);
         }
         //return <div key={key}>{value.monthYear} = ${price} </div>;
     })
 
-    console.log(data);
+    //console.log(data);
     return data;
 }
 
@@ -66,8 +64,8 @@ const Graph = ({ Params }) => {
             const ctx = chartRef.current.getContext('2d');
             var gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, '#622bf8b7');   // Red color at the top
-                gradient.addColorStop(0.6, 'rgba(255, 255, 255, 0.5)');   // Red color at the top
-                gradient.addColorStop(1, 'rgba(255, 255, 255, 0.5)');   // Blue color at the bottom
+                gradient.addColorStop(0.2, '#622bf847');   // Red color at the top
+                gradient.addColorStop(1, '#612af800');   // Blue color at the bottom
         
             chartInstance = new Chart(ctx, {
                 type: 'line',
@@ -102,17 +100,27 @@ const Graph = ({ Params }) => {
                     },
                     scales: {
                       x: {
+                        beginAtZero: true,
+                        stacked: true,
                         title: {
-                          display: true
+                            display: true,
+                            color: 'black' // Set y-axis title color to black
+                        },
+                        ticks: {
+                            color: 'black' // Set y-axis ticks color to black
                         }
                       },
                       y: {
-                        beginAtZero: true, 
+                        beginAtZero: true,
                         stacked: true,
                         title: {
-                          display: true,
+                            display: true,
+                            color: 'black' // Set y-axis title color to black
+                        },
+                        ticks: {
+                            color: 'black' // Set y-axis ticks color to black
                         }
-                      }
+                    }
                     }
                   }
             });

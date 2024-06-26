@@ -1,24 +1,25 @@
 .container {
     display: flex;
-    width: 100%;
-    
-    background-color: #f7f6f9;
+    margin: 0 3vw;
+    justify-content: space-between;
 }
 
+
+
 .graph{
-    margin: 2vw;
     display: flex;
     justify-content: center;
     flex: 2;
 
 }
 .stocks {
-    margin: 2vw;
     flex:1 ;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
 }
-
+.stocks, .graph{
+    background-color: var(--card-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    border: 1px solid #ccc;
+}

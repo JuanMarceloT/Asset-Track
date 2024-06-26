@@ -1,21 +1,44 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState, useLayoutEffect } from 'react';
 
-const ScrollableDivs = ({ children, maxHeight }) => {
+const ScrollableDivs = ({ children }) => {
     const containerRef = useRef(null);
     const [isScrollable, setIsScrollable] = useState(false);
+    const [maxHeight, setMaxHeight] = useState(0);
 
-    useEffect(() => {
+    const calculateMaxHeight = () => {
         const container = containerRef.current;
         if (container) {
-            setIsScrollable(container.scrollHeight > maxHeight);
-            console.log(container);
+            const viewportHeight = window.innerHeight * .90;
+            const containerTop = container.getBoundingClientRect().top;
+            const availableHeight = viewportHeight - containerTop;
+            setMaxHeight(availableHeight);
+            setIsScrollable(container.scrollHeight > availableHeight);
         }
-    }, [maxHeight]);
+    };
+
+    useLayoutEffect(() => {
+        calculateMaxHeight();
+
+        // Add event listener for window resize
+        window.addEventListener('resize', calculateMaxHeight);
+
+        return () => {
+            window.removeEventListener('resize', calculateMaxHeight);
+        };
+    }, []);
 
     return (
-        <div style={{ maxHeight: maxHeight + "vh", padding: '0px 30px', overflowY: isScrollable ? 'scroll' : 'auto' , overflowX: 'hidden'}} ref={containerRef}>
+        <div
+            style={{
+                maxHeight: maxHeight + "px",
+                overflowY: isScrollable ? 'scroll' : 'auto',
+                overflowX: 'hidden'
+            }}
+            ref={containerRef}
+        >
             {children}
         </div>
     );
 };
+
 export default ScrollableDivs;

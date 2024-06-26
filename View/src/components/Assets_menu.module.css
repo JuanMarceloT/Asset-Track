@@ -1,0 +1,28 @@
+.assetMenu {
+    display: flex;
+    flex-direction: column;
+    align-content: space-between;
+    justify-content: space-between;
+    height: 90%;
+    width: 100%;
+}
+.stockinput{
+    height: 100%;
+    background-color: rgba(212, 212, 212, 0);
+}
+
+.closeButton{
+  position: relative;
+  top: 10px;
+  right: -90%;
+  width: 30px;
+  height: 30px;
+  background: none;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid #ccc;
+  font-size: 20px;
+  cursor: pointer;
+}
+.button {
+    margin: 10px;
+}

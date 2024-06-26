@@ -1,0 +1,19 @@
+table {
+    border-collapse: collapse;
+    color: var(--main-text-color);
+    width: 100%;
+}
+
+tr {
+    border-bottom: 1pt solid black;
+}
+
+thead td {
+    text-align: center;
+}
+img {
+    display: block;
+    margin: auto;
+    padding: 1vh 0;
+    width: 5vh;
+}

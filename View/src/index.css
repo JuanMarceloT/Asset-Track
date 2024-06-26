@@ -4,10 +4,24 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
+  background-color:white;
+  
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+:root {
+  --main-color: #white; 
+  --menu-color: #white;
+  --secondary-color: white; 
+  --card-color: #ffffff;
+  --main-text-color: #000000; 
+  --secondary-text-color: #434343; 
+  --button-color: #540f8d;
+  --card-color-test: #23003d;
+  --hover-button-color: rgb(39, 4, 66); 
 }

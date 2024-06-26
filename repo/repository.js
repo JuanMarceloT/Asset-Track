@@ -3,6 +3,7 @@ const { type } = require('os');
 const pool = require('./db');
 const { get } = require('https');
 const { promises } = require('dns');
+const { get_stock_name_by_id } = require('../View/src/bff');
 
 
 
@@ -213,77 +214,70 @@ async function Stocks_aggregated_by_month(id){
 }
 
 
-async function GetMontlyAsset(id) {
-  var assetByMonth = [];
+async function getMonthlyAsset(userId) {
+  const assetByMonth = [];
 
   try {
-    const Stocks_by_month = await Stocks_aggregated_by_month(92);
+    const stocksByMonth = await Stocks_aggregated_by_month(92);
+    const monthsSince = getLastWeekdaysSince(stocksByMonth[0].month, stocksByMonth[0].year);
+    let currentIndex = 0;
 
-    let months_since = getLastWeekdaysSince(Stocks_by_month[0].month - 1, Stocks_by_month[0].year);
-    let j = 0;
-    
-    for(let i = 0; i < months_since.length;i++){
-      //console.log(months_since[i]);
-
-      //Get the index of the last transaction that occurred before the date
-      if (Stocks_by_month[j + 1] && 
-        Stocks_by_month[j + 1].year <= months_since[i].getFullYear() && 
-        Stocks_by_month[j + 1].month <= (months_since[i].getMonth() + 1)) {
-        j++;
-    }
-      //console.log(Stocks_by_month[j]);
-      let assets_values = 0;
-
-      for(let k = 0;k < Stocks_by_month[j].stocks.length;k++){
-
-        let asset_price = await get_stock_close_price(Get_Stock_Code(Stocks_by_month[j].stocks[k].stock_id), months_since[i]);
-        
-        //if the day has no price, will iterate until found a day with open market
-        if(asset_price == 0){
-          let temp = new Date(months_since[i]);
-          while(asset_price == 0 || typeof(asset_price) != 'number'){
-            //console.log(temp);
-            //console.log(typeof(asset_price));
-            temp.setDate(temp.getDate() - 1);
-            asset_price = await get_stock_close_price(Get_Stock_Code(Stocks_by_month[j].stocks[k].stock_id), temp);
-          }          
-        }
-
-        assets_values += asset_price * Stocks_by_month[j].stocks[k].total_qtd;
-      }
+    for (const month of monthsSince) {
+      currentIndex = findLastTransactionIndex(stocksByMonth, currentIndex, month);
+      const assetsValue = await calculateAssetsValue(stocksByMonth[currentIndex].stocks, month);
 
       assetByMonth.push({
-        'year': months_since[i].getFullYear(),
-        'month': months_since[i].getMonth() + 1,
-        'stocks': Stocks_by_month[j].stocks,
-        'assets_values': assets_values
+        year: month.getFullYear(),
+        month: month.getMonth() + 1,
+        assets_value: assetsValue
       });
-      
     }
-
-    //console.log(Stocks_by_month);
-    //console.log(assetByMonth);
 
     return assetByMonth;
   } catch (error) {
-    console.error("error " + error);
+    console.error("Error:", error);
   }
 }
 
+function findLastTransactionIndex(stocksByMonth, currentIndex, month) {
+  while (stocksByMonth[currentIndex + 1] &&
+         stocksByMonth[currentIndex + 1].year <= month.getFullYear() &&
+         stocksByMonth[currentIndex + 1].month <= (month.getMonth() + 1)) {
+    currentIndex++;
+  }
+  return currentIndex;
+}
+
+async function calculateAssetsValue(stocks, month) {
+  let totalValue = 0;
+
+  for (const stock of stocks) {
+    let assetPrice = await get_stock_close_price(Get_Stock_Code(stock.stock_id), month);
+    while (assetPrice === 0 || typeof assetPrice !== 'number') {
+      month.setDate(month.getDate() - 1);
+      assetPrice = await get_stock_close_price(Get_Stock_Code(stock.stock_id), month);
+    }
+    
+    totalValue += assetPrice * stock.total_qtd;
+  }
+  return totalValue;
+}
 
 function Get_Stock_Code(stock_id){
   return "ITUB4";
 }
 
 async function get_stock_close_price(stockName, date) {
+
+  return 1;
   try {
     const response = await fetch(`http://127.0.0.1:5000/stock/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`);
     //console.log(date);
-    const data = await response.json();
-
     if (!response.ok) {
       return undefined;
     }
+    const data = await response.json();
+
     return data[0]?.Close ?? 0;
 
   } catch (error) {
@@ -294,7 +288,7 @@ async function get_stock_close_price(stockName, date) {
 
 
 function getLastWeekdaysSince(month, year) {
-  let startDate = new Date(year, month);
+  let startDate = new Date(year, month - 1);
   let currentDate = new Date();
   let result = [];
 
@@ -306,6 +300,8 @@ function getLastWeekdaysSince(month, year) {
       }
       if(lastDay < currentDate){
         result.push(new Date(lastDay));
+      }else {
+        result.push(currentDate);
       }
 
       startDate.setMonth(startDate.getMonth() + 1);
@@ -394,60 +390,74 @@ function formatDate(year, month, day) {
   return formattedDate;
 }
 
-
-async function InsertStock(user_id, stock_id, units, price, TYPE) {
-
+async function InsertStock(userId, stockId, units, price, type) {
   try {
-    const FindSameStockQuery = `
-        SELECT *
-        FROM stocks
-        WHERE user_id = $1
-        AND stock_id = $2
-        ;
-        ` ;
-    const CheckStock = await executeQuery(FindSameStockQuery, [user_id, stock_id]);
-    ////console.log(CheckStock[0].units);
+    const stock = await FindStock(userId, stockId);
 
-    if (CheckStock.length > 0) {
-      const updateQuery = `
-          UPDATE stocks
-          SET units = $1, avg_price = $2
-          WHERE user_id = $3 AND stock_id = $4
-          RETURNING *;
-        `;
-      let new_avg_price = CheckStock[0].avg_price;
-      if (TYPE == 'BUY') {
-        new_avg_price = ((CheckStock[0].units * CheckStock[0].avg_price) + (units * price)) / (CheckStock[0].units + units);
-        const updateResult = await executeQuery(updateQuery, [(CheckStock[0].units + units), new_avg_price.toFixed(), user_id, stock_id]); // esse to fixed é gambiarra
-      }
-      if (TYPE == 'SELL') {
-        new_avg_price = ((CheckStock[0].units * CheckStock[0].avg_price) - (units * price)) / (CheckStock[0].units - units);
-        let FInalUnits = (CheckStock[0].units - units);
-        if (FInalUnits > 0) {
-          const updateResult = await executeQuery(updateQuery, [FInalUnits, new_avg_price.toFixed(), user_id, stock_id]); // esse to fixed é gambiarra
-        } else {
-          const REMOVE_STOCK = `DELETE FROM stocks
-            WHERE user_id = $1 AND stock_id = $2
-            RETURNING *;
-            `;
-          const updateResult = await executeQuery(REMOVE_STOCK, [user_id, stock_id]);
-        }
-      }
+    if (stock) {
+      await updateStock(userId, stockId, units, price, type, stock);
     } else {
-      const createStockQuery = `
-          INSERT INTO stocks (user_id, stock_id, STOCK_NAME, units, avg_price)
-          VALUES ($1, $2, $3, $4, $5)
-          RETURNING *;
-        `;
-      const createStockValues = await executeQuery(createStockQuery, [user_id, stock_id, Get_Stock_Code(stock_id), units, price]);
-
+      await createStock(userId, stockId, units, price);
     }
   } catch (error) {
-    console.error('Error Inserting stock:', error);
+    console.error('Error inserting stock:', error);
+  }
+}
+
+async function FindStock(userId, stockId) {
+  const query = `
+    SELECT *
+    FROM stocks
+    WHERE user_id = $1
+      AND stock_id = $2;
+  `;
+  const result = await executeQuery(query, [userId, stockId]);
+  return result[0];
+}
+
+async function updateStock(userId, stockId, units, price, type, existingStock) {
+  let newUnits;
+  let newAvgPrice;
+
+  if (type === 'BUY') {
+    newUnits = existingStock.units + units;
+    newAvgPrice = ((existingStock.units * existingStock.avg_price) + (units * price)) / newUnits;
+  } else if (type === 'SELL') {
+    newUnits = existingStock.units - units;
+    newAvgPrice = ((existingStock.units * existingStock.avg_price) - (units * price)) / newUnits;
   }
 
+  if (newUnits > 0) {
+    const query = `
+      UPDATE stocks
+      SET units = $1, avg_price = $2
+      WHERE user_id = $3 AND stock_id = $4
+      RETURNING *;
+    `;
+    await executeQuery(query, [newUnits, newAvgPrice.toFixed(), userId, stockId]);
+  } else {
+    await deleteStock(userId, stockId);
+  }
+}
+
+async function createStock(userId, stockId, units, price) {
+  const query = `
+    INSERT INTO stocks (user_id, stock_id, STOCK_NAME, units, avg_price)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING ;
+  `;
+  await executeQuery(query, [userId, stockId, get_stock_name_by_id(stockId), units, price]);
+}
+
+async function deleteStock(userId, stockId) {
+  const query = `
+    DELETE FROM stocks
+    WHERE user_id = $1 AND stock_id = $2;
+  `;
+  await executeQuery(query, [userId, stockId]);
 }
 
 
 
-module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario, Nova_Tranasção, formatDate, GetMontlyAsset, get_stock_close_price };
+
+module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario, Nova_Tranasção, formatDate, getMonthlyAsset, get_stock_close_price };
