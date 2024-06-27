@@ -1,9 +1,11 @@
 import React from "react";
 import styles from "./Dividends_menu.module.css";
 import ScrollableDivs from "./ScrollableDivs";
-import { get_stock_img_by_id, get_stock_name_by_id } from "../bff";
+import { get_stock_img_by_id, get_stock_name_by_id , formatMonthYear} from "../bff";
 
 function Dividends_menu({dividends}){
+
+    console.log(dividends);;
     return (<div className={styles.assetMenu}>
         <ScrollableDivs>
             {dividends != null && (<table>
@@ -12,19 +14,23 @@ function Dividends_menu({dividends}){
                         <th colSpan={2}>Stock</th>
                         <th>Data</th>
                         <th>Div. per share</th>
+                        <th>Total Div.</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {
-                        dividends && dividends.map((dividend) => (
-                            <tr>
-                                <td><img src={get_stock_img_by_id(dividend.stock_id)} alt='logo'></img></td>
-                                <td>{get_stock_name_by_id(dividend.stock_id)}</td>
-                                <td>March, 2023</td>
-                                <td>{dividend.units}</td>
-                            </tr>
-                        ))
-                    }
+                {
+                            Object.entries(dividends).reverse().map(([dividendKey, dividend]) => (
+                                Object.entries(dividend["Dividends"]["stock_dividends"]).map(([stockId]) => (
+                                    <tr>
+                                        <td><img src={get_stock_img_by_id(parseInt(stockId))} alt='logo'></img></td>
+                                        <td>{get_stock_name_by_id(parseInt(stockId))}</td>
+                                        <td>{formatMonthYear(dividend["year"], dividend["month"])}</td>
+                                        <td>{dividend["Dividends"]["stock_dividends"][stockId].dividends_per_share.toFixed(2)}</td>
+                                        <td>{dividend["Dividends"]["stock_dividends"][stockId].total_Dividends.toFixed(2)}</td>
+                                    </tr>
+                                ))
+                            ))
+                        }
                 </tbody>
             </table>
 

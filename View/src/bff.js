@@ -12,6 +12,9 @@ async function Create_New_Transaction(args){
 async function Get_Graph_Params(id){
   return await CallEndpointGet(`GetGraph?user_id=${id}`);
 }
+async function Get_Dividends(id){
+  return await CallEndpointGet(`GetUserDividends?user_id=${id}`);
+}
 
 
 
@@ -109,6 +112,26 @@ function get_stock_price_by_id(id){
   }
 }
 
+function formatMonthYear(year, month) {
+  const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+  ];
+  let formattedDate = "";
+  formattedDate = `${monthNames[parseInt(month, 10) - 1]}, ${year}`;
+  return formattedDate;
+}
+function get_ytd_dividends(dividend){
+  let total_Dividends = 0;
+  console.log(dividend);
+  let current_year = new Date().getFullYear();
+  Object.keys(dividend).map(dividend_id => {
+    if(dividend[dividend_id]["year"] == current_year){
+      total_Dividends += dividend[dividend_id]["Dividends"]["total_Dividends"];
+    }
+  });
+  return total_Dividends;
+}
 
 
-module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id, get_stock_price_by_id};
+module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends};

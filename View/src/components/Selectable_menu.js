@@ -9,7 +9,7 @@ import Assets_menu from './Assets_menu';
 import Transactions_menu from './Transactions_menu';
 import Dividends_menu from './Dividends_menu';
 
-const Selectable_menu = ({ id, HandleNewTransaction, stocks, transactions }) => {
+const Selectable_menu = ({ id, HandleNewTransaction, stocks, transactions, Dividends }) => {
   const [selected, setSelected] = useState(0);
 
   const handleSelect = (index) => {
@@ -27,7 +27,7 @@ const Selectable_menu = ({ id, HandleNewTransaction, stocks, transactions }) => 
       content = <Transactions_menu  transactions={transactions}/>
       break;
     case 2:
-      content = <Dividends_menu dividends={transactions}/>
+      content = <Dividends_menu dividends={Dividends}/>
       break;
     default:
       content = null;

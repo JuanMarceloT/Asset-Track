@@ -300,37 +300,49 @@ async function get_User_monthly_dividends(user_id) {
         */
       });
     }
-
-    return assetByMonth;
+    //console.log(DividendsByMonth);
+    return DividendsByMonth;
   } catch (error) {
     console.error("Error:", error);
   }
 }
 
-async function calculateDividends(stocks, month) {
+async function calculateDividendsInMonth(stocks, month) {
   let Dividends = {};
   let total_Dividends = 0;
 
   for (const stock of stocks) {
     let stock_dividends_in_month = await get_stock_dividends_in_month(Get_Stock_Code(stock.stock_id), month);
     let stock_dividends = 0;
-    for (const date of stock_dividends_in_month) {
-      stock_dividends += stock_dividends_in_month[date];
+    //console.log(stock_dividends_in_month);
+    for (const [date, dividend] of Object.entries(stock_dividends_in_month)) {
+      stock_dividends += dividend;
     }
-    Dividends["stocks"][stock_id] = {
-      dividends_per_share: stock_dividends_in_month,
-      total_Dividends: stock_dividends_in_month * stock.total_qtd,
+    Dividends[stock.stock_id] = {
+      dividends_per_share: stock_dividends,
+      total_Dividends: stock_dividends * stock.total_qtd,
     };
 
     total_Dividends += stock_dividends * stock.total_qtd;
   }
-
-  Dividends["total_Dividends"] = total_Dividends;
-  return Dividends;
+  return {
+    "total_Dividends":total_Dividends,
+    "stock_dividends":Dividends
+  };
 }
 
 async function get_stock_dividends_in_month(stock_code, month) {
-  return 1;
+  console.log(stock_code);
+  if(stock_code == "PETR4"){
+    return {
+      "2020-01-01": 20.48,
+      "2020-01-02": 1.48,
+    };
+  }
+  return {
+    "2020-01-01": 0.48,
+    "2020-01-02": 0.48,
+  };
   try {
     const response = await fetch(`http://127.0.0.1:5000/dividends/${stock_code}.SA/${date.getFullYear()}-${date.getMonth() + 1}`);
     //console.log(date);
@@ -347,7 +359,11 @@ async function get_stock_dividends_in_month(stock_code, month) {
 }
 
 function Get_Stock_Code(stock_id) {
-  return "ITUB4";
+  if(stock_id == 1){
+    return "ITUB4";
+  }
+
+  return "PETR4";
 }
 
 async function get_stock_close_price(stockName, date) {

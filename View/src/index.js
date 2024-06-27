@@ -4,7 +4,7 @@ import Selectable_menu from './components/Selectable_menu';
 import Info_Card from './components/Info_Card';
 import './index.css';
 import Graph from './components/graph';
-import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params} from './bff.js';
+import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividends, get_ytd_dividends} from './bff.js';
 
 import Dashboard_Section from './Dashboard_Section';
 import Top_Cards from './components/Top_Cards';
@@ -21,6 +21,8 @@ function App() {
   const [graph, setGraph] = useState({});
   const [Invested, setInvested] = useState(0); 
   const [variation, setVariation] = useState(0);
+  const [Dividends, setDividends] = useState(0);
+  const [Dividends_ytd, setDividends_ytd] = useState(0);
 
 
   function HandleNewTransaction (args) {
@@ -48,6 +50,9 @@ function App() {
       setstocks(data.stocks);
       settransacitons(data.transactions);
       updateGraph();
+      let dividend = await Get_Dividends(id);
+      setDividends(dividend);
+      setDividends_ytd(get_ytd_dividends(dividend));
       return data;
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -120,11 +125,11 @@ function App() {
       <Top_Cards>
         <Info_Card content={{title: "Investido", content:`R$ ${Invested}`, subcontent:""}}/>
         <Info_Card content={{title: "Variação", content:`R$ ${variation}`, subcontent:""}}/>
-        <Info_Card content={{title: "Dividendos deste ano", content:"R$240,87", subcontent:""}}/>
+        <Info_Card content={{title: "Dividendos deste ano", content:`R$ ${Dividends_ytd}`, subcontent:""}}/>
       </Top_Cards>
       <Dashboard_Section>
         <Graph Params={graph} />
-        <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks} transactions={transactions}/>
+        <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks} transactions={transactions} Dividends={Dividends}/>
       </Dashboard_Section>
     </React.StrictMode>
   );

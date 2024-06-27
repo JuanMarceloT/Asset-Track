@@ -1,29 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 import styles from './Graph.module.css';
-/*
-
-if (Params) {
-    return (
-        <>
-            {Object.keys(Params).map(key => {
-                const value = Params[key];
-                let price = 0;
-                let stock_price = 2;
-                {Object.keys(value.assets).map(key => {
-                    price += +value.assets[key].qtd;
-                })}
-                return <div key={key}>{value.monthYear} = ${price} </div>;
-            })}
-        </>
-    );
-}
-return null; // or any other fallback if Params is falsy
 
 
-
-
-*/
+import { formatMonthYear } from '../bff';
 
 function FormatToGraphData(Params){
     const data = {
@@ -34,7 +14,7 @@ function FormatToGraphData(Params){
     Object.keys(Params).map(key => {
 
         if(Params[key].assets_value > -1){
-            data.labels.push(`${Params[key].year}-${Params[key].month}`);
+            data.labels.push(formatMonthYear(Params[key].year, Params[key].month));;
             data.values.push(Params[key].assets_value);
         }
         //return <div key={key}>{value.monthYear} = ${price} </div>;
