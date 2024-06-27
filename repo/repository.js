@@ -153,8 +153,8 @@ async function GetUserStocks(id) {
   return StocksResult;
 }
 
-async function Stocks_aggregated_by_month(id){
-  try{
+async function Stocks_aggregated_by_month(id) {
+  try {
     const query = `
     WITH aggregated_data AS (
       SELECT
@@ -194,20 +194,20 @@ async function Stocks_aggregated_by_month(id){
     if (Stocks_by_month.length === 0) {
       throw new Error('User not found');
     }
-      console.log(`${Stocks_by_month[0].year}-${Stocks_by_month[0].month}`);
-      console.log(Stocks_by_month[0].stocks[0]);
-    for(let i = 1;i < Stocks_by_month.length;i++){
+    console.log(`${Stocks_by_month[0].year}-${Stocks_by_month[0].month}`);
+    console.log(Stocks_by_month[0].stocks[0]);
+    for (let i = 1; i < Stocks_by_month.length; i++) {
       console.log(`${Stocks_by_month[i].year}-${Stocks_by_month[i].month}`);
       Stocks_by_month[i].stocks[0].total_qtd += Stocks_by_month[i - 1].stocks[0].total_qtd;
       console.log(Stocks_by_month[i].stocks[0]);
-      if(Stocks_by_month[i].stocks[1]){
+      if (Stocks_by_month[i].stocks[1]) {
         console.log(Stocks_by_month[i].stocks[1]);
       }
     }
 
     console.log("-------------------------------------------");
     return Stocks_by_month;
-  }catch (error) {
+  } catch (error) {
     console.error("error " + error);
   }
 
@@ -241,8 +241,8 @@ async function getMonthlyAsset(userId) {
 
 function findLastTransactionIndex(stocksByMonth, currentIndex, month) {
   while (stocksByMonth[currentIndex + 1] &&
-         stocksByMonth[currentIndex + 1].year <= month.getFullYear() &&
-         stocksByMonth[currentIndex + 1].month <= (month.getMonth() + 1)) {
+    stocksByMonth[currentIndex + 1].year <= month.getFullYear() &&
+    stocksByMonth[currentIndex + 1].month <= (month.getMonth() + 1)) {
     currentIndex++;
   }
   return currentIndex;
@@ -257,13 +257,96 @@ async function calculateAssetsValue(stocks, month) {
       month.setDate(month.getDate() - 1);
       assetPrice = await get_stock_close_price(Get_Stock_Code(stock.stock_id), month);
     }
-    
+
     totalValue += assetPrice * stock.total_qtd;
   }
   return totalValue;
 }
 
-function Get_Stock_Code(stock_id){
+
+
+async function get_User_monthly_dividends(user_id) {
+  const DividendsByMonth = [];
+
+  try {
+    const stocksByMonth = await Stocks_aggregated_by_month(92);
+    const monthsSince = getLastWeekdaysSince(stocksByMonth[0].month, stocksByMonth[0].year);
+    let currentIndex = 0;
+
+    for (const month of monthsSince) {
+      currentIndex = findLastTransactionIndex(stocksByMonth, currentIndex, month);
+      const Dividends = await calculateDividendsInMonth(stocksByMonth[currentIndex].stocks, month);
+
+      DividendsByMonth.push({
+        year: month.getFullYear(),
+        month: month.getMonth() + 1,
+        Dividends: Dividends
+        /*{
+          total_Dividends: 200,
+          stocks: {
+            ITUB4: {
+              dividends_per_share: 12,
+              total_Dividends: 100,
+            },
+            PETR4: {
+              dividends_per_share: 12,
+              total_Dividends: 100,
+            }
+          }
+        }
+
+
+
+        */
+      });
+    }
+
+    return assetByMonth;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+async function calculateDividends(stocks, month) {
+  let Dividends = {};
+  let total_Dividends = 0;
+
+  for (const stock of stocks) {
+    let stock_dividends_in_month = await get_stock_dividends_in_month(Get_Stock_Code(stock.stock_id), month);
+    let stock_dividends = 0;
+    for (const date of stock_dividends_in_month) {
+      stock_dividends += stock_dividends_in_month[date];
+    }
+    Dividends["stocks"][stock_id] = {
+      dividends_per_share: stock_dividends_in_month,
+      total_Dividends: stock_dividends_in_month * stock.total_qtd,
+    };
+
+    total_Dividends += stock_dividends * stock.total_qtd;
+  }
+
+  Dividends["total_Dividends"] = total_Dividends;
+  return Dividends;
+}
+
+async function get_stock_dividends_in_month(stock_code, month) {
+  return 1;
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/dividends/${stock_code}.SA/${date.getFullYear()}-${date.getMonth() + 1}`);
+    //console.log(date);
+    if (!response.ok) {
+      return undefined;
+    }
+    const data = await response.json();
+
+    return data[0] ?? 0;
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+function Get_Stock_Code(stock_id) {
   return "ITUB4";
 }
 
@@ -293,22 +376,24 @@ function getLastWeekdaysSince(month, year) {
   let result = [];
 
   while (startDate <= currentDate) {
-      let lastDay = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0); 
+    let lastDay = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
 
-      while (lastDay.getDay() === 0 || lastDay.getDay() === 6) {
-          lastDay.setDate(lastDay.getDate() - 1);
-      }
-      if(lastDay < currentDate){
-        result.push(new Date(lastDay));
-      }else {
-        result.push(currentDate);
-      }
+    while (lastDay.getDay() === 0 || lastDay.getDay() === 6) {
+      lastDay.setDate(lastDay.getDate() - 1);
+    }
+    if (lastDay < currentDate) {
+      result.push(new Date(lastDay));
+    } else {
+      result.push(currentDate);
+    }
 
-      startDate.setMonth(startDate.getMonth() + 1);
+    startDate.setMonth(startDate.getMonth() + 1);
   }
 
   return result;
 }
+
+
 
 async function SelectUser(id) {
   const userQuery = `
@@ -460,4 +545,4 @@ async function deleteStock(userId, stockId) {
 
 
 
-module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario, Nova_Tranasção, formatDate, getMonthlyAsset, get_stock_close_price };
+module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario, Nova_Tranasção, formatDate, getMonthlyAsset, get_stock_close_price, get_User_monthly_dividends};
