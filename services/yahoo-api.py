@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 import yfinance as yf
 from datetime import datetime, timedelta
+import calendar
 
 app = Flask(__name__)
 
@@ -10,6 +11,18 @@ def get_stock_data(stock_name, date):
     end_date = start_date + timedelta(days=1)
     ticker = yf.Ticker(stock_name)
     data = ticker.history(start=start_date.strftime('%Y-%m-%d'), end=end_date.strftime('%Y-%m-%d'))
+    return jsonify(data.to_dict(orient='records'))
+
+
+@app.route('/stock_month/<string:stock_name>/<string:date>', methods=['GET'])
+def get_stock_data_month(stock_name, date):
+    start_date = datetime.strptime(date, '%Y-%m-%d')
+    start_date = start_date.replace(day=1)
+    _, num_days = calendar.monthrange(start_date.year, start_date.month)
+    end_date = start_date.replace(day=num_days)
+    print(num_days)
+    ticker = yf.Ticker(stock_name)
+    data = ticker.history(start=start_date, end=end_date)
     return jsonify(data.to_dict(orient='records'))
 
 
