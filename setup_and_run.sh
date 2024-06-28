@@ -10,7 +10,6 @@ echo "executing React"
 gnome-terminal -- bash -c "cd View;npm install; npm start;" &
 
 echo "executing Yfinance"
-echo "Executing Yfinance"
 gnome-terminal -- bash -c "
 cd services;
 if [ ! -d 'venv' ]; then

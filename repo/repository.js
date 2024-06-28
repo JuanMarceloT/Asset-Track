@@ -148,8 +148,9 @@ async function GetUserStocks(id) {
         FROM stocks
         WHERE user_id = $1;
       `;
-  const StocksValues = [id];
-  const StocksResult = await executeQuery(StocksQuery, StocksValues);
+  const user_id = [id];
+  const StocksResult = await executeQuery(StocksQuery, [93]);
+  console.log(StocksResult);
   return StocksResult;
 }
 
@@ -194,18 +195,18 @@ async function Stocks_aggregated_by_month(id) {
     if (Stocks_by_month.length === 0) {
       throw new Error('User not found');
     }
-    console.log(`${Stocks_by_month[0].year}-${Stocks_by_month[0].month}`);
-    console.log(Stocks_by_month[0].stocks[0]);
+    //console.log(`${Stocks_by_month[0].year}-${Stocks_by_month[0].month}`);
+    //console.log(Stocks_by_month[0].stocks[0]);
     for (let i = 1; i < Stocks_by_month.length; i++) {
-      console.log(`${Stocks_by_month[i].year}-${Stocks_by_month[i].month}`);
+      //console.log(`${Stocks_by_month[i].year}-${Stocks_by_month[i].month}`);
       Stocks_by_month[i].stocks[0].total_qtd += Stocks_by_month[i - 1].stocks[0].total_qtd;
-      console.log(Stocks_by_month[i].stocks[0]);
+      //console.log(Stocks_by_month[i].stocks[0]);
       if (Stocks_by_month[i].stocks[1]) {
-        console.log(Stocks_by_month[i].stocks[1]);
+        //console.log(Stocks_by_month[i].stocks[1]);
       }
     }
 
-    console.log("-------------------------------------------");
+    //console.log("-------------------------------------------");
     return Stocks_by_month;
   } catch (error) {
     console.error("error " + error);
@@ -214,11 +215,11 @@ async function Stocks_aggregated_by_month(id) {
 }
 
 
-async function getMonthlyAsset(userId) {
+async function getMonthlyAsset(user_id) {
   const assetByMonth = [];
 
   try {
-    const stocksByMonth = await Stocks_aggregated_by_month(92);
+    const stocksByMonth = await Stocks_aggregated_by_month(user_id);
     const monthsSince = getLastWeekdaysSince(stocksByMonth[0].month, stocksByMonth[0].year);
     let currentIndex = 0;
 
@@ -269,7 +270,7 @@ async function get_User_monthly_dividends(user_id) {
   const DividendsByMonth = [];
 
   try {
-    const stocksByMonth = await Stocks_aggregated_by_month(92);
+    const stocksByMonth = await Stocks_aggregated_by_month(user_id);
     const monthsSince = getLastWeekdaysSince(stocksByMonth[0].month, stocksByMonth[0].year);
     let currentIndex = 0;
 
@@ -332,19 +333,19 @@ async function calculateDividendsInMonth(stocks, month) {
 }
 
 async function get_stock_dividends_in_month(stock_code, month) {
-  console.log(stock_code);
-  if(stock_code == "PETR4"){
-    return {
-      "2020-01-01": 20.48,
-      "2020-01-02": 1.48,
-    };
-  }
-  return {
-    "2020-01-01": 0.48,
-    "2020-01-02": 0.48,
-  };
+  //console.log(stock_code);
+   if(stock_code == "PETR4"){
+     return {
+       "2020-01-01": 20.48,
+       "2020-01-02": 1.48,
+     };
+   }
+   return {
+     "2020-01-01": 0.48,
+     "2020-01-02": 0.48,
+   };
   try {
-    const response = await fetch(`http://127.0.0.1:5000/dividends/${stock_code}.SA/${date.getFullYear()}-${date.getMonth() + 1}`);
+    const response = await fetch(`http://127.0.0.1:5000/dividends/${stock_code}.SA/${month.getFullYear()}-${month.getMonth() + 1}`);
     //console.log(date);
     if (!response.ok) {
       return undefined;
@@ -367,8 +368,7 @@ function Get_Stock_Code(stock_id) {
 }
 
 async function get_stock_close_price(stockName, date) {
-
-  return 1;
+return 1;
   try {
     const response = await fetch(`http://127.0.0.1:5000/stock/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`);
     //console.log(date);
@@ -494,6 +494,8 @@ function formatDate(year, month, day) {
 async function InsertStock(userId, stockId, units, price, type) {
   try {
     const stock = await FindStock(userId, stockId);
+    console.log(userId);
+    console.log(stockId);
 
     if (stock) {
       await updateStock(userId, stockId, units, price, type, stock);
@@ -532,8 +534,7 @@ async function updateStock(userId, stockId, units, price, type, existingStock) {
     const query = `
       UPDATE stocks
       SET units = $1, avg_price = $2
-      WHERE user_id = $3 AND stock_id = $4
-      RETURNING *;
+      WHERE user_id = $3 AND stock_id = $4;
     `;
     await executeQuery(query, [newUnits, newAvgPrice.toFixed(), userId, stockId]);
   } else {
@@ -544,8 +545,7 @@ async function updateStock(userId, stockId, units, price, type, existingStock) {
 async function createStock(userId, stockId, units, price) {
   const query = `
     INSERT INTO stocks (user_id, stock_id, STOCK_NAME, units, avg_price)
-    VALUES ($1, $2, $3, $4, $5)
-    RETURNING ;
+    VALUES ($1, $2, $3, $4, $5);
   `;
   await executeQuery(query, [userId, stockId, get_stock_name_by_id(stockId), units, price]);
 }

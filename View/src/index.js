@@ -11,7 +11,7 @@ import Top_Cards from './components/Top_Cards';
 import Top_Menu from './components/Top_Menu';
 
 function App() {
-  const id = 92;
+  const id = 93;
 
   const [Username,setusername] = useState(null);
   const [stocks, setstocks] = useState(null);
@@ -32,8 +32,8 @@ function App() {
 
   function GetInvestedValues(graph){
     let this_month = graph[graph.length - 1].assets_value;
-    console.log("oasd");
-    console.log(graph);
+    // console.log("oasd");
+    // console.log(graph);
     setInvested(this_month);
   }
 
@@ -124,7 +124,7 @@ function App() {
       <Top_Menu/>
       <Top_Cards>
         <Info_Card content={{title: "Investido", content:`R$ ${Invested}`, subcontent:""}}/>
-        <Info_Card content={{title: "Variação", content:`R$ ${variation}`, subcontent:""}}/>
+        <Info_Card content={{title: "Variação", content:`R$ ${variation.toFixed(2)}`, subcontent:""}}/>
         <Info_Card content={{title: "Dividendos deste ano", content:`R$ ${Dividends_ytd}`, subcontent:""}}/>
       </Top_Cards>
       <Dashboard_Section>

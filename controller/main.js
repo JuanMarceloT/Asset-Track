@@ -14,9 +14,9 @@ const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, for
 
 
 async function main() {
-  const Graph = await get_User_monthly_dividends(15);
-  //console.log("Starting delay...");
-  console.log(Graph);
+  //const Graph = await get_User_monthly_dividends(15);
+  ////console.log("Starting delay...");
+  ////console.log(Graph);
 }
 
 main();
@@ -28,33 +28,35 @@ app.get('/users', async (req, res) => {
     const users = await SelectUsers();
     res.json(users);
   } catch (error) {
-    console.error('Error:', error);
+    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 // API endpoint to get user info
 app.get('/GetUser', async (req, res) => {
+  //console.log("quando user");
   try {
     //console.log(req.query);
     const { user_id } = req.query;
     const user = await SelectUser(user_id);;
     res.json(user);
   } catch (error) {
-    console.error('Error:', error);
+    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 app.get('/GetGraph', async(req,res)=>{
-
+  //console.log("quando user");
+  //console.log(req.query);
   try{
     const {user_id} = req.query;
     const Graph = await getMonthlyAsset(user_id);
     
     res.json(Graph);
   }catch (error) {
-    console.error('Error:', error);
+    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 })
@@ -62,12 +64,14 @@ app.get('/GetGraph', async(req,res)=>{
 app.get('/GetUserDividends', async(req,res)=>{
 
   try{
+    //console.log("quando user");
+    //console.log(req.query);
     const {user_id} = req.query;
     const Dividends = await get_User_monthly_dividends(user_id);
     
     res.json(Dividends);
   }catch (error) {
-    console.error('Error:', error);
+    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 })
@@ -80,7 +84,7 @@ app.post('/users', async (req, res) => {
     const id = await CriaUsuario(nome);
     res.status(201).json(id);
   } catch (error) {
-    console.error('Error:', error);
+    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -92,7 +96,7 @@ app.post('/transactions', async (req, res) => {
     const transação = await Nova_Tranasção(user_id, stock_id, type, units, price, formatDate(year, month, day));
     res.status(201).json(transação);
   } catch (error) {
-    console.error('Error:', error);
+    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -100,6 +104,6 @@ app.post('/transactions', async (req, res) => {
 
 app.listen(port, () => {
   inicializarDb();
-  console.log(`Server running at http://localhost:${port}`);
+  //console.log(`Server running at http://localhost:${port}`);
 });
 

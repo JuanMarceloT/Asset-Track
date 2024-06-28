@@ -123,7 +123,7 @@ function formatMonthYear(year, month) {
 }
 function get_ytd_dividends(dividend){
   let total_Dividends = 0;
-  console.log(dividend);
+  // console.log(dividend);
   let current_year = new Date().getFullYear();
   Object.keys(dividend).map(dividend_id => {
     if(dividend[dividend_id]["year"] == current_year){
