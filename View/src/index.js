@@ -13,6 +13,7 @@ import Top_Menu from './components/Top_Menu';
 function App() {
   const id = 93;
 
+  const [onSelectTimePeriod, SetonSelectTimePeriod] = useState('1d');
   const [Username,setusername] = useState(null);
   const [stocks, setstocks] = useState(null);
   const [transactions, settransacitons] = useState(null);
@@ -103,17 +104,15 @@ function App() {
               console.error('Failed to update transactions and stocks:', error);
               SetStocksLoading(false);
           }
-      }else{  //gambiarra da braba, pq ele não tava esperando o updatetransactions terminar e acabava que só atualizava na proxima chamada
-        try {
-            await updateTransactionsAndStocks();
-          } catch (error) {
-              console.error('Failed to update transactions and stocks:', error);
-          }
       }
   };
 
   fetchData();
   }, [updateFlag]);
+
+  useEffect(()=>{
+    updateGraph();
+  },[onSelectTimePeriod])
   
 
 
@@ -128,7 +127,7 @@ function App() {
         <Info_Card content={{title: "Dividendos deste ano", content:`R$ ${Dividends_ytd}`, subcontent:""}}/>
       </Top_Cards>
       <Dashboard_Section>
-        <Graph Params={graph} />
+        <Graph Params={graph} onSelectTimePeriod={onSelectTimePeriod} SetonSelectTimePeriod={SetonSelectTimePeriod}/>
         <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks} transactions={transactions} Dividends={Dividends}/>
       </Dashboard_Section>
     </React.StrictMode>

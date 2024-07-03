@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
 import styles from './Graph.module.css';
 
 
 import { formatMonthYear } from '../bff';
+import Graph_time_selector from './Graph_time_selector';
 
 function FormatToGraphData(Params){
     const data = {
@@ -24,9 +25,8 @@ function FormatToGraphData(Params){
     return data;
 }
 
-const Graph = ({ Params }) => {
+const Graph = ({ Params , onSelectTimePeriod , SetonSelectTimePeriod}) => {
     const chartRef = useRef(null);
-    
     const data = FormatToGraphData(Params);
     //console.log(data);
     
@@ -114,7 +114,10 @@ const Graph = ({ Params }) => {
         };
     }, [data]);
 
-    return <canvas ref={chartRef} />;
+    return <div className={styles.graph_dashboard}>
+        <Graph_time_selector SetonSelectTimePeriod={SetonSelectTimePeriod} onSelectTimePeriod={onSelectTimePeriod}/>
+        <canvas ref={chartRef} />;
+    </div>
 };
 
 export default Graph;

@@ -11,7 +11,7 @@ gnome-terminal -- bash -c "cd View;npm install; npm start;" &
 
 echo "executing Yfinance"
 gnome-terminal -- bash -c "
-cd services;
+cd external_services;
 if [ ! -d 'venv' ]; then
   echo 'Creating virtual environment and installing dependencies...';
   python3 -m venv venv;

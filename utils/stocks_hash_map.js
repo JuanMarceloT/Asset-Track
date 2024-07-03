@@ -51,4 +51,4 @@ function get_stock_img_by_id(stock_id){
     return id_stockImg.get(stock_id);
 }
 
-export {get_stock_id_by_code, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id};
+module.export =  { get_stock_id_by_code, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id };

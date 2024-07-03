@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-const Graph_time_selector = ({ onSelectTimePeriod }) => {
-  const [selectedPeriod, setSelectedPeriod] = useState('1d');
+const Graph_time_selector = ({ onSelectTimePeriod ,SetonSelectTimePeriod }) => {
+  const [selectedPeriod, setSelectedPeriod] = useState(onSelectTimePeriod);
 
   const handleClick = (period) => {
     setSelectedPeriod(period);
-    onSelectTimePeriod(period);
+    SetonSelectTimePeriod(period);
   };
 
   return (

@@ -14,7 +14,7 @@ def get_stock_data(stock_name, date):
     return jsonify(data.to_dict(orient='records'))
 
 
-@app.route('/stock_month/<string:stock_name>/<string:date>', methods=['GET'])
+@app.route('/stock_period/<string:stock_name>/<string:date>/<string:period>', methods=['GET'])
 def get_stock_data_month(stock_name, date):
     start_date = datetime.strptime(date, '%Y-%m-%d')
     start_date = start_date.replace(day=1)
@@ -22,7 +22,7 @@ def get_stock_data_month(stock_name, date):
     end_date = start_date.replace(day=num_days)
     print(num_days)
     ticker = yf.Ticker(stock_name)
-    data = ticker.history(start=start_date, end=end_date)
+    data = ticker.history(start=start_date, end=end_date, period=period)
     return jsonify(data.to_dict(orient='records'))
 
 
