@@ -4,19 +4,20 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 
-
 const app = express();
 const port = 3330;
+
 app.use(cors()); 
 app.use(bodyParser.json());
 
-const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção, formatDate, getMonthlyAsset, get_stock_close_price, get_User_monthly_dividends} = require('../repo/repository');
+const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção} = require('../repo/repository');
 
+const { get_User_monthly_dividends } = require( '../services/stock_service');
 
 async function main() {
-  //const Graph = await get_User_monthly_dividends(15);
-  ////console.log("Starting delay...");
-  ////console.log(Graph);
+  const Graph = await get_User_monthly_dividends(93);
+  console.log("Starting delay...");
+  console.log(Graph);
 }
 
 main();
