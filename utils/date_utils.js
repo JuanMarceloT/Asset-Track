@@ -22,6 +22,7 @@ function getLastWeekdaysSince(month, year) {
 }
 
 
+
 function formatDate(year, month, day) {
     const formattedMonth = String(month).padStart(2, '0');
     const formattedDay = String(day).padStart(2, '0');
@@ -33,3 +34,6 @@ function formatDate(year, month, day) {
 
     return formattedDate;
 }
+
+
+module.exports = {getLastWeekdaysSince, formatDate}

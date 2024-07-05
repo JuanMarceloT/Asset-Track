@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 
 const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção} = require('../repo/repository');
 
-const { get_User_monthly_dividends } = require( '../services/stock_service');
+const { get_User_monthly_dividends, getAssetValueByPeriod } = require( '../services/stock_service');
 
 async function main() {
-  const Graph = await get_User_monthly_dividends(93);
+  const Graph = await getAssetValueByPeriod(93, "sd");
   console.log("Starting delay...");
   console.log(Graph);
 }
@@ -52,8 +52,8 @@ app.get('/GetGraph', async(req,res)=>{
   //console.log("quando user");
   //console.log(req.query);
   try{
-    const {user_id} = req.query;
-    const Graph = await getMonthlyAsset(user_id);
+    const {user_id, time_period} = req.query;
+    const Graph = await getAssetValueByPeriod(user_id);
     
     res.json(Graph);
   }catch (error) {

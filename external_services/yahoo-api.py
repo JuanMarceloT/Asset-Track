@@ -14,16 +14,22 @@ def get_stock_data(stock_name, date):
     return jsonify(data.to_dict(orient='records'))
 
 
-@app.route('/stock_period/<string:stock_name>/<string:date>/<string:period>', methods=['GET'])
-def get_stock_data_month(stock_name, date):
-    start_date = datetime.strptime(date, '%Y-%m-%d')
-    start_date = start_date.replace(day=1)
-    _, num_days = calendar.monthrange(start_date.year, start_date.month)
-    end_date = start_date.replace(day=num_days)
-    print(num_days)
-    ticker = yf.Ticker(stock_name)
-    data = ticker.history(start=start_date, end=end_date, period=period)
-    return jsonify(data.to_dict(orient='records'))
+@app.route('/stock_period/<string:stock_name>/<string:date>/<string:periodo>', methods=['GET'])
+def get_stock_data_period(stock_name, date, periodo):
+    try:
+        start_date = datetime.strptime(date, '%Y-%m-%d')
+
+        ticker = yf.Ticker(stock_name)
+        data = ticker.history(start=start_date, period="1y")
+
+        data_records = data.reset_index().to_dict(orient='records')
+        for record in data_records:
+            record['Date'] = record['Date'].strftime('%Y-%m-%d')
+        
+        return jsonify(data_records)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 
 @app.route('/dividends/<string:stock_name>/<string:date>', methods=['GET'])

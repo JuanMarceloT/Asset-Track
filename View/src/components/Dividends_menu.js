@@ -5,7 +5,7 @@ import { get_stock_img_by_id, get_stock_name_by_id , formatMonthYear} from "../b
 
 function Dividends_menu({dividends}){
 
-    console.log(dividends);;
+    //console.log(dividends);;
     return (<div className={styles.assetMenu}>
         <ScrollableDivs>
             {dividends != null && (<table>

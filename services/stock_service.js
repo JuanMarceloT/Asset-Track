@@ -1,3 +1,9 @@
+const { Stocks_aggregated_by_month, Stocks_aggregated } = require("../repo/repository")
+const { getLastWeekdaysSince } = require("../utils/date_utils"); 
+const { get_stock_code_by_id } = require("../utils/stocks_hash_map"); 
+
+
+
 async function get_daily_close_price(stockName, date) {
     return 1;
     try {
@@ -16,16 +22,16 @@ async function get_daily_close_price(stockName, date) {
 
 }
 
-async function get_period_close_prices() {
+async function get_period_close_prices(stockName, date, time_period) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/stock/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`);
+        const response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}/${time_period}`);
         //console.log(date);
         if (!response.ok) {
             return undefined;
         }
         const data = await response.json();
 
-        return data[0]?.Close ?? 0;
+        return data ?? 0;
 
     } catch (error) {
         console.error('Error:', error);
@@ -64,7 +70,7 @@ async function calculateDividendsInMonth(stocks, month) {
     let total_Dividends = 0;
 
     for (const stock of stocks) {
-        let stock_dividends_in_month = await get_stock_dividends_in_month(Get_Stock_Code(stock.stock_id), month);
+        let stock_dividends_in_month = await get_stock_dividends_in_month(get_stock_code_by_id(stock.stock_id), month);
         let stock_dividends = 0;
         //console.log(stock_dividends_in_month);
         for (const [date, dividend] of Object.entries(stock_dividends_in_month)) {
@@ -89,6 +95,7 @@ async function get_User_monthly_dividends(user_id) {
 
     try {
         const stocksByMonth = await Stocks_aggregated_by_month(user_id);
+        console.log(stocksByMonth);
         const monthsSince = getLastWeekdaysSince(stocksByMonth[0].month, stocksByMonth[0].year);
         let currentIndex = 0;
 
@@ -124,12 +131,13 @@ async function get_User_monthly_dividends(user_id) {
 }
 
 
-async function getMonthlyAsset(user_id, time_period) {
+async function getAssetValueByPeriod(user_id, time_period) {
     const assetByTimePeriod = [];
 
     try {
-        const stocksByTimePeriod = await Stocks_aggregated_by_month(user_id);
-        const monthsSince = getLastWeekdaysSince(stocksByTimePeriod[0].month, stocksByTimePeriod[0].year);
+        const stocksByTimePeriod = await Stocks_aggregated(user_id);
+        console.log(stocksByTimePeriod);
+        const monthsSince = getLastWeekdaysSince(stocksByTimePeriod[0].month, stocksByTimePeriod[0].year, stocksByTimePeriod[0].day, time_period);
         let currentIndex = 0;
 
         for (const month of monthsSince) {
@@ -148,6 +156,10 @@ async function getMonthlyAsset(user_id, time_period) {
         console.error("Error:", error);
     }
 }
+
+
+
+
 function findLastTransactionIndex(stocksByMonth, currentIndex, month) {
     while (stocksByMonth[currentIndex + 1] &&
         stocksByMonth[currentIndex + 1].year <= month.getFullYear() &&
@@ -162,13 +174,16 @@ async function calculateAssetsValue(stocks, month) {
     let totalValue = 0;
 
     for (const stock of stocks) {
-        let assetPrice = await get_daily_close_price(Get_Stock_Code(stock.stock_id), month);
+        let assetPrice = await get_daily_close_price(get_stock_code_by_id(stock.stock_id), month);
         while (assetPrice === 0 || typeof assetPrice !== 'number') {
             month.setDate(month.getDate() - 1);
-            assetPrice = await get_daily_close_price(Get_Stock_Code(stock.stock_id), month);
+            assetPrice = await get_daily_close_price(get_stock_code_by_id(stock.stock_id), month);
         }
 
         totalValue += assetPrice * stock.total_qtd;
     }
     return totalValue;
 }
+
+
+module.exports = {get_daily_close_price, get_period_close_prices, get_stock_dividends_in_month, calculateAssetsValue, calculateDividendsInMonth, get_User_monthly_dividends, getAssetValueByPeriod, findLastTransactionIndex}

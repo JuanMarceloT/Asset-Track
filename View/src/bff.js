@@ -9,8 +9,8 @@ async function Create_New_Transaction(args){
   CallEndpointPost("transactions", args);
 }
 
-async function Get_Graph_Params(id){
-  return await CallEndpointGet(`GetGraph?user_id=${id}`);
+async function Get_Graph_Params(id, TimePeriod){
+  return await CallEndpointGet(`GetGraph?user_id=${id}&time_period=${TimePeriod}`);
 }
 async function Get_Dividends(id){
   return await CallEndpointGet(`GetUserDividends?user_id=${id}`);

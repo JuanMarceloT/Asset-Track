@@ -33,8 +33,8 @@ function App() {
 
   function GetInvestedValues(graph){
     let this_month = graph[graph.length - 1].assets_value;
-    // console.log("oasd");
-    // console.log(graph);
+    console.log("oasd");
+    console.log(graph);
     setInvested(this_month);
   }
 
@@ -50,7 +50,6 @@ function App() {
       setusername(data.name);
       setstocks(data.stocks);
       settransacitons(data.transactions);
-      updateGraph();
       let dividend = await Get_Dividends(id);
       setDividends(dividend);
       setDividends_ytd(get_ytd_dividends(dividend));
@@ -74,7 +73,7 @@ function App() {
 
   const updateGraph = async () => {
     try {
-      const data = await Get_Graph_Params(id);
+      const data = await Get_Graph_Params(id, onSelectTimePeriod);
       setGraph(data);
       //console.log(data);
       GetInvestedValues(data);
