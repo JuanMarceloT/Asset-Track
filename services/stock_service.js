@@ -1,5 +1,5 @@
 const { Stocks_aggregated_by_month, Stocks_aggregated } = require("../repo/repository")
-const { getLastWeekdaysSince } = require("../utils/date_utils"); 
+const { getLastWeekdaysSince, formatDate } = require("../utils/date_utils"); 
 const { get_stock_code_by_id } = require("../utils/stocks_hash_map"); 
 
 
@@ -131,11 +131,60 @@ async function get_User_monthly_dividends(user_id) {
 }
 
 
+
+
+
+async function getPortfolioStockDates(user_id){
+    const stocks_dates = [];
+
+    try {
+        const stocksByTimePeriod = await Stocks_aggregated(user_id);
+        ;
+        for (const transaction_date in stocksByTimePeriod) {
+            //console.log(stocksByTimePeriod[transaction_date]);
+            let { year, month, day, stocks } = stocksByTimePeriod[transaction_date];
+            let actual_date = formatDate(year, month, day)
+            
+            //console.log(stocks);
+            
+            for (const stock_index in stocks) {
+                let stock = stocks[stock_index];
+                const foundStock = stocks_dates.find(transaction_date => transaction_date.stock_id === stock.stock_id);
+
+                if (!foundStock) {
+                    stocks_dates.push({
+                        stock_id: stock.stock_id,
+                        initial_date: actual_date,
+                        end_date: null
+                    });
+                }
+            }
+
+            for(const stock_date in stocks_dates){
+                let stock = stocks_dates[stock_date];
+                //console.log(stock);
+                const foundStock = stocks.find(transaction_date => transaction_date.stock_id == stock.stock_id);
+
+                if (!foundStock && stock.end_date === null) {
+                    console.log("!foundStock");
+                    stock.end_date = actual_date;
+                }
+            }
+        }
+        console.log(stocks_dates);
+    }catch(ex){
+        console.error("Error:", ex);
+    }
+}
+
+
+
 async function getAssetValueByPeriod(user_id, time_period) {
     const assetByTimePeriod = [];
 
     try {
         const stocksByTimePeriod = await Stocks_aggregated(user_id);
+        console.log(getPortfolioStockDates(93));
         console.log(stocksByTimePeriod);
         const monthsSince = getLastWeekdaysSince(stocksByTimePeriod[0].month, stocksByTimePeriod[0].year, stocksByTimePeriod[0].day, time_period);
         let currentIndex = 0;
@@ -156,6 +205,7 @@ async function getAssetValueByPeriod(user_id, time_period) {
         console.error("Error:", error);
     }
 }
+
 
 
 
