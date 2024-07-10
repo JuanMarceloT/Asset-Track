@@ -14,13 +14,13 @@ def get_stock_data(stock_name, date):
     return jsonify(data.to_dict(orient='records'))
 
 
-@app.route('/stock_period/<string:stock_name>/<string:date>/<string:periodo>', methods=['GET'])
-def get_stock_data_period(stock_name, date, periodo):
+@app.route('/stock_period/<string:stock_name>/<string:inital_date>/<string:final_date>/<string:periodo>', methods=['GET'])
+def get_stock_data_period(stock_name, inital_date, final_date, periodo):
     try:
-        start_date = datetime.strptime(date, '%Y-%m-%d')
-
+        start_date = datetime.strptime(inital_date, '%Y-%m-%d')
+        end_date = datetime.strptime(final_date, '%Y-%m-%d')
         ticker = yf.Ticker(stock_name)
-        data = ticker.history(start=start_date, period="1y")
+        data = ticker.history(start=start_date, end=end_date)
 
         data_records = data.reset_index().to_dict(orient='records')
         for record in data_records:

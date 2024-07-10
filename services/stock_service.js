@@ -22,9 +22,11 @@ async function get_daily_close_price(stockName, date) {
 
 }
 
-async function get_period_close_prices(stockName, date, time_period) {
+async function get_period_close_prices(stockName, initial, end, time_period) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}/${time_period}`);
+        const initial_date = new Date(initial);
+        const end_date = new Date(end);
+        const response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${initial_date.getFullYear()}-${initial_date.getMonth() + 1}-${initial_date.getDay()}/${end_date.getFullYear()}-${end_date.getMonth() + 1}-${end_date.getDay()}/${time_period}`);
         //console.log(date);
         if (!response.ok) {
             return undefined;
@@ -172,6 +174,7 @@ async function getPortfolioStockDates(user_id){
             }
         }
         console.log(stocks_dates);
+        return stocks_dates;
     }catch(ex){
         console.error("Error:", ex);
     }
@@ -183,22 +186,21 @@ async function getAssetValueByPeriod(user_id, time_period) {
     const assetByTimePeriod = [];
 
     try {
-        const stocksByTimePeriod = await Stocks_aggregated(user_id);
-        console.log(getPortfolioStockDates(93));
-        console.log(stocksByTimePeriod);
-        const monthsSince = getLastWeekdaysSince(stocksByTimePeriod[0].month, stocksByTimePeriod[0].year, stocksByTimePeriod[0].day, time_period);
-        let currentIndex = 0;
+        const stocks_prices = await getPortfolioStockDates(93);
+        console.log(stocks_prices);;
+        for (const transaction_date of stocks_prices) {
+            console.log(transaction_date);
 
-        for (const month of monthsSince) {
-            currentIndex = findLastTransactionIndex(stocksByTimePeriod, currentIndex, month);
-            const assetsValue = await calculateAssetsValue(stocksByTimePeriod[currentIndex].stocks, month);
-
-            assetByTimePeriod.push({
-                year: month.getFullYear(),
-                month: month.getMonth() + 1,
-                assets_value: assetsValue
+            stock_price = await get_period_close_prices("PETR4", transaction_date.initial_date, transaction_date.end_date, "1d");
+            stock_price.map(stock => {
+                if(assetByTimePeriod[stock.Date]){
+                    assetByTimePeriod[stock.Date] += stock.Close
+                }else{
+                    assetByTimePeriod[stock.Date] = stock.Close
+                }
             });
         }
+
 
         return assetByTimePeriod;
     } catch (error) {
