@@ -4,6 +4,7 @@ const pool = require('./db');
 const { get } = require('https');
 const { promises } = require('dns');
 const { get_stock_name_by_id } = require('../utils/stocks_hash_map.js');
+const { ok } = require('assert');
 
 
 
@@ -150,8 +151,8 @@ async function GetUserStocks(id) {
         WHERE user_id = $1;
       `;
   const user_id = [id];
-  const StocksResult = await executeQuery(StocksQuery, [93]);
-  console.log(StocksResult);
+  const StocksResult = await executeQuery(StocksQuery, [id]);
+  //console.log(StocksResult);
   return StocksResult;
 }
 
@@ -259,7 +260,7 @@ async function Stocks_aggregated(id) {
     `;
     const Stocks_by_month = await executeQuery(query, [id]);
     if (Stocks_by_month.length === 0) {
-      throw new Error('User not found');
+      throw new Error('No Stocks found');
     }
     //console.log(`${Stocks_by_month[0].year}-${Stocks_by_month[0].month}`);
     //console.log(Stocks_by_month[0].stocks[0]);
@@ -321,13 +322,24 @@ async function SelectUser(id) {
       transactions: transactionsResult
     };
 
-    ////console.log(userWithTransactions);
+    //console.log(userWithTransactions);
     return userWithTransactions;
   } catch (error) {
     console.error('Error selecting user with transactions:', error);
   }
 }
 
+async function Delete_User(nome) {
+
+  const query = `DELETE FROM USUARIO WHERE NAME = '${nome}' RETURNING id;`;
+
+  try {
+    const result = await executeQuery(query);
+    return result;
+  } catch (error) {
+    console.error('Error Deleting User user:', error);
+  }
+}
 
 
 async function CriaUsuario(nome) {
@@ -411,6 +423,11 @@ async function updateStock(userId, stockId, units, price, type, existingStock) {
 }
 
 async function createStock(userId, stockId, units, price) {
+
+  if (price < 0) {
+    throw new Error('Invalid price. Price cannot be negative.');
+  }
+
   const query = `
     INSERT INTO stocks (user_id, stock_id, STOCK_NAME, units, avg_price)
     VALUES ($1, $2, $3, $4, $5);
@@ -429,4 +446,6 @@ async function deleteStock(userId, stockId) {
 
 
 
-module.exports = { inicializarDb, SelectUser, SelectUsers, CriaUsuario, Nova_Tranasção, Stocks_aggregated_by_month, Stocks_aggregated};
+module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, Nova_Tranasção, Stocks_aggregated_by_month, Stocks_aggregated};
+
+
