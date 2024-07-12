@@ -262,16 +262,14 @@ async function Stocks_aggregated(id) {
     if (Stocks_by_month.length === 0) {
       throw new Error('No Stocks found');
     }
-    //console.log(`${Stocks_by_month[0].year}-${Stocks_by_month[0].month}`);
-    //console.log(Stocks_by_month[0].stocks[0]);
     for (let i = 1; i < Stocks_by_month.length; i++) {
-      //console.log(`${Stocks_by_month[i].year}-${Stocks_by_month[i].month}`);
-      Stocks_by_month[i].stocks[0].total_qtd += Stocks_by_month[i - 1].stocks[0].total_qtd;
-      //console.log(Stocks_by_month[i].stocks[0]);
-      if (Stocks_by_month[i].stocks[1]) {
-        //console.log(Stocks_by_month[i].stocks[1]);
-      }
+      Stocks_by_month[i - 1].stocks.map(a => Stocks_by_month[i].stocks.find(b => b.stock_id === a.stock_id) ? Stocks_by_month[i].stocks.map(b => b.stock_id === a.stock_id ? b.total_qtd = a.total_qtd + b.total_qtd : b.total_qtd) : Stocks_by_month[i].stocks.push(a));
+      
+      Stocks_by_month[i].stocks.map(a => a.total_qtd < 1 ? Stocks_by_month[i].stocks.splice(Stocks_by_month[i].stocks.indexOf(a), 1) : a);
+      //Stocks_by_month[i].stocks[0].total_qtd += Stocks_by_month[i - 1].stocks[0].total_qtd;
     }
+
+    //console.log(Stocks_by_month);
 
     //console.log("-------------------------------------------");
     return Stocks_by_month;
@@ -374,8 +372,8 @@ async function executeQuery(query, values) {
 async function InsertStock(userId, stockId, units, price, type) {
   try {
     const stock = await FindStock(userId, stockId);
-    console.log(userId);
-    console.log(stockId);
+    //console.log(userId);
+    //console.log(stockId);
 
     if (stock) {
       await updateStock(userId, stockId, units, price, type, stock);

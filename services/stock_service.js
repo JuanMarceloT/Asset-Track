@@ -141,9 +141,9 @@ async function getPortfolioStockDates(user_id){
         const stocksByTimePeriod = await Stocks_aggregated(user_id);
         ;
         for (const transaction_date in stocksByTimePeriod) {
-            //console.log(stocksByTimePeriod[transaction_date]);
             let { year, month, day, stocks } = stocksByTimePeriod[transaction_date];
             let actual_date = formatDate(year, month, day)
+            //console.log(stocks);
             
             for (const stock_index in stocks) {
                 let stock = stocks[stock_index];
@@ -160,9 +160,7 @@ async function getPortfolioStockDates(user_id){
 
             for(const stock_date in stocks_dates){
                 let stock = stocks_dates[stock_date];
-                //console.log(stock);
                 const foundStock = stocks.find(transaction_date => transaction_date.stock_id == stock.stock_id);
-
                 if (!foundStock && stock.end_date === null) {
                     stock.end_date = actual_date;
                 }
@@ -184,7 +182,7 @@ async function getAssetValueByPeriod(user_id, time_period) {
         console.log("entrei aqui");
         console.log(user_id);
         const stocks_prices = await getPortfolioStockDates(user_id);
-        console.log(stocks_prices);;
+        console.log(stocks_prices);
         for (const transaction_date of stocks_prices) {
             //console.log(transaction_date);
 
@@ -236,4 +234,4 @@ async function calculateAssetsValue(stocks, month) {
 }
 
 
-module.exports = {get_daily_close_price, get_period_close_prices, get_stock_dividends_in_month, calculateAssetsValue, calculateDividendsInMonth, get_User_monthly_dividends, getAssetValueByPeriod, findLastTransactionIndex}
+module.exports = {get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_dividends_in_month, calculateAssetsValue, calculateDividendsInMonth, get_User_monthly_dividends, getAssetValueByPeriod, findLastTransactionIndex}

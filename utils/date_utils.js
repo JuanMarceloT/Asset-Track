@@ -27,7 +27,7 @@ function formatDate(year, month, day) {
     const formattedMonth = String(month).padStart(2, '0');
     const formattedDay = String(day).padStart(2, '0');
 
-    const date = new Date(year, month - 1, day); // Month is zero-based 
+    const date = new Date(year, month, day);
 
     //'YYYY-MM-DD'
     const formattedDate = `${date.getFullYear()}-${formattedMonth}-${formattedDay}`;

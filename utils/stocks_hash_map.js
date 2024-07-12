@@ -32,8 +32,10 @@ function addStock(stock){
 }
 
 
-addStock({id:1, code:"PETR4", name:"Petrobras", img_url:"https://cdn.worldvectorlogo.com/logos/petrobras-8.svg"});
+addStock({id:6, code:"PETR4", name:"PETROBRAS", img_url:"https://cdn.worldvectorlogo.com/logos/petrobras-8.svg"});
+addStock({id:5, code:"VALE3", name:"VALE3", img_url:"https://cdn.worldvectorlogo.com/logos/petrobras-8.svg"});
 addStock({id:2, code:"ITUB4", name:"Itaú Unibanco", img_url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png"});
+addStock({id:1, code:"CASH3", name:"MELIUZ", img_url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png"});
 
 function get_stock_id_by_code(stock_code){
     return stocksCode_id.get(stock_code);
