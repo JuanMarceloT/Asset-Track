@@ -14,10 +14,12 @@ const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção} = r
 
 const { get_User_monthly_dividends, getAssetValueByPeriod } = require( '../services/stock_service');
 
+const { formatDate} = require("../utils/date_utils")
+
 async function main() {
-  const Graph = await getAssetValueByPeriod(93, "sd");
-  console.log("Starting delay...");
-  console.log(Graph);
+  const Graph = await getAssetValueByPeriod(3, "sd");
+  //console.log("Starting delay...");
+  //console.log(Graph);
 }
 
 main();
@@ -48,19 +50,14 @@ app.get('/GetUser', async (req, res) => {
   }
 });
 
-app.get('/GetGraph', async(req,res)=>{
-  //console.log("quando user");
-  //console.log(req.query);
-  try{
-    const {user_id, time_period} = req.query;
-    const Graph = await getAssetValueByPeriod(user_id);
-    
-    res.json(Graph);
-  }catch (error) {
-    //console.error('Error:', error);
+app.get('/GetGraph', async (req, res) => {
+  try {
+    const { user_id, time_period } = req.query;
+    res.json(await getAssetValueByPeriod(user_id, time_period));
+  } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
-})
+});
 
 app.get('/GetUserDividends', async(req,res)=>{
 
