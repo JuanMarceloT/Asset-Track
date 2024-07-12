@@ -36,4 +36,14 @@ function formatDate(year, month, day) {
 }
 
 
-module.exports = {getLastWeekdaysSince, formatDate}
+function compare_string_yyyy_mm_dd_dates(date1, date2) {
+    const parsedDate1 = new Date(date1);
+    const parsedDate2 = new Date(date2);
+
+    if (parsedDate2 > parsedDate1) {
+        return false;
+    }
+
+    return true;
+}
+module.exports = {getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates}

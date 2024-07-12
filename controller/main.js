@@ -17,7 +17,7 @@ const { get_User_monthly_dividends, getAssetValueByPeriod } = require( '../servi
 const { formatDate} = require("../utils/date_utils")
 
 async function main() {
-  const Graph = await getAssetValueByPeriod(3, "sd");
+  const Graph = await getAssetValueByPeriod(4, "sd");
   //console.log("Starting delay...");
   //console.log(Graph);
 }

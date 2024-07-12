@@ -1,5 +1,5 @@
 const { Stocks_aggregated_by_month, Stocks_aggregated } = require("../repo/repository")
-const { getLastWeekdaysSince, formatDate } = require("../utils/date_utils"); 
+const { getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates } = require("../utils/date_utils"); 
 const { get_stock_code_by_id } = require("../utils/stocks_hash_map"); 
 
 
@@ -143,12 +143,10 @@ async function getPortfolioStockDates(user_id){
         for (const transaction_date in stocksByTimePeriod) {
             let { year, month, day, stocks } = stocksByTimePeriod[transaction_date];
             let actual_date = formatDate(year, month, day)
-            //console.log(stocks);
             
             for (const stock_index in stocks) {
                 let stock = stocks[stock_index];
                 const foundStock = stocks_dates.find(transaction_date => transaction_date.stock_id === stock.stock_id);
-
                 if (!foundStock) {
                     stocks_dates.push({
                         stock_id: stock.stock_id,
@@ -174,29 +172,66 @@ async function getPortfolioStockDates(user_id){
 }
 
 
+async function getPortfolioStockUnits(user_id){
+    const stocks_units = {};
+
+    try {
+        const stocksByTimePeriod = await Stocks_aggregated(user_id);
+        ;
+        for (const transaction_date in stocksByTimePeriod) {
+            let { year, month, day, stocks } = stocksByTimePeriod[transaction_date];
+            let actual_date = formatDate(year, month, day)
+
+            for (const stock_index in stocks) {
+                let stock = stocks[stock_index];
+
+                if(!stocks_units[actual_date]){
+                    stocks_units[actual_date] = {}
+                }
+
+                stocks_units[actual_date][stock.stock_id] = stock.total_qtd;
+            }
+            
+        }
+        //console.log(stocks_units);
+        return stocks_units;
+    }catch(ex){
+        console.error("Error:", ex);
+    }
+}
+
+
+function getStockQtdbyDate(stocks_units, stock_id, date){
+    let last_date = null;
+    Object.entries(stocks_units).map(date_stock => compare_string_yyyy_mm_dd_dates(date, date_stock[0]) ? last_date = date_stock : date_stock)
+    
+    if(last_date){
+        stock_qtd = last_date[1][stock_id];
+    }
+    return stock_qtd;
+}
+
 
 async function getAssetValueByPeriod(user_id, time_period) {
     const assetByTimePeriod = {};
 
     try {
-        console.log("entrei aqui");
-        console.log(user_id);
         const stocks_prices = await getPortfolioStockDates(user_id);
-        console.log(stocks_prices);
+        const stocks_units = await getPortfolioStockUnits(user_id);
         for (const transaction_date of stocks_prices) {
-            //console.log(transaction_date);
+            console.log(transaction_date);
 
             stock_price = await get_period_close_prices(get_stock_code_by_id(transaction_date.stock_id), transaction_date.initial_date, transaction_date.end_date, "1d");
-            //console.log(stock_price);
             stock_price && stock_price.map(stock => {
+                    //console.log(getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date))
                     if(!assetByTimePeriod[stock.Date]){
-                        assetByTimePeriod[stock.Date] = +stock.Close.toFixed(2);
+                        assetByTimePeriod[stock.Date] = +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date) ; 
                     }else{
-                        assetByTimePeriod[stock.Date] += +stock.Close.toFixed(2);
+                        assetByTimePeriod[stock.Date] += +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date) ; 
                     }
                 });
         }
-
+        
         //console.log(assetByTimePeriod)
         return assetByTimePeriod;
     } catch (error) {
