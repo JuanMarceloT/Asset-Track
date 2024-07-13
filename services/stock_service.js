@@ -24,7 +24,14 @@ async function get_daily_close_price(stockName, date) {
 
 async function get_period_close_prices(stockName, initial, end, time_period) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${initial}/${end}/${time_period}`);
+
+        let response;
+        if(!end){
+            let current_date = new Date().toISOString().slice(0, 10);
+            response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${initial}/${current_date}/${time_period}`);
+        }else{
+            response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${initial}/${end}/${time_period}`);
+        }
         //console.log(date);
         if (!response.ok) {
             return undefined;
