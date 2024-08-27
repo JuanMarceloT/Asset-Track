@@ -72,6 +72,22 @@ async function get_stock_dividends_in_month(stock_code, month) {
     }
 }
 
+async function get_stock_dividends_by_period(stock_code, month) {
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/dividends_period/${stock_code}.SA/${month.getFullYear()}-${month.getMonth() + 1}`);
+        //console.log(date);
+        if (!response.ok) {
+            return undefined;
+        }
+        const data = await response.json();
+
+        return data ?? 0;
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 async function calculateDividendsInMonth(stocks, month) {
     let Dividends = {};
     let total_Dividends = 0;
@@ -99,7 +115,7 @@ async function calculateDividendsInMonth(stocks, month) {
 
 async function get_User_monthly_dividends(user_id) {
     const DividendsByMonth = [];
-    return DividendsByMonth;
+    // return DividendsByMonth;
     try {
         const stocksByMonth = await Stocks_aggregated_by_month(user_id);
         console.log(stocksByMonth);
@@ -276,4 +292,4 @@ async function calculateAssetsValue(stocks, month) {
 }
 
 
-module.exports = {get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_dividends_in_month, calculateAssetsValue, calculateDividendsInMonth, get_User_monthly_dividends, getAssetValueByPeriod, findLastTransactionIndex}
+module.exports = {get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_dividends_in_month, calculateAssetsValue, calculateDividendsInMonth, get_User_monthly_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period}

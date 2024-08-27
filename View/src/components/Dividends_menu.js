@@ -21,7 +21,7 @@ function Dividends_menu({dividends}){
                 {
                             Object.entries(dividends).reverse().map(([dividendKey, dividend]) => (
                                 Object.entries(dividend["Dividends"]["stock_dividends"]).map(([stockId]) => (
-                                    <tr>
+                                    <tr className={styles.card}>
                                         <td><img src={get_stock_img_by_id(parseInt(stockId))} alt='logo'></img></td>
                                         <td>{get_stock_name_by_id(parseInt(stockId))}</td>
                                         <td>{formatMonthYear(dividend["year"], dividend["month"])}</td>

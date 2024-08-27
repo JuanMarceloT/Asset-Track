@@ -120,14 +120,11 @@ function App() {
   return (
     <React.StrictMode>
       <Top_Menu/>
-      <Top_Cards>
-        <Info_Card content={{title: "Investido", content:`R$ ${Invested}`, subcontent:""}}/>
-        <Info_Card content={{title: "Variação", content:`R$ ${variation.toFixed(2)}`, subcontent:""}}/>
-        <Info_Card content={{title: "Dividendos deste ano", content:`R$ ${Dividends_ytd}`, subcontent:""}}/>
-      </Top_Cards>
       <Dashboard_Section>
-        <Graph Params={graph} onSelectTimePeriod={onSelectTimePeriod} SetonSelectTimePeriod={SetonSelectTimePeriod}/>
+        <Info_Card content={{title: "Investido", content:`R$ ${Invested.toFixed(2)}`, subcontent:"+12% this month"}}/>
+        <Info_Card content={{title: "Dividendos deste ano", content:`R$ ${Dividends_ytd.toFixed(2)}`, subcontent:"+8% this year"}}/>
         <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks} transactions={transactions} Dividends={Dividends}/>
+        <Graph Params={graph} onSelectTimePeriod={onSelectTimePeriod} SetonSelectTimePeriod={SetonSelectTimePeriod}/>
       </Dashboard_Section>
     </React.StrictMode>
   );

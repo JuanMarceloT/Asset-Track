@@ -1,11 +1,10 @@
 table {
     border-collapse: collapse;
     color: var(--main-text-color);
-    width: 100%;
 }
 
-tr {
-    border-bottom: 1pt solid black;
+.card {
+    border-bottom: 1pt solid rgb(255, 255, 255);
 }
 
 thead td {
@@ -16,4 +15,5 @@ img {
     margin: auto;
     padding: 1vh 0;
     width: 5vh;
+    height: 100%;
 }

@@ -9,7 +9,7 @@ const PlusButton = ({state, setState}) => {
 
   return (
     <button className={styles.plus} onClick={handleClick}>
-      +
+      Add transaction
     </button>
   );
 };

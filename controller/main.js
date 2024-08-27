@@ -12,18 +12,16 @@ app.use(bodyParser.json());
 
 const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção} = require('../repo/repository');
 
-const { get_User_monthly_dividends, getAssetValueByPeriod } = require( '../services/stock_service');
+const { get_User_monthly_dividends, getAssetValueByPeriod, get_stock_dividends_by_period } = require( '../services/stock_service');
 
 const { formatDate} = require("../utils/date_utils")
 
 async function main() {
-  const Graph = await getAssetValueByPeriod(4, "sd");
-  //console.log("Starting delay...");
-  //console.log(Graph);
+    const Graph = await get_stock_dividends_by_period("ITUB4", new Date("04/11/2019"));
+    console.log(Graph);
 }
 
 main();
-
 
 // API endpoint to get all users
 app.get('/users', async (req, res) => {
@@ -31,21 +29,17 @@ app.get('/users', async (req, res) => {
     const users = await SelectUsers();
     res.json(users);
   } catch (error) {
-    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 // API endpoint to get user info
 app.get('/GetUser', async (req, res) => {
-  //console.log("quando user");
   try {
-    //console.log(req.query);
     const { user_id } = req.query;
     const user = await SelectUser(user_id);;
     res.json(user);
   } catch (error) {
-    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -59,11 +53,10 @@ app.get('/GetGraph', async (req, res) => {
   }
 });
 
+// need to fix, just need to return all dividends
 app.get('/GetUserDividends', async(req,res)=>{
 
   try{
-    //console.log("quando user");
-    //console.log(req.query);
     const {user_id} = req.query;
     const Dividends = await get_User_monthly_dividends(user_id);
     
@@ -74,7 +67,6 @@ app.get('/GetUserDividends', async(req,res)=>{
   }
 })
 
-
 // API endpoint to create a new user
 app.post('/users', async (req, res) => {
   try {
@@ -82,7 +74,6 @@ app.post('/users', async (req, res) => {
     const id = await CriaUsuario(nome);
     res.status(201).json(id);
   } catch (error) {
-    //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

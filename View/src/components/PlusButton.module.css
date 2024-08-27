@@ -1,13 +1,14 @@
 .plus {
   width: 90%;
   height: 50px; /* Adjust height as needed */
-  font-size: 44px;
+  font-size: 20px;
   text-align: center;
   line-height: 50px; 
   border-radius: 10px;
   border: none;
   background-color: var(--button-color);
-  color: white;
+  color: rgb(0, 0, 0);
+  font-family:manrope;
   cursor: pointer;
   user-select: none;
   display: flex;

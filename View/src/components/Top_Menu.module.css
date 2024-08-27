@@ -9,8 +9,8 @@
     align-items: center;
     background-color: var(--main-color);
     padding: 1vh 5vw;
-    color: black;
-    border-bottom: 1px solid #ccc;
+    color: rgb(255, 255, 255);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .topMenu h1{
@@ -21,6 +21,11 @@
   .logoContainer {
     display: flex;
     align-items: center;
+    gap: 10px;
+  }
+  .logoContainer h1 {
+    font-weight: 600;
+    font-family:    manrope;
   }
   
   .companyLogo {
@@ -46,8 +51,7 @@
   }
   
   .profilePic {
-    height: 40px;
-    width: 40px;
+    height: 30px;
     border-radius: 50%;
     margin-right: 5px;
     background-color: aliceblue;
@@ -62,8 +66,8 @@
     position: absolute;
     top: 60px;
     right: 0;
-    background-color: #161b2e;
-    color: black;
+    background-color: #000000;
+    color: rgb(255, 255, 255);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
   }

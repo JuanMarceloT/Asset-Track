@@ -14,14 +14,29 @@ code {
     monospace;
 }
 
+.top {
+  width: 100%;
+  
+  height: 100%;
+  
+  background-color: #cecece;
+}
+.bot {
+  width: 100%;
+  
+  height: 100%;
+  
+  background-color: #c49c9c;
+}
 :root {
-  --main-color: #white; 
-  --menu-color: #white;
+  --main-color: #18181b; 
+  --menu-color: #3d3d43;
   --secondary-color: white; 
-  --card-color: #ffffff;
-  --main-text-color: #000000; 
-  --secondary-text-color: #434343; 
-  --button-color: #540f8d;
+  --card-color: #18181b;
+  --main-text-color: #ffffff; 
+  --secondary-text-color: #cecece; 
+  --button-color: #ffffff;
   --card-color-test: #23003d;
-  --hover-button-color: rgb(39, 4, 66); 
+  --hover-button-color: rgb(196, 196, 196);
+  --border-color: #2e2e2e 
 }
