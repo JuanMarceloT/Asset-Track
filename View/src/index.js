@@ -111,6 +111,7 @@ function App() {
 
   useEffect(()=>{
     updateGraph();
+    // console.log(graph);
   },[onSelectTimePeriod])
   
 

@@ -10,18 +10,17 @@ function FormatToGraphData(Params){
     const data = {
         labels: [],
         values: []
-    }
+    }   
 
     Object.keys(Params).map(key => {
-
-        if(Params[key].assets_value > -1){
-            data.labels.push(formatMonthYear(Params[key].year, Params[key].month));;
-            data.values.push(Params[key].assets_value);
-        }
+        // console.log(Params[);
+            data.labels.push(key);
+            data.values.push(Params[key]);
+        
         //return <div key={key}>{value.monthYear} = ${price} </div>;
     })
 
-    //console.log(data);
+    console.log(data);
     return data;
 }
 
@@ -42,10 +41,10 @@ const Graph = ({ Params , onSelectTimePeriod , SetonSelectTimePeriod}) => {
             
             
             const ctx = chartRef.current.getContext('2d');
-            var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, '#622bf8b7');   // Red color at the top
-                gradient.addColorStop(0.2, '#622bf847');   // Red color at the top
-                gradient.addColorStop(1, '#612af800');   // Blue color at the bottom
+            // var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            //     gradient.addColorStop(0, '#622bf8b7');   // Red color at the top
+            //     gradient.addColorStop(0.2, '#622bf847');   // Red color at the top
+            //     gradient.addColorStop(1, '#612af800');   // Blue color at the bottom
         
             chartInstance = new Chart(ctx, {
                 type: 'line',
@@ -53,8 +52,8 @@ const Graph = ({ Params , onSelectTimePeriod , SetonSelectTimePeriod}) => {
                     labels: data.labels,
                     datasets: [{
                         data: data.values,
-                        borderColor: '#632bf8',
-                        backgroundColor: gradient,
+                        borderColor: '#ffffff',
+                        backgroundColor: '#612af800',
                         fill: true,
                         pointRadius: 0,  // Remove the dots
                     pointHoverRadius: 0  // Remove the dots on hover
@@ -84,10 +83,10 @@ const Graph = ({ Params , onSelectTimePeriod , SetonSelectTimePeriod}) => {
                         stacked: true,
                         title: {
                             display: true,
-                            color: 'black' // Set y-axis title color to black
+                            color: 'white' // Set y-axis title color to black
                         },
                         ticks: {
-                            color: 'black' // Set y-axis ticks color to black
+                            color: 'white' // Set y-axis ticks color to black
                         }
                       },
                       y: {
@@ -95,10 +94,10 @@ const Graph = ({ Params , onSelectTimePeriod , SetonSelectTimePeriod}) => {
                         stacked: true,
                         title: {
                             display: true,
-                            color: 'black' // Set y-axis title color to black
+                            color: 'white' // Set y-axis title color to white
                         },
                         ticks: {
-                            color: 'black' // Set y-axis ticks color to black
+                            color: 'white' // Set y-axis ticks color to white
                         }
                     }
                     }

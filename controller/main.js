@@ -18,7 +18,7 @@ const { formatDate} = require("../utils/date_utils")
 
 async function main() {
     const Graph = await get_stock_dividends_by_period("ITUB4", new Date("04/11/2019"));
-    console.log(Graph);
+    // console.log(Graph);
 }
 
 main();
@@ -47,7 +47,9 @@ app.get('/GetUser', async (req, res) => {
 app.get('/GetGraph', async (req, res) => {
   try {
     const { user_id, time_period } = req.query;
-    res.json(await getAssetValueByPeriod(user_id, time_period));
+    let graph = await getAssetValueByPeriod(user_id, time_period);
+    console.log(graph);
+    res.json(graph);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
