@@ -19,10 +19,14 @@
   width: 30px;
   height: 30px;
   background: none;
-  background-color: rgb(255, 255, 255);
+  background-color: black;
+  color: white;
   border: 1px solid #ccc;
   font-size: 20px;
+  font-family:    manrope;
+  font-weight: 300;
   cursor: pointer;
+  border-radius: 20%;
 }
 .button {
     margin: 10px;

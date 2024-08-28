@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './Stock_input.module.css';  
+import styles from './Stock_input.module.css';
 
 function StockInput({ user_id, HandleNewTransaction }) {
   const [stock_id, setstock_id] = useState('');
@@ -28,9 +28,9 @@ function StockInput({ user_id, HandleNewTransaction }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if(date === " "){
+    if (date === " ") {
       console.log("Coloque data");
-    }else{
+    } else {
 
       const type = tipo;
       let year = date.split('-')[0];
@@ -49,8 +49,8 @@ function StockInput({ user_id, HandleNewTransaction }) {
         month: parseInt(month),
         day: parseInt(day)
       });
-  };
-}
+    };
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -64,14 +64,16 @@ function StockInput({ user_id, HandleNewTransaction }) {
       </label>
       <label>
         Price:
-        <input type="number" step="0.01" min="0" value={price}onChange={handlePriceChange} />
+        <input type="number" step="0.01" min="0" value={price} onChange={handlePriceChange} />
       </label>
       <label>
         Date:
         <input type="date" value={date} onChange={handleDateChange} />
       </label>
-      <button type="submit" onClick={()=> settipo('BUY')}>Comprar</button>
-      <button type="submit" onClick={()=> settipo('SELL')}>Vender</button>
+      <div className={styles.types}>
+        <button type="submit" onClick={() => settipo('BUY')} id={styles.buy}>Comprar</button>
+        <button type="submit" onClick={() => settipo('SELL')} id={styles.sell}>Vender</button>
+      </div>
     </form>
   );
 }
