@@ -5,7 +5,6 @@ const { get_stock_code_by_id } = require("../utils/stocks_hash_map");
 
 
 async function get_daily_close_price(stockName, date) {
-    return 1;
     try {
         const response = await fetch(`http://127.0.0.1:5000/stock/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`);
         //console.log(date);
@@ -21,6 +20,23 @@ async function get_daily_close_price(stockName, date) {
     }
 
 }
+
+async function get_stock_price(stockName) {
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/stock_last_price/${stockName}.SA/`);
+        if (!response.ok) {
+            return undefined;
+        }
+        const data = await response.json();
+
+        return data ?? 0;
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}
+
 
 async function get_period_close_prices(stockName, initial, end, time_period) {
     try {
@@ -292,4 +308,4 @@ async function calculateAssetsValue(stocks, month) {
 }
 
 
-module.exports = {get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_dividends_in_month, calculateAssetsValue, calculateDividendsInMonth, get_User_monthly_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period}
+module.exports = {get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_dividends_in_month,get_stock_price, calculateAssetsValue, calculateDividendsInMonth, get_User_monthly_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period}

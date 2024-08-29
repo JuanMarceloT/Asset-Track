@@ -13,6 +13,14 @@ def get_stock_data(stock_name, date):
     data = ticker.history(start=start_date.strftime('%Y-%m-%d'), end=end_date.strftime('%Y-%m-%d'))
     return jsonify(data.to_dict(orient='records'))
 
+@app.route('/stock_last_price/<string:stock_name>/', methods=['GET'])
+def get_stock_last_price(stock_name):
+    ticker = yf.Ticker(stock_name)
+    last_price = ticker.history(period='1d')['Close'].iloc[-1]
+    return jsonify(last_price)
+
+
+
 
 @app.route('/stock_period/<string:stock_name>/<string:inital_date>/<string:final_date>/<string:periodo>', methods=['GET'])
 def get_stock_data_period(stock_name, inital_date, final_date, periodo):
