@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Transactions_menu.module.css";
-import ScrollableDivs from "./ScrollableDivs";
-import TransactionCard from "./Transaction_card";
+import ScrollableDivs from "../cards/ScrollableDivs";
+import TransactionCard from "../cards/Transaction_card";
 
 
 function Transactions_menu({ transactions }) {

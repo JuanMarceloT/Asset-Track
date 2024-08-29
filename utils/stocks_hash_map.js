@@ -33,9 +33,9 @@ function addStock(stock){
 
 
 addStock({id:6, code:"PETR4", name:"PETROBRAS", img_url:"https://cdn.worldvectorlogo.com/logos/petrobras-8.svg"});
-addStock({id:5, code:"VALE3", name:"VALE3", img_url:"https://cdn.worldvectorlogo.com/logos/petrobras-8.svg"});
-addStock({id:2, code:"ITUB4", name:"Itaú Unibanco", img_url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png"});
-addStock({id:1, code:"CASH3", name:"MELIUZ", img_url:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png"});
+addStock({id:5, code:"VALE3", name:"VALE3", img_url:"https://s3-symbol-logo.tradingview.com/vale--600.png"});
+addStock({id:2, code:"ITUB4", name:"Itaú Unibanco", img_url:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/1011px-Banco_Ita%C3%BA_logo.svg.png"});
+addStock({id:1, code:"CASH3", name:"MELIUZ", img_url:"https://yt3.googleusercontent.com/cxDKS7OTT2SB4CNFHlrAvCDivGJR70H8ne8607esi9q6ALGQClYZPa03qcAR0ynhCtYS5JNMBA=s900-c-k-c0x00ffffff-no-rj"});
 
 function get_stock_id_by_code(stock_code){
     return stocksCode_id.get(stock_code);
@@ -50,7 +50,7 @@ function get_stock_name_by_id(stock_name){
 }
 
 function get_stock_img_by_id(stock_id){
-    return id_stockImg.get(stock_id);
+    return id_StockImg.get(stock_id);
 }
 
 module.exports =  { get_stock_id_by_code, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id };

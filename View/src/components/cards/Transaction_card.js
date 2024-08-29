@@ -1,6 +1,6 @@
 import React from 'react';
 import style from './Transaction_card.module.css';
-import { get_stock_code_by_id, get_stock_img_by_id, get_stock_name_by_id, get_stock_price_by_id } from '../bff';
+import { get_stock_code_by_id, get_stock_img_by_id, get_stock_name_by_id, get_stock_price_by_id } from '../../bff';
 
 const TransactionCard = ({ transaction }) => {
 

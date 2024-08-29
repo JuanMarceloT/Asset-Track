@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Dividends_menu.module.css";
-import ScrollableDivs from "./ScrollableDivs";
-import { get_stock_img_by_id, get_stock_name_by_id , formatMonthYear} from "../bff";
+import ScrollableDivs from "../cards/ScrollableDivs";
+import { get_stock_img_by_id, get_stock_name_by_id , formatMonthYear} from "../../bff";
 
 function Dividends_menu({dividends}){
 
@@ -18,7 +18,7 @@ function Dividends_menu({dividends}){
                     </tr>
                 </thead>
                 <tbody>
-                {
+                {               
                             Object.entries(dividends).reverse().map(([dividendKey, dividend]) => (
                                 Object.entries(dividend["Dividends"]["stock_dividends"]).map(([stockId]) => (
                                     <tr className={styles.card}>

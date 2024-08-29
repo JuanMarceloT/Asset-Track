@@ -14,11 +14,13 @@ const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção} = r
 
 const { get_User_monthly_dividends, getAssetValueByPeriod, get_stock_dividends_by_period } = require( '../services/stock_service');
 
-const { formatDate} = require("../utils/date_utils")
+const { formatDate} = require("../utils/date_utils");
+const { createNewUser } = require('../View/src/bff');
 
 async function main() {
-    const Graph = await get_stock_dividends_by_period("ITUB4", new Date("04/11/2019"));
+    // const Graph = await get_stock_dividends_by_period("ITUB4", new Date("04/11/2019"));
     // console.log(Graph);
+    // const d = CriaUsuario("juan");
 }
 
 main();
@@ -37,7 +39,17 @@ app.get('/users', async (req, res) => {
 app.get('/GetUser', async (req, res) => {
   try {
     const { user_id } = req.query;
-    const user = await SelectUser(user_id);;
+    const user = await SelectUser(user_id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/GetUserStockInfo', async (req, res) => {
+  try {
+    const { user_id } = req.query;
+    const user = await SelectUser(user_id);
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
@@ -48,7 +60,7 @@ app.get('/GetGraph', async (req, res) => {
   try {
     const { user_id, time_period } = req.query;
     let graph = await getAssetValueByPeriod(user_id, time_period);
-    console.log(graph);
+    // console.log(graph);
     res.json(graph);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });

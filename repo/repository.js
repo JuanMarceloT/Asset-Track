@@ -3,7 +3,7 @@ const { type } = require('os');
 const pool = require('./db');
 const { get } = require('https');
 const { promises } = require('dns');
-const { get_stock_name_by_id } = require('../utils/stocks_hash_map.js');
+const { get_stock_name_by_id, get_stock_img_by_id, get_stock_code_by_id } = require('../utils/stocks_hash_map.js');
 const { ok } = require('assert');
 
 
@@ -72,7 +72,6 @@ async function CriarTabelaStocks() {
   const query = `CREATE TABLE IF NOT EXISTS STOCKS (
         User_ID INTEGER REFERENCES USUARIO(ID),
         STOCK_ID INTEGER,
-        STOCK_NAME VARCHAR(255),
         AVG_PRICE INTEGER NOT NULL,  
         UNITS INTEGER NOT NULL  
     )
@@ -146,13 +145,19 @@ async function GetUserTransactions(id) {
 
 async function GetUserStocks(id) {
   const StocksQuery = `
-        SELECT ROUND(avg_price::numeric / 100, 2) as avg_price_in_Real, stock_id, stock_name, units
+        SELECT ROUND(avg_price::numeric / 100, 2) as avg_price_in_Real, stock_id, units
         FROM stocks
         WHERE user_id = $1;
       `;
-  const user_id = [id];
   const StocksResult = await executeQuery(StocksQuery, [id]);
-  //console.log(StocksResult);
+  StocksResult.forEach(x => {
+    x.img_url = get_stock_img_by_id(x.stock_id);
+    
+    x.img_url = get_stock_img_by_id(x.stock_id);
+    x.stock_name = get_stock_name_by_id(x.stock_id);
+    x.stock_code = get_stock_code_by_id(x.stock_id);
+    console.log(x);
+  });
   return StocksResult;
 }
 
@@ -427,10 +432,10 @@ async function createStock(userId, stockId, units, price) {
   }
 
   const query = `
-    INSERT INTO stocks (user_id, stock_id, STOCK_NAME, units, avg_price)
-    VALUES ($1, $2, $3, $4, $5);
+    INSERT INTO stocks (user_id, stock_id, units, avg_price)
+    VALUES ($1, $2, $3, $4);
   `;
-  await executeQuery(query, [userId, stockId, get_stock_name_by_id(stockId), units, price]);
+  await executeQuery(query, [userId, stockId, units, price]);
 }
 
 async function deleteStock(userId, stockId) {

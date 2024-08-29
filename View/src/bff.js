@@ -92,10 +92,14 @@ function get_stock_code_by_id(id){
 
 function get_stock_img_by_id(id){
   switch(id){
-    case 1:
-      return "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/1011px-Banco_Ita%C3%BA_logo.svg.png";
     case 2:
+      return "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/1011px-Banco_Ita%C3%BA_logo.svg.png";
+    case 6:
       return "https://cdn.worldvectorlogo.com/logos/petrobras-8.svg";
+    case 5: 
+      return "https://s3-symbol-logo.tradingview.com/vale--600.png";
+    case 1:
+      return "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png";
     default:
       return 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png'
   }
@@ -104,7 +108,7 @@ function get_stock_img_by_id(id){
 function get_stock_price_by_id(id){
   switch(id){
     case 1:
-      return 25.45;
+      return 1.15;
     case 2:
       return 18.16;
     default:

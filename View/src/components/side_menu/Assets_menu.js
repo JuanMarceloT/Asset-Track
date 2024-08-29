@@ -1,8 +1,8 @@
 import React , {useState} from "react";
-import ScrollableDivs from "./ScrollableDivs";
-import Simple_stock_card from "./Simple_stock_card";
-import PlusButton from "./PlusButton";
-import StockInput from "./Stock_input";
+import ScrollableDivs from "../cards/ScrollableDivs";
+import Simple_stock_card from "../cards/Simple_stock_card";
+import PlusButton from "../cards/PlusButton";
+import StockInput from "../cards/Stock_input";
 
 import styles from './Assets_menu.module.css';
 
@@ -27,7 +27,7 @@ function Assets_menu({stocks, HandleNewTransaction, id}){
         <ScrollableDivs>
           {
             stocks && stocks.map((stock) => (
-              <Simple_stock_card stock_id={stock.stock_id} Avg_price={stock.avg_price_in_real} />
+              <Simple_stock_card stock={stock} />
             ))
           }
         </ScrollableDivs>

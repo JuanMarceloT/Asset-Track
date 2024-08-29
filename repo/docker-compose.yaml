@@ -13,4 +13,6 @@ services:
     ports:
       - "5439:5432" 
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Mount the volume
+      - /var/lib/postgresql/data # Anonymous volume
+    # volumes:
+    #   - postgres_data:/var/lib/postgresql/data  # Mount the volume

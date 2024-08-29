@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import ScrollableDivs from './ScrollableDivs';
-import Simple_stock_card from './Simple_stock_card';
+import ScrollableDivs from '../cards/ScrollableDivs';
+import Simple_stock_card from '../cards/Simple_stock_card';
 import styles from './selectable_menu.module.css';
-import PlusButton from './PlusButton';
-import StockInput from './Stock_input';
-import TransactionCard from './Transaction_card';
+import PlusButton from '../cards/PlusButton';
+import StockInput from '../cards/Stock_input';
+import TransactionCard from '../cards/Transaction_card';
 import Assets_menu from './Assets_menu';
 import Transactions_menu from './Transactions_menu';
 import Dividends_menu from './Dividends_menu';
@@ -27,6 +27,7 @@ const Selectable_menu = ({ id, HandleNewTransaction, stocks, transactions, Divid
       content = <Transactions_menu  transactions={transactions}/>
       break;
     case 2:
+      console.log(Dividends);
       content = <Dividends_menu dividends={Dividends}/>
       break;
     default:

@@ -1,47 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import Selectable_menu from './components/Selectable_menu';
-import Info_Card from './components/Info_Card';
+import Selectable_menu from './components/side_menu/Selectable_menu';
+import Info_Card from './components/cards/Info_Card';
 import './index.css';
-import Graph from './components/graph';
+import Graph from './components/graph/graph';
 import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividends, get_ytd_dividends} from './bff.js';
 
 import Dashboard_Section from './Dashboard_Section';
-import Top_Cards from './components/Top_Cards';
-import Top_Menu from './components/Top_Menu';
+import Top_Menu from './components/top_menu/Top_Menu';
 
 function App() {
-  const id = 93;
+  const id = 7;
 
-  const [onSelectTimePeriod, SetonSelectTimePeriod] = useState('1d');
   const [Username,setusername] = useState(null);
   const [stocks, setstocks] = useState(null);
   const [transactions, settransacitons] = useState(null);
-  const [updateFlag, setUpdateFlag] = useState(0);
-  const [StocksLoading, SetStocksLoading] = useState(0);
-  const [graph, setGraph] = useState({});
   const [Invested, setInvested] = useState(0); 
-  const [variation, setVariation] = useState(0);
   const [Dividends, setDividends] = useState(0);
   const [Dividends_ytd, setDividends_ytd] = useState(0);
 
 
   function HandleNewTransaction (args) {
     Create_New_Transaction(args);
-    setUpdateFlag(1);
   };
 
   function GetInvestedValues(graph){
-    let this_month = graph[graph.length - 1].assets_value;
-    console.log("oasd");
-    console.log(graph);
-    setInvested(this_month);
-  }
-
-  function GetVariation(graph){
-    let this_month = graph[graph.length - 1].assets_value;
-    let last_month = graph[graph.length - 2].assets_value;
-    setVariation(this_month - last_month);
+    setInvested(0);
   }
 
   const Inicializer = async () => {
@@ -64,23 +48,8 @@ function App() {
       const data = await GetUser(id);
       setstocks(data.stocks);
       settransacitons(data.transactions);
-      ////console.log(transactions);
-      ////console.log(stocks);
     } catch (error) {
       console.error("Error fetching user:", error);
-    }
-  };
-
-  const updateGraph = async () => {
-    try {
-      const data = await Get_Graph_Params(id, onSelectTimePeriod);
-      setGraph(data);
-      //console.log(data);
-      GetInvestedValues(data);
-      GetVariation(data);
-      
-    } catch (error) {
-      console.error("Error fetching graph:", error);
     }
   };
 
@@ -90,34 +59,6 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (updateFlag === 1) {
-          SetStocksLoading(true);
-          try {
-              await updateTransactionsAndStocks();
-              SetStocksLoading(false);
-              await updateGraph();
-              setUpdateFlag(0);
-          } catch (error) {
-              console.error('Failed to update transactions and stocks:', error);
-              SetStocksLoading(false);
-          }
-      }
-  };
-
-  fetchData();
-  }, [updateFlag]);
-
-  useEffect(()=>{
-    updateGraph();
-    // console.log(graph);
-  },[onSelectTimePeriod])
-  
-
-
-
-
   return (
     <React.StrictMode>
       <Top_Menu/>
@@ -125,7 +66,7 @@ function App() {
         <Info_Card content={{title: "Investido", content:`R$ ${Invested.toFixed(2)}`, subcontent:"+12% this month"}}/>
         <Info_Card content={{title: "Dividendos deste ano", content:`R$ ${Dividends_ytd.toFixed(2)}`, subcontent:"+8% this year"}}/>
         <Selectable_menu id={id} HandleNewTransaction={HandleNewTransaction} stocks={stocks} transactions={transactions} Dividends={Dividends}/>
-        <Graph Params={graph} onSelectTimePeriod={onSelectTimePeriod} SetonSelectTimePeriod={SetonSelectTimePeriod}/>
+        <Graph user_id={id}/>
       </Dashboard_Section>
     </React.StrictMode>
   );
