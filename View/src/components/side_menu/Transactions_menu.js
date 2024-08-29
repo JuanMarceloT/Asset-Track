@@ -4,7 +4,7 @@ import ScrollableDivs from "../cards/ScrollableDivs";
 import TransactionCard from "../cards/Transaction_card";
 
 
-function Transactions_menu({ transactions }) {
+function Transactions_menu({ transactions , stock_infos}) {
     return (<div className={styles.assetMenu}>
         <ScrollableDivs>
             {transactions != null && (<table>
@@ -20,7 +20,7 @@ function Transactions_menu({ transactions }) {
                 <tbody>
                     {
                         transactions && transactions.map((transaction) => (
-                            <TransactionCard key={transaction.id} transaction={{ type: transaction.transaction_type, date: transaction.timestamp, units: transaction.units, price: transaction.price_in_real, stock_id: transaction.stock_id }} />
+                            <TransactionCard key={transaction.id} transaction={{ type: transaction.transaction_type, date: transaction.timestamp, units: transaction.units, price: transaction.price_in_real, stock_id: transaction.stock_id, img: stock_infos[transaction.stock_id].img,  stock_name: stock_infos[transaction.stock_id].stock_name  }} />
                         ))
                     }
                 </tbody>

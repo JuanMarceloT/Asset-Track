@@ -9,14 +9,13 @@ import Assets_menu from './Assets_menu';
 import Transactions_menu from './Transactions_menu';
 import Dividends_menu from './Dividends_menu';
 
-const Selectable_menu = ({ id, stocks, transactions, Dividends }) => {
+const Selectable_menu = ({ id, stocks, transactions, Dividends, stock_infos }) => {
   const [selected, setSelected] = useState(0);
 
   const handleSelect = (index) => {
     setSelected(index);
   };
-  //console.log(stocks);
-
+  
   let content;
 
   switch (selected) {
@@ -24,7 +23,7 @@ const Selectable_menu = ({ id, stocks, transactions, Dividends }) => {
       content = <Assets_menu stocks={stocks} id={id}/>
       break;
     case 1:
-      content = <Transactions_menu  transactions={transactions}/>
+      content = <Transactions_menu  transactions={transactions} stock_infos={stock_infos} />
       break;
     case 2:
       console.log(Dividends);
