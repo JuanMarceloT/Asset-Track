@@ -18,23 +18,13 @@
     flex-direction: column;
     row-gap: 1vh;
 }
-.card {
-    flex:1;
-    display: flex;
-    flex-direction: column;
-    row-gap: 1vh; 
-}
-.input{
-    flex:2;
-}
 
-.stocks, .graph {
-    margin: 10px;
-}
-
-.cards, .input, .graph{
+.graph{
     background-color: var(--card-color);
     border-radius: 10px;
     /* margin: 5px; */
     border: 2px solid var(--border-color);
+}
+.stocks, .graph {
+    margin: 10px;
 }

@@ -10,20 +10,10 @@ function Dashboard_Section({ children }) {
     return (
         <div className={styles.container}>
             <div className={styles.stocks}>
-                <div className={styles.card}>
-                    <div className={styles.cards}>
-                        {firstChild}
-                    </div>
-                    <div className={styles.cards}>
-                        {childrenArray[1]}
-                    </div>
-                </div>
-                <div className={styles.input}>
-                    {childrenArray[2]}
-                </div>
+                {firstChild}
             </div>
             <div className={styles.graph}>
-                {childrenArray[3]}
+                {secondChild}
             </div>
         </div>
     );

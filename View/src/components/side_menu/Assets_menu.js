@@ -2,11 +2,11 @@ import React , {useState} from "react";
 import ScrollableDivs from "../cards/ScrollableDivs";
 import Simple_stock_card from "../cards/Simple_stock_card";
 import PlusButton from "../cards/PlusButton";
-import StockInput from "../cards/Stock_input";
+import StockInput from "./Stock_input";
 
 import styles from './Assets_menu.module.css';
 
-function Assets_menu({stocks, HandleNewTransaction, id}){
+function Assets_menu({stocks, id}){
 
 
 
@@ -16,7 +16,7 @@ function Assets_menu({stocks, HandleNewTransaction, id}){
       <button className={styles.closeButton} onClick={() => {
         setIsTabMenu(!IsTabMenu);
       }}>X</button>
-      <StockInput user_id={id} HandleNewTransaction={HandleNewTransaction} />
+      <StockInput user_id={id} />
     </div>
     );
   }
@@ -27,7 +27,7 @@ function Assets_menu({stocks, HandleNewTransaction, id}){
         <ScrollableDivs>
           {
             stocks && stocks.map((stock) => (
-              <Simple_stock_card stock={stock} />
+              <Simple_stock_card key={stock.stock_id} stock={stock} />
             ))
           }
         </ScrollableDivs>

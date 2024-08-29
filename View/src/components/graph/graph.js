@@ -40,7 +40,6 @@ const Graph = ({ user_id }) => {
 
     useEffect(() => {
         updateGraph();
-        console.log("entrei");
     }, [onSelectTimePeriod]);
 
     useEffect(() => {

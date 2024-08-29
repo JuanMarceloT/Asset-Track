@@ -8,7 +8,9 @@ const TransactionCard = ({ transaction }) => {
 
   return (
     <tr className={style.card}>
-      <img src={get_stock_img_by_id(transaction.stock_id)} alt='logo'></img>
+      <td>
+        <img src={get_stock_img_by_id(transaction.stock_id)} alt='logo'></img>
+      </td>
       <td>{get_stock_name_by_id(transaction.stock_id)}</td>
       <td>{transaction.date.split('').slice(0, 10).join('')}</td>
       <td>{transaction.type}</td>

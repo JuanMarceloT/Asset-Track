@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import styles from './Stock_input.module.css';
+import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividends, get_ytd_dividends} from './../../bff.js';
 
-function StockInput({ user_id, HandleNewTransaction }) {
+function HandleNewTransaction(args) {
+    Create_New_Transaction(args);
+};
+
+
+function StockInput({ user_id }) {
   const [stock_id, setstock_id] = useState('');
   const [units, setUnits] = useState('');
   const [price, setPrice] = useState('');
