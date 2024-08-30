@@ -6,7 +6,7 @@ import StockInput from "./Stock_input";
 
 import styles from './Assets_menu.module.css';
 
-function Assets_menu({stocks, id, setReload}){
+function Assets_menu({stocks, id, setReload, stock_prices}){
 
 
 
@@ -27,7 +27,7 @@ function Assets_menu({stocks, id, setReload}){
         <ScrollableDivs>
           {
             stocks && stocks.map((stock) => (
-              <Simple_stock_card key={stock.stock_id} stock={stock} />
+              <Simple_stock_card key={stock.stock_id} stock={stock} stock_prices={stock_prices[stock.stock_id]} />
             ))
           }
         </ScrollableDivs>

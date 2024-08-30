@@ -12,6 +12,7 @@ function Side_menu({ user_id, setReload, Reload}) {
     const [Dividends, setDividends] = useState(0);
     const [Dividends_ytd, setDividends_ytd] = useState(0);
     const [stock_infos, setStockInfos] = useState([]);
+    const [stock_prices, setstock_prices] = useState({});
 
 
     useEffect(() => {
@@ -47,8 +48,7 @@ function Side_menu({ user_id, setReload, Reload}) {
 
     const prices = useMemo(() => {
         if(stocks){
-            console.log(stocks);
-            // Get_prices(stocks).then(x => console.log(x)); 
+            Get_prices(stocks).then(x => console.log(x)); 
         }
     }, [stocks]);
 
@@ -56,19 +56,20 @@ function Side_menu({ user_id, setReload, Reload}) {
 
         const response = {};
 
-        //  Create an array of promises for all stock prices
-         const pricePromises = stocks.map(stock => {
-           return get_stock_price_by_id(stock.stock_id).then(price => {
-             const variation = parseInt((price * 100 / parseFloat(stock.avg_price_in_real)) - 100);
-             response[stock.stock_id] = {
-               price,
-               variation
-             };
-           });
-         });
+        for (const stock of stocks) {
+            try {
+              const price = await get_stock_price_by_id(stock.stock_id);
+              const variation = parseInt((price * 100 / parseFloat(stock.avg_price_in_real)) - 100);
+              response[stock.stock_id] = {
+                price,
+                variation,
+              };
+            } catch (error) {
+              console.error(`Error fetching price for stock ID ${stock.stock_id}:`, error);
+            }
+          }
 
-         await Promise.all(pricePromises);
-      
+        setstock_prices(response);
         return response;
     };
 
@@ -84,7 +85,7 @@ function Side_menu({ user_id, setReload, Reload}) {
                     </div>
                 </div>
                 <div className={styles.input}>
-                    <Selectable_menu id={user_id} stocks={stocks} transactions={transactions} Dividends={Dividends} setReload={setReload} stock_infos={stock_infos} />
+                    <Selectable_menu id={user_id} stocks={stocks} stock_prices={stock_prices} transactions={transactions} Dividends={Dividends} setReload={setReload} stock_infos={stock_infos} />
                 </div>
             </div>
         </div>

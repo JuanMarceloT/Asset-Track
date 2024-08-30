@@ -9,7 +9,7 @@ import Assets_menu from './Assets_menu';
 import Transactions_menu from './Transactions_menu';
 import Dividends_menu from './Dividends_menu';
 
-const Selectable_menu = ({ id, stocks, transactions, Dividends, stock_infos, setReload }) => {
+const Selectable_menu = ({ id, stocks,stock_prices, transactions, Dividends, stock_infos, setReload }) => {
   const [selected, setSelected] = useState(0);
 
   const handleSelect = (index) => {
@@ -20,7 +20,7 @@ const Selectable_menu = ({ id, stocks, transactions, Dividends, stock_infos, set
 
   switch (selected) {
     case 0:
-      content = <Assets_menu stocks={stocks} setReload={setReload} id={id}/>
+      content = <Assets_menu stocks={stocks} setReload={setReload} id={id} stock_prices={stock_prices}/>
       break;
     case 1:
       content = <Transactions_menu  transactions={transactions} stock_infos={stock_infos} />

@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './simple_stock_card.module.css';
 import { get_stock_code_by_id, get_stock_img_by_id, get_stock_name_by_id, get_stock_price_by_id } from '../../bff';
 
 
-function Simple_stock_card({ stock }) {
+function Simple_stock_card({ stock, stock_prices }) {
 
-  let stock_variation = 0;
-  let price = 0.0;
+  
+  const [stockPrice, setStockPrice] = useState(0);
+  const [stockVariation, setStockVariation] = useState(0); 
+
+  useEffect(() => {
+    if(stock_prices){
+      setStockPrice(stock_prices.price);
+      setStockVariation(stock_prices.variation);
+    }
+  }, [stock_prices]);
 
   return (
     <div className={styles.container}>
@@ -17,14 +25,14 @@ function Simple_stock_card({ stock }) {
           <p>{stock.stock_code}</p>
         </div>
         <div className={styles.stock_price}>
-          <h1>R$ {price.toFixed(2)}</h1>
+          <h1>R$ {stockPrice.toFixed(2)}</h1>
           <span id={
-            stock_variation > 0
+            stockVariation > 0
               ? styles.positive
-              : stock_variation < 0
+              : stockVariation < 0
                 ? styles.negative
                 : styles.neutral
-          }>{stock_variation}%</span>
+          }>{stockVariation}%</span>
         </div>
 
       </div>
