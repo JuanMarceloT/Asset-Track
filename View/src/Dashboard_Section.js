@@ -35,5 +35,5 @@ function Dashboard_Section({ children }) {
 
 */
 
-export default Dashboard_Section;
+export default React.memo(Dashboard_Section);
 

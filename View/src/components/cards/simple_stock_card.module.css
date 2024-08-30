@@ -40,3 +40,7 @@ span {
 #negative{
     color: red;
 }
+
+#neutral{
+    color: rgb(141, 141, 141);
+}

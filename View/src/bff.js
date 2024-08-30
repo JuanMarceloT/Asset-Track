@@ -105,15 +105,9 @@ function get_stock_img_by_id(id){
   }
 }
 
-function get_stock_price_by_id(id){
-  switch(id){
-    case 1:
-      return 1.15;
-    case 2:
-      return 18.16;
-    default:
-      return 7.15;
-  }
+async function get_stock_price_by_id(id){
+  const price = await CallEndpointGet(`Stock_price?stock_id=${id}`);
+  return price;
 }
 
 function formatMonthYear(year, month) {

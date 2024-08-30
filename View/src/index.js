@@ -9,10 +9,10 @@ import Dashboard_Section from './Dashboard_Section';
 import Top_Menu from './components/top_menu/Top_Menu';
 
 function App() {
-  const id = 7;
+  const id = 6;
 
   const [Username,setusername] = useState(null);
-
+  const [Reload, setReload] = useState(true);
 
 
   // const Inicializer = async () => {
@@ -41,8 +41,8 @@ function App() {
     <React.StrictMode>
       <Top_Menu/>
       <Dashboard_Section>
-        <Side_menu  user_id={id}/>
-        <Graph user_id={id}/>
+        <Side_menu  user_id={id} setReload={setReload} Reload={Reload}/>
+        <Graph user_id={id} Reload={Reload}/>
       </Dashboard_Section>
     </React.StrictMode>
   );

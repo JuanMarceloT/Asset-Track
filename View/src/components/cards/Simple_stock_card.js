@@ -1,31 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './simple_stock_card.module.css';
 import { get_stock_code_by_id, get_stock_img_by_id, get_stock_name_by_id, get_stock_price_by_id } from '../../bff';
 
 
-function Simple_stock_card ({stock}){
+function Simple_stock_card({ stock }) {
 
-      let stock_price = get_stock_price_by_id(stock.stock_id);
-      let stock_variation = (stock_price * 100 / parseFloat(stock.avg_price_in_real)) - 100; 
-      stock_variation = parseInt(stock_variation);
-        return (
-            <div className={styles.container}>
-              <img src={stock.img_url} alt='logo'></img>
-              <div className={styles.infos}>
-                <div className={styles.stock_code}> 
-                  <h1>{stock.stock_name}</h1>
-                  <p>{stock.stock_code}</p>
-                </div>
-                <div className={styles.stock_price}>
-                  <h1>R$ {stock_price}</h1>
-                  <span id={stock_variation > 0 ? styles.positive : styles.negative}>{stock_variation}%</span>
-                </div>
+  let stock_variation = 0;
+  let price = 0.0;
 
-              </div>
-            </div>
-      
-          );
-    
+  return (
+    <div className={styles.container}>
+      <img src={stock.img_url} alt='logo'></img>
+      <div className={styles.infos}>
+        <div className={styles.stock_code}>
+          <h1>{stock.stock_name}</h1>
+          <p>{stock.stock_code}</p>
+        </div>
+        <div className={styles.stock_price}>
+          <h1>R$ {price.toFixed(2)}</h1>
+          <span id={
+            stock_variation > 0
+              ? styles.positive
+              : stock_variation < 0
+                ? styles.negative
+                : styles.neutral
+          }>{stock_variation}%</span>
+        </div>
+
+      </div>
+    </div>
+
+  );
+
 };
 
 export default Simple_stock_card;

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import styles from './Side_menu.module.css'
 import Selectable_menu from "./Selectable_menu"
 import Info_Card from "./../cards/Info_Card"
-import { GetUser } from '../../bff';
+import { GetUser , get_stock_price_by_id } from '../../bff';
 
-function Side_menu({ user_id }) {
+
+function Side_menu({ user_id, setReload, Reload}) {
     const [stocks, setstocks] = useState(null);
     const [transactions, settransacitons] = useState(null);
     const [Invested, setInvested] = useState(0);
@@ -16,6 +17,7 @@ function Side_menu({ user_id }) {
     useEffect(() => {
         async function fetchData() {
             try {
+                
                 let user = await GetUser(user_id);
                 console.log(user);
                 setstocks(user.stocks);
@@ -35,10 +37,40 @@ function Side_menu({ user_id }) {
 
             } catch (error) {
                 console.error('Error fetching user data:', error);
+            }finally{
+                setReload(false);
             }
         }
         fetchData();
-    }, []);
+    }, [Reload]);
+
+
+    const prices = useMemo(() => {
+        if(stocks){
+            console.log(stocks);
+            // Get_prices(stocks).then(x => console.log(x)); 
+        }
+    }, [stocks]);
+
+    async function Get_prices(stocks) {
+
+        const response = {};
+
+        //  Create an array of promises for all stock prices
+         const pricePromises = stocks.map(stock => {
+           return get_stock_price_by_id(stock.stock_id).then(price => {
+             const variation = parseInt((price * 100 / parseFloat(stock.avg_price_in_real)) - 100);
+             response[stock.stock_id] = {
+               price,
+               variation
+             };
+           });
+         });
+
+         await Promise.all(pricePromises);
+      
+        return response;
+    };
 
     return (
         <div className={styles.container}>
@@ -52,7 +84,7 @@ function Side_menu({ user_id }) {
                     </div>
                 </div>
                 <div className={styles.input}>
-                    <Selectable_menu id={user_id} stocks={stocks} transactions={transactions} Dividends={Dividends} stock_infos={stock_infos} />
+                    <Selectable_menu id={user_id} stocks={stocks} transactions={transactions} Dividends={Dividends} setReload={setReload} stock_infos={stock_infos} />
                 </div>
             </div>
         </div>

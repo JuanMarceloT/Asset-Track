@@ -6,7 +6,7 @@ import StockInput from "./Stock_input";
 
 import styles from './Assets_menu.module.css';
 
-function Assets_menu({stocks, id}){
+function Assets_menu({stocks, id, setReload}){
 
 
 
@@ -16,7 +16,7 @@ function Assets_menu({stocks, id}){
       <button className={styles.closeButton} onClick={() => {
         setIsTabMenu(!IsTabMenu);
       }}>X</button>
-      <StockInput user_id={id} />
+      <StockInput user_id={id} setReload={setReload} />
     </div>
     );
   }
@@ -39,4 +39,4 @@ function Assets_menu({stocks, id}){
 
 }
 
-export default Assets_menu;
+export default React.memo(Assets_menu);

@@ -23,7 +23,7 @@ function FormatToGraphData(Params) {
 }
 
 
-const Graph = ({ user_id }) => {
+const Graph = ({ user_id, Reload }) => {
 
     const [onSelectTimePeriod, SetonSelectTimePeriod] = useState('1d');
     const [graph, setGraph] = useState({});
@@ -40,7 +40,7 @@ const Graph = ({ user_id }) => {
 
     useEffect(() => {
         updateGraph();
-    }, [onSelectTimePeriod]);
+    }, [onSelectTimePeriod, Reload]);
 
     useEffect(() => {
         const data = FormatToGraphData(graph);

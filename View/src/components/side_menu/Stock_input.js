@@ -7,7 +7,7 @@ function HandleNewTransaction(args) {
 };
 
 
-function StockInput({ user_id }) {
+function StockInput({ user_id, setReload }) {
   const [stock_id, setstock_id] = useState('');
   const [units, setUnits] = useState('');
   const [price, setPrice] = useState('');
@@ -55,6 +55,8 @@ function StockInput({ user_id }) {
         month: parseInt(month),
         day: parseInt(day)
       });
+
+      setReload(true);
     };
   }
 
