@@ -110,6 +110,21 @@ async function get_stock_price_by_id(id){
   return price;
 }
 
+
+async function get_assets_total_value(stocks) {
+  // Create a copy of stocks to avoid mutating the original array
+  const stocksCopy = [...stocks];
+
+  const pricePromises = stocksCopy.map(async (stock) => {
+    const price = await get_stock_price_by_id(stock.stock_id);
+    return price * stock.units;
+  });
+
+  const totalValues = await Promise.all(pricePromises);
+  const totalAssetsValue = totalValues.reduce((acc, value) => acc + value, 0);
+
+  return totalAssetsValue;
+}
 function formatMonthYear(year, month) {
   const monthNames = [
       "January", "February", "March", "April", "May", "June",
@@ -132,4 +147,4 @@ function get_ytd_dividends(dividend){
 }
 
 
-module.exports = { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends};
+module.exports = { GetUser,get_assets_total_value,  Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends};

@@ -2,23 +2,22 @@ import React, { useEffect, useState, useMemo } from 'react';
 import styles from './Side_menu.module.css'
 import Selectable_menu from "./Selectable_menu"
 import Info_Card from "./../cards/Info_Card"
-import { GetUser , get_stock_price_by_id } from '../../bff';
+import { GetUser , get_stock_price_by_id, get_assets_total_value } from '../../bff';
 
 
 function Side_menu({ user_id, setReload, Reload}) {
     const [stocks, setstocks] = useState(null);
     const [transactions, settransacitons] = useState(null);
-    const [Invested, setInvested] = useState(0);
     const [Dividends, setDividends] = useState(0);
     const [Dividends_ytd, setDividends_ytd] = useState(0);
     const [stock_infos, setStockInfos] = useState([]);
     const [stock_prices, setstock_prices] = useState({});
+    const [total_assets_value, settotal_assets_value] = useState(0);
 
 
     useEffect(() => {
         async function fetchData() {
             try {
-                
                 let user = await GetUser(user_id);
                 console.log(user);
                 setstocks(user.stocks);
@@ -48,7 +47,8 @@ function Side_menu({ user_id, setReload, Reload}) {
 
     const prices = useMemo(() => {
         if(stocks){
-            Get_prices(stocks).then(x => console.log(x)); 
+            Get_prices(stocks);
+            total_value(stocks);
         }
     }, [stocks]);
 
@@ -73,12 +73,19 @@ function Side_menu({ user_id, setReload, Reload}) {
         return response;
     };
 
+
+    async function total_value(stocks){
+        let total_value = await get_assets_total_value(stocks);
+        settotal_assets_value(total_value);
+        return total_value;
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.stocks}>
                 <div className={styles.card}>
                     <div className={styles.cards}>
-                        <Info_Card content={{ title: "Investido", content: `R$ ${Invested.toFixed(2)}`, subcontent: "+12% this month" }} />
+                        <Info_Card content={{ title: "Investido", content: `R$ ${total_assets_value.toFixed(2)}`, subcontent: "+12% this month" }} />
                     </div>
                     <div className={styles.cards}>
                         <Info_Card content={{ title: "Dividendos deste ano", content: `R$ ${Dividends_ytd.toFixed(2)}`, subcontent: "+8% this year" }} />
