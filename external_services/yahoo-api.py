@@ -65,19 +65,16 @@ def get_dividends_month(stock_name, date):
         # If there are no dividends for the specified date, return an empty JSON response
         return jsonify({})
 
-@app.route('/dividends_period/<string:stock_name>/<string:date>', methods=['GET'])
-def get_dividends_by_period(stock_name, date):
+@app.route('/dividends_period/<string:stock_name>/<string:ini_date>/<string:final_date>', methods=['GET'])
+def get_dividends_by_period(stock_name, ini_date, final_date):
     # Get the ticker and dividends data
     ticker = yf.Ticker(stock_name)
     dividends = ticker.dividends
     
     try:
-        # Convert date to datetime object
-        month = datetime.strptime(date, '%Y-%m')
-        
         # Filter dividends data for the specified month
-        filtered_dividends = dividends[(dividends.index.year >= month.year) & (dividends.index.month >= month.month)]
-        
+        filtered_dividends = dividends[(dividends.index >= ini_date) & (dividends.index <= final_date)]
+
         # Convert the filtered dividends to a dictionary with string keys
         filtered_dividends_dict = {str(k): v for k, v in filtered_dividends.items()}
         
