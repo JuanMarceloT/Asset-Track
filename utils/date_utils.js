@@ -21,7 +21,9 @@ function getLastWeekdaysSince(month, year) {
     return result;
 }
 
-
+function date_to_yyyy_mm_dd(date){
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+}
 
 function formatDate(year, month, day) {
     const formattedMonth = String(month).padStart(2, '0');
@@ -46,4 +48,4 @@ function compare_string_yyyy_mm_dd_dates(date1, date2) {
 
     return true;
 }
-module.exports = {getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates}
+module.exports = {getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd}

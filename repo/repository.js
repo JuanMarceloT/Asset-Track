@@ -166,25 +166,22 @@ async function Stocks_aggregated_by_month(id) {
     const query = `
     WITH aggregated_data AS (
       SELECT
-          DATE_TRUNC('month', timestamp) AS month_date,
+          EXTRACT(YEAR FROM timestamp) AS year,
+          EXTRACT(MONTH FROM timestamp) AS month,
           stock_id,
-          SUM(
-              CASE
-                  WHEN transaction_type = 'BUY' THEN units
-                  WHEN transaction_type = 'SELL' THEN -units
-                  ELSE 0
-              END
-          ) AS total_qtd
+          SUM(CASE WHEN transaction_type = 'BUY' THEN units WHEN transaction_type = 'SELL' THEN -units ELSE 0 END) AS total_qtd
       FROM
           transactions
       WHERE
           user_id = $1
       GROUP BY
-          month_date,
+          EXTRACT(YEAR FROM timestamp),
+          EXTRACT(MONTH FROM timestamp),
           stock_id
   )
   SELECT
-      TO_CHAR(month_date, 'MM-DD-YYYY') AS month,
+      year,
+      month,
       json_agg(
           json_build_object(
               'stock_id', stock_id,
@@ -194,10 +191,11 @@ async function Stocks_aggregated_by_month(id) {
   FROM
       aggregated_data
   GROUP BY
-      month_date
+      year,
+      month
   ORDER BY
-      month_date;
-  
+      year,
+      month;
   
     `;
     const Stocks_by_month = await executeQuery(query, [id]);
@@ -228,25 +226,25 @@ async function Stocks_aggregated(id) {
     const query = `
     WITH aggregated_data AS (
       SELECT
-          EXTRACT(YEAR FROM timestamp) AS year,
-          EXTRACT(MONTH FROM timestamp) AS month,
-          EXTRACT(DAY FROM timestamp) AS day,
+          DATE_TRUNC('day', timestamp) AS date,
           stock_id,
-          SUM(CASE WHEN transaction_type = 'BUY' THEN units WHEN transaction_type = 'SELL' THEN -units ELSE 0 END) AS total_qtd
+          SUM(
+              CASE
+                  WHEN transaction_type = 'BUY' THEN units
+                  WHEN transaction_type = 'SELL' THEN -units
+                  ELSE 0
+              END
+          ) AS total_qtd
       FROM
           transactions
       WHERE
           user_id = $1
       GROUP BY
-          EXTRACT(YEAR FROM timestamp),
-          EXTRACT(MONTH FROM timestamp),
-          EXTRACT(DAY FROM timestamp),
+          date,
           stock_id
   )
   SELECT
-      year,
-      month,
-      day,
+      TO_CHAR(date, 'YYYY-MM-DD') AS date,
       json_agg(
           json_build_object(
               'stock_id', stock_id,
@@ -256,15 +254,9 @@ async function Stocks_aggregated(id) {
   FROM
       aggregated_data
   GROUP BY
-      year,
-      month,
-      day
+      date
   ORDER BY
-      year,
-      month,
-      day;
-  
-    `;
+      date;`
     const Stocks_by_month = await executeQuery(query, [id]);
     if (Stocks_by_month.length === 0) {
       throw new Error('No Stocks found');
