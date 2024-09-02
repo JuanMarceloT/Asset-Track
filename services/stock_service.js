@@ -1,4 +1,4 @@
-const { Stocks_aggregated_by_month, Stocks_aggregated } = require("../repo/repository")
+const { Stocks_aggregated } = require("../repo/repository")
 const { getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd } = require("../utils/date_utils");
 const { get_stock_code_by_id } = require("../utils/stocks_hash_map");
 
@@ -61,33 +61,6 @@ async function get_period_close_prices(stockName, initial, end, time_period) {
     }
 }
 
-async function get_stock_dividends_in_month(stock_code, month) {
-    //console.log(stock_code);
-    if (stock_code == "PETR4") {
-        return {
-            "2020-01-01": 20.48,
-            "2020-01-02": 1.48,
-        };
-    }
-    return {
-        "2020-01-01": 0.48,
-        "2020-01-02": 0.48,
-    };
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/dividends/${stock_code}.SA/${month.getFullYear()}-${month.getMonth() + 1}`);
-        //console.log(date);
-        if (!response.ok) {
-            return undefined;
-        }
-        const data = await response.json();
-
-        return data[0] ?? 0;
-
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
 async function get_stock_dividends_by_period(stock_code, initial_date, end_date) {
     try {
         const response = await fetch(`http://127.0.0.1:5000/dividends_period/${stock_code}.SA/${date_to_yyyy_mm_dd(initial_date)}/${date_to_yyyy_mm_dd(end_date)}`);
@@ -104,32 +77,8 @@ async function get_stock_dividends_by_period(stock_code, initial_date, end_date)
     }
 }
 
-async function calculateDividendsInMonth(stocks, month) {
-    let Dividends = {};
-    let total_Dividends = 0;
 
-    for (const stock of stocks) {
-        let stock_dividends_in_month = await get_stock_dividends_in_month(get_stock_code_by_id(stock.stock_id), month);
-        let stock_dividends = 0;
-        //console.log(stock_dividends_in_month);
-        for (const [date, dividend] of Object.entries(stock_dividends_in_month)) {
-            stock_dividends += dividend;
-        }
-        Dividends[stock.stock_id] = {
-            dividends_per_share: stock_dividends,
-            total_Dividends: stock_dividends * stock.total_qtd,
-        };
-
-        total_Dividends += stock_dividends * stock.total_qtd;
-    }
-    return {
-        "total_Dividends": total_Dividends,
-        "stock_dividends": Dividends
-    };
-}
-
-
-async function get_User_monthly_dividends(user_id) {
+async function get_User_dividends(user_id) {
     try {
         const stocksByMonth = await Stocks_aggregated(user_id);
         let currentIndex = 0;
@@ -330,4 +279,4 @@ async function calculateAssetsValue(stocks, month) {
 }
 
 
-module.exports = { get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_dividends_in_month, get_stock_price, calculateAssetsValue, calculateDividendsInMonth, get_User_monthly_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period }
+module.exports = { get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_dividends_in_month, get_stock_price, calculateAssetsValue, calculateDividendsInMonth, get_User_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period }

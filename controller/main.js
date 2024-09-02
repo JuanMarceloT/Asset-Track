@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção} = require('../repo/repository');
 
-const { get_User_monthly_dividends, getAssetValueByPeriod, get_stock_dividends_by_period ,get_stock_price} = require( '../services/stock_service');
+const { get_User_dividends, getAssetValueByPeriod,get_stock_price} = require( '../services/stock_service');
 
 const { formatDate} = require("../utils/date_utils");
 const { createNewUser } = require('../View/src/bff');
@@ -85,7 +85,7 @@ app.get('/GetUserDividends', async(req,res)=>{
 
   try{
     const {user_id} = req.query;
-    const Dividends = await get_User_monthly_dividends(user_id);
+    const Dividends = await get_User_dividends(user_id);
     
     res.json(Dividends);
   }catch (error) {

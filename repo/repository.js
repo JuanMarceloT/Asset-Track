@@ -161,66 +161,6 @@ async function GetUserStocks(id) {
   return StocksResult;
 }
 
-async function Stocks_aggregated_by_month(id) {
-  try {
-    const query = `
-    WITH aggregated_data AS (
-      SELECT
-          EXTRACT(YEAR FROM timestamp) AS year,
-          EXTRACT(MONTH FROM timestamp) AS month,
-          stock_id,
-          SUM(CASE WHEN transaction_type = 'BUY' THEN units WHEN transaction_type = 'SELL' THEN -units ELSE 0 END) AS total_qtd
-      FROM
-          transactions
-      WHERE
-          user_id = $1
-      GROUP BY
-          EXTRACT(YEAR FROM timestamp),
-          EXTRACT(MONTH FROM timestamp),
-          stock_id
-  )
-  SELECT
-      year,
-      month,
-      json_agg(
-          json_build_object(
-              'stock_id', stock_id,
-              'total_qtd', total_qtd
-          )
-      ) AS stocks
-  FROM
-      aggregated_data
-  GROUP BY
-      year,
-      month
-  ORDER BY
-      year,
-      month;
-  
-    `;
-    const Stocks_by_month = await executeQuery(query, [id]);
-    if (Stocks_by_month.length === 0) {
-      throw new Error('User not found');
-    }
-    //console.log(`${Stocks_by_month[0].year}-${Stocks_by_month[0].month}`);
-    //console.log(Stocks_by_month[0].stocks[0]);
-    for (let i = 1; i < Stocks_by_month.length; i++) {
-      //console.log(`${Stocks_by_month[i].year}-${Stocks_by_month[i].month}`);
-      Stocks_by_month[i].stocks[0].total_qtd += Stocks_by_month[i - 1].stocks[0].total_qtd;
-      //console.log(Stocks_by_month[i].stocks[0]);
-      if (Stocks_by_month[i].stocks[1]) {
-        //console.log(Stocks_by_month[i].stocks[1]);
-      }
-    }
-
-    //console.log("-------------------------------------------");
-    return Stocks_by_month;
-  } catch (error) {
-    console.error("error " + error);
-  }
-
-}
-
 async function Stocks_aggregated(id) {
   try {
     const query = `
@@ -276,16 +216,6 @@ async function Stocks_aggregated(id) {
     console.error("error " + error);
   }
 
-}
-
-
-
-function Get_Stock_Code(stock_id) {
-  if(stock_id == 1){
-    return "ITUB4";
-  }
-
-  return "PETR4";
 }
 
 
@@ -443,6 +373,6 @@ async function deleteStock(userId, stockId) {
 
 
 
-module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, Nova_Tranasção, Stocks_aggregated_by_month, Stocks_aggregated};
+module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, Nova_Tranasção, Stocks_aggregated};
 
 
