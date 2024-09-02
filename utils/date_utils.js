@@ -22,7 +22,7 @@ function getLastWeekdaysSince(month, year) {
 }
 
 function date_to_yyyy_mm_dd(date){
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate() + 1}`
 }
 
 function formatDate(year, month, day) {
