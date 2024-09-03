@@ -305,10 +305,6 @@ async function getAssetValueByPeriod(user_id, time_period) {
     }
 }
 
-
-
-
-
 function findLastTransactionIndex(stocksByMonth, currentIndex, month) {
     while (stocksByMonth[currentIndex + 1] &&
         stocksByMonth[currentIndex + 1].year <= month.getFullYear() &&

@@ -16,7 +16,7 @@ const { get_User_dividends, getAssetValueByPeriod,get_stock_price} = require( '.
 
 const { formatDate} = require("../utils/date_utils");
 const { createNewUser } = require('../View/src/bff');
-const { get_stock_code_by_id } = require('../utils/stocks_hash_map');
+const { get_stock_code_by_id, get_all_stocks} = require('../utils/stocks_hash_map');
 
 async function main() {
     // const Graph = await get_stock_dividends_by_period("ITUB4", new Date("04/11/2019"));
@@ -80,13 +80,23 @@ app.get('/GetGraph', async (req, res) => {
   }
 });
 
-// need to fix, just need to return all dividends
 app.get('/GetUserDividends', async(req,res)=>{
 
   try{
     const {user_id} = req.query;
     const Dividends = await get_User_dividends(user_id);
     res.json(Dividends);
+  }catch (error) {
+    //console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
+
+app.get('/GetStocksInfo', async(req,res)=>{
+
+  try{
+    res.json(get_all_stocks());
   }catch (error) {
     //console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
