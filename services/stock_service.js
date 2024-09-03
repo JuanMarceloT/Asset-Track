@@ -1,5 +1,5 @@
 const { Stocks_aggregated } = require("../repo/repository")
-const { getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd } = require("../utils/date_utils");
+const { formatStockTimePeriod, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd } = require("../utils/date_utils");
 const { get_stock_code_by_id } = require("../utils/stocks_hash_map");
 
 
@@ -237,12 +237,20 @@ async function getPortfolioStockUnits(user_id) {
 
 function getStockQtdbyDate(stocks_units, stock_id, date) {
     let last_date = null;
-    Object.entries(stocks_units).map(date_stock => compare_string_yyyy_mm_dd_dates(date, date_stock[0]) ? last_date = date_stock : date_stock)
+
+    for (const [current_date, units] of Object.entries(stocks_units)) {
+        if (compare_string_yyyy_mm_dd_dates(date, current_date)) {
+            last_date = [current_date, units];
+        }
+    }
+
+    let stock_qtd = 0;
 
     if (last_date) {
-        stock_qtd = last_date[1][stock_id];
+        stock_qtd = last_date[1][stock_id] ?? 0;
     }
-    return stock_qtd ?? 0;
+
+    return stock_qtd;
 }
 
 async function get_prices_by_timeperiod(transaction_details, time_period){
@@ -268,6 +276,7 @@ async function get_prices_by_timeperiod(transaction_details, time_period){
 }
 
 
+
 async function getAssetValueByPeriod(user_id, time_period) {
     const assetByTimePeriod = {};
 
@@ -278,11 +287,13 @@ async function getAssetValueByPeriod(user_id, time_period) {
             // console.log(transaction_date);
             stock_price = await get_prices_by_timeperiod(transaction_date, time_period);
             stock_price && stock_price.map(stock => {
-                //console.log(getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date))
-                if (!assetByTimePeriod[stock.Date]) {
-                    assetByTimePeriod[stock.Date] = +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date);
+                // console.log(getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date))
+                let date = new Date(stock.Date);
+                let formated_date = formatStockTimePeriod(time_period, date);
+                if (!assetByTimePeriod[formated_date]) {
+                    assetByTimePeriod[formated_date] = +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date);
                 } else {
-                    assetByTimePeriod[stock.Date] += +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date);
+                    assetByTimePeriod[formated_date] += +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date);
                 }
             });
         }

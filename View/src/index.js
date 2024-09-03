@@ -9,7 +9,7 @@ import Dashboard_Section from './Dashboard_Section';
 import Top_Menu from './components/top_menu/Top_Menu';
 
 function App() {
-  const id = 6;
+  const id = 7;
 
   const [Username,setusername] = useState(null);
   const [Reload, setReload] = useState(true);

@@ -21,6 +21,21 @@ function getLastWeekdaysSince(month, year) {
     return result;
 }
 
+function formatStockTimePeriod(timePeriod, date) {
+    if (timePeriod === "1d") {
+        return formatTime(date);
+    } else {
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    }
+}
+
+function formatTime(date) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
+
+
 function date_to_yyyy_mm_dd(date){
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate() + 1}`
 }
@@ -48,4 +63,4 @@ function compare_string_yyyy_mm_dd_dates(date1, date2) {
 
     return true;
 }
-module.exports = {getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd}
+module.exports = {getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd, formatTime, formatStockTimePeriod}
