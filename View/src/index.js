@@ -14,29 +14,6 @@ function App() {
   const [Username,setusername] = useState(null);
   const [Reload, setReload] = useState(true);
 
-
-  // const Inicializer = async () => {
-  //   try {
-  //     const data = await GetUser(id);
-  //     setusername(data.name);
-  //     setstocks(data.stocks);
-  //     settransacitons(data.transactions);
-  //     let dividend = await Get_Dividends(id);
-  //     setDividends(dividend);
-  //     setDividends_ytd(get_ytd_dividends(dividend));
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error fetching user:", error);
-  //   }
-  // };
-  
-
-  // useEffect(() => {
-  //   Inicializer().then((user) => {
-  //     console.log(user);
-  //   });
-  // }, []);
-
   return (
     <React.StrictMode>
       <Top_Menu/>

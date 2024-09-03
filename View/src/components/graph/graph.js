@@ -27,11 +27,17 @@ const Graph = ({ user_id, Reload }) => {
 
     const [onSelectTimePeriod, SetonSelectTimePeriod] = useState('1d');
     const [graph, setGraph] = useState({});
+    const [cached_graph, setCachedGraph] = useState({}); 
 
     const updateGraph = async () => {
         try {
-            const graph_params = await Get_Graph_Params(user_id, onSelectTimePeriod);
-            setGraph(graph_params);
+            if (!cached_graph[onSelectTimePeriod] || Reload) {
+                const graph_params = await Get_Graph_Params(user_id, onSelectTimePeriod);
+                setCachedGraph(prevCache => ({ ...prevCache, [onSelectTimePeriod]: graph_params }));
+                setGraph(graph_params);
+            } else {
+                setGraph(cached_graph[onSelectTimePeriod]);
+            }
         } catch (error) {
             console.error("Error fetching graph:", error);
         }
@@ -44,7 +50,7 @@ const Graph = ({ user_id, Reload }) => {
 
     useEffect(() => {
         const data = FormatToGraphData(graph);
-        console.log(data);
+        // console.log(data);
         let chartInstance = null;
 
         if (chartRef && chartRef.current) {
