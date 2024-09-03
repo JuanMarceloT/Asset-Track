@@ -55,7 +55,7 @@ def get_stock_data_period(stock_name, period, interval):
         #   this is intraday case
         if period == '1d':
             for record in data_records:
-                record['Datetime'] = record['Datetime'].strftime("%a, %d %b %Y %H:%M:%S %Z")
+                record['Date'] = record['Datetime'].strftime("%a, %d %b %Y %H:%M:%S %Z")
         else:
             for record in data_records:
                 record['Date'] = record['Date'].strftime('%Y-%m-%d')

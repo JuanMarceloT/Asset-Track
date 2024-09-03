@@ -38,16 +38,35 @@ async function get_stock_price(stockName) {
 }
 
 
-async function get_period_close_prices(stockName, initial, end, time_period) {
+async function get_interval_close_prices(stockName, initial, end, time_period) {
     try {
 
         let response;
         if (!end) {
             let current_date = new Date().toISOString().slice(0, 10);
-            response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${initial}/${current_date}/${time_period}`);
+            response = await fetch(`http://127.0.0.1:5000/stock_interval/${stockName}.SA/${initial}/${current_date}/${time_period}`);
         } else {
-            response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${initial}/${end}/${time_period}`);
+            response = await fetch(`http://127.0.0.1:5000/stock_interval/${stockName}.SA/${initial}/${end}/${time_period}`);
         }
+        //console.log(date);
+        if (!response.ok) {
+            return undefined;
+        }
+        const data = await response.json();
+
+        return data ?? 0;
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function get_period_close_prices(stockName, time_period, time_interval) {
+    try {
+
+        let response;
+        response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${time_period}/${time_interval}`);
+
         //console.log(date);
         if (!response.ok) {
             return undefined;
@@ -226,6 +245,28 @@ function getStockQtdbyDate(stocks_units, stock_id, date) {
     return stock_qtd ?? 0;
 }
 
+async function get_prices_by_timeperiod(transaction_details, time_period){
+    switch (time_period){
+        case "1d":
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "1d", "30m");
+        case "7d":
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "5d", "1d");
+        case "1m":
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "1mo", "5d");
+        case "6m":
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "6mo", "1wk");
+        case "ytd":
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "ytd", "1wk");
+        case "1y":
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "1y", "1mo");
+        case "5y":
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "5y", "3mo");
+        case "max":
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "max", "3mo");
+    }
+    return {};
+}
+
 
 async function getAssetValueByPeriod(user_id, time_period) {
     const assetByTimePeriod = {};
@@ -235,8 +276,7 @@ async function getAssetValueByPeriod(user_id, time_period) {
         const stocks_units = await getPortfolioStockUnits(user_id);
         for (const transaction_date of stocks_prices) {
             // console.log(transaction_date);
-
-            stock_price = await get_period_close_prices(get_stock_code_by_id(transaction_date.stock_id), transaction_date.initial_date, transaction_date.end_date, "1d");
+            stock_price = await get_prices_by_timeperiod(transaction_date, time_period);
             stock_price && stock_price.map(stock => {
                 //console.log(getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date))
                 if (!assetByTimePeriod[stock.Date]) {
@@ -284,4 +324,4 @@ async function calculateAssetsValue(stocks, month) {
 }
 
 
-module.exports = { get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_price, calculateAssetsValue, get_User_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period }
+module.exports = { get_daily_close_price, get_interval_close_prices, getPortfolioStockDates, get_stock_price, calculateAssetsValue, get_User_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period }
