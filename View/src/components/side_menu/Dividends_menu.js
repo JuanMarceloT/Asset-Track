@@ -16,7 +16,7 @@ function Dividends_menu({ dividends, stock_infos }) {
                             <tr className={styles.card} key={`${day}-${month}-${year}-${id}`}>
                                 <td><img src={stock_infos[id].img_url} alt='logo'></img></td>
                                 <td>{stock_infos[id].stock_name}</td>
-                                <td>{`${day}/${month}/${year}`}</td>
+                                <td>{`${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`}</td>
                                 <td>{stock.div_per_share.toFixed(2)}</td>
                                 <td>{stock.total_div.toFixed(2)}</td>
                             </tr>
