@@ -27,7 +27,7 @@ def get_stock_data_interval(stock_name, inital_date, final_date, interval):
     try:
         start_date = datetime.strptime(inital_date, '%Y-%m-%d')
         end_date = datetime.strptime(final_date, '%Y-%m-%d')
-        
+
         ticker = yf.Ticker(stock_name)
 
         data = ticker.history(start=start_date, end=end_date, interval=interval)
@@ -45,20 +45,26 @@ def get_stock_data_interval(stock_name, inital_date, final_date, interval):
 @app.route('/stock_period/<string:stock_name>/<string:period>/<string:interval>', methods=['GET'])
 def get_stock_data_period(stock_name, period, interval):
     try:
+
         ticker = yf.Ticker(stock_name)
 
         data = ticker.history(period=period, interval=interval)
 
         data_records = data.reset_index().to_dict(orient='records')
-        for record in data_records:
-            record['Date'] = record['Date'].strftime('%Y-%m-%d')
+
+        #   this is intraday case
+        if period == '1d':
+            for record in data_records:
+                record['Datetime'] = record['Datetime'].strftime("%a, %d %b %Y %H:%M:%S %Z")
+        else:
+            for record in data_records:
+                record['Date'] = record['Date'].strftime('%Y-%m-%d')
+        
         
         return jsonify(data_records)
     
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-
-
 
 
 @app.route('/dividends/<string:stock_name>/<string:date>', methods=['GET'])
