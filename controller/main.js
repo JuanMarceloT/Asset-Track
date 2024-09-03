@@ -10,7 +10,7 @@ const port = 3330;
 app.use(cors()); 
 app.use(bodyParser.json());
 
-const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,Nova_Tranasção} = require('../repo/repository');
+const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,New_Transaction} = require('../repo/repository');
 
 const { get_User_dividends, getAssetValueByPeriod,get_stock_price} = require( '../services/stock_service');
 
@@ -118,7 +118,7 @@ app.post('/users', async (req, res) => {
 app.post('/transactions', async (req, res) => {
   try {
     const { user_id, stock_id, type, units, price, year, month, day } = req.body;
-    const transação = await Nova_Tranasção(user_id, stock_id, type, units, price, formatDate(year, month, day));
+    const transação = await New_Transaction(user_id, stock_id, type, units, price, formatDate(year, month, day));
     res.status(201).json(transação);
   } catch (error) {
     //console.error('Error:', error);

@@ -95,22 +95,21 @@ async function CriarTabelaTransaçõess() {
   executeQuery(query);
 }
 
-async function Nova_Tranasção(user_id, stock_id, transaction_type, units, price, date) {
+async function New_Transaction(user_id, stock_id, transaction_type, units, price, date) {
   const query = `
       INSERT INTO TRANSACTIONS (user_id, stock_id, transaction_type, units, price, timestamp)
       VALUES ($1, $2, $3, $4, $5, $6);
     `;
-  const values = [user_id, stock_id, transaction_type, units, price, date];
-  await InsertStock(user_id, stock_id, units, price, transaction_type);
-
-
-  try {
-    await executeQuery(query, values);
-    ////console.log('Transaction inserted successfully.');
-  } catch (error) {
-    console.error('Error inserting transaction:', error);
-  }
-
+    // This is how many units were actually processed in the transaction
+    let efective_units = await InsertStock(user_id, stock_id, units, price, transaction_type);
+    if(efective_units){
+      const values = [user_id, stock_id, transaction_type, efective_units, price, date];
+      try {
+        await executeQuery(query, values);
+      } catch (error) {
+        console.error('Error inserting transaction:', error);
+      }
+    }
 }
 
 
@@ -320,10 +319,13 @@ async function InsertStock(userId, stockId, units, price, type) {
     //console.log(stockId);
 
     if (stock) {
-      await updateStock(userId, stockId, units, price, type, stock);
-    } else {
+      return await updateStock(userId, stockId, units, price, type, stock);
+    } 
+    if(!stock && type == "BUY"){
       await createStock(userId, stockId, units, price);
+      return units
     }
+
   } catch (error) {
     console.error('Error inserting stock:', error);
   }
@@ -359,8 +361,10 @@ async function updateStock(userId, stockId, units, price, type, existingStock) {
       WHERE user_id = $3 AND stock_id = $4;
     `;
     await executeQuery(query, [newUnits, newAvgPrice.toFixed(), userId, stockId]);
+    return units;
   } else {
     await deleteStock(userId, stockId);
+    return existingStock.units;
   }
 }
 
@@ -388,6 +392,6 @@ async function deleteStock(userId, stockId) {
 
 
 
-module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, Nova_Tranasção, Stocks_aggregated};
+module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, New_Transaction, Stocks_aggregated};
 
 
