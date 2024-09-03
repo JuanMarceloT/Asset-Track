@@ -6,7 +6,7 @@ import StockInput from "./Stock_input";
 
 import styles from './Assets_menu.module.css';
 
-function Assets_menu({stocks, id, setReload, stock_prices}){
+function Assets_menu({stocks, id, setReload, stock_prices, stock_infos}){
 
 
 
@@ -16,7 +16,7 @@ function Assets_menu({stocks, id, setReload, stock_prices}){
       <button className={styles.closeButton} onClick={() => {
         setIsTabMenu(!IsTabMenu);
       }}>X</button>
-      <StockInput user_id={id} setReload={setReload} />
+      <StockInput user_id={id} setReload={setReload} stock_infos={stock_infos} />
     </div>
     );
   }

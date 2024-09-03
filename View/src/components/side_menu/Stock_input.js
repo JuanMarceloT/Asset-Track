@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styles from './Stock_input.module.css';
-import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividends, get_ytd_dividends} from './../../bff.js';
+import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividends, get_ytd_dividends } from './../../bff.js';
 
 function HandleNewTransaction(args) {
-    Create_New_Transaction(args);
+  Create_New_Transaction(args);
 };
 
 
-function StockInput({ user_id, setReload }) {
+function StockInput({ user_id, setReload, stock_infos }) {
   const [stock_id, setstock_id] = useState('');
   const [units, setUnits] = useState('');
   const [price, setPrice] = useState('');
@@ -45,16 +45,16 @@ function StockInput({ user_id, setReload }) {
 
 
 
-      HandleNewTransaction({
-        user_id: parseInt(user_id),
-        stock_id: parseInt(stock_id),
-        units: parseInt(units),
-        price: parseInt(parseFloat(price) * 100), // Convert price to cents
-        type,
-        year: parseInt(year),
-        month: parseInt(month),
-        day: parseInt(day)
-      });
+       HandleNewTransaction({
+         user_id: parseInt(user_id),
+         stock_id: parseInt(stock_id),
+         units: parseInt(units),
+         price: parseInt(parseFloat(price) * 100),  // Convert price to cents
+         type,
+         year: parseInt(year),
+         month: parseInt(month),
+         day: parseInt(day)
+       });
 
       setReload(true);
     };
@@ -64,7 +64,18 @@ function StockInput({ user_id, setReload }) {
     <form onSubmit={handleSubmit}>
       <label>
         Stock Name:
-        <input type="text" value={stock_id} onChange={handleStockNameChange} />
+        <select id="itemSelect" value={stock_id} onChange={handleStockNameChange}>
+          <option value="" disabled>Select your Stock</option>
+          {
+            Object.keys(stock_infos).map(key => {
+              return (
+                <option key={key} value={key}>
+                  {stock_infos[key].name}
+                </option>
+              );
+            })
+          }
+        </select>
       </label>
       <label>
         Units:

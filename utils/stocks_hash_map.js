@@ -2,7 +2,7 @@ const id_stocksCode = new Map();
 const stocksCode_id = new Map()
 const id_stockName = new Map();
 const id_StockImg = new Map();
-let stocks = [];
+let stocks = {};
 
 function addStock(stock){
     if(!stock.id ||!stock.code || !stock.name ){
@@ -24,7 +24,7 @@ function addStock(stock){
     id_stocksCode.set(stock.id, stock.code);
     stocksCode_id.set(stock.code, stock.id);
     id_stockName.set(stock.id, stock.name);
-    stocks.push(stock);
+    stocks[stock.id] = stock;
 
     if(stock.img_url){
         id_StockImg.set(stock.id, stock.img_url);

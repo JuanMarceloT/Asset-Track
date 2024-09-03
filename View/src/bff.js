@@ -16,6 +16,9 @@ async function Get_Dividends(id){
   return await CallEndpointGet(`GetUserDividends?user_id=${id}`);
 }
 
+async function GetStockInfos(){
+  return await CallEndpointGet(`GetStocksInfo`);
+}
 
 
 async function CallEndpointPost(endpoint, bodyjson){
@@ -110,4 +113,4 @@ function get_ytd_dividends(dividend){
 }
 
 
-module.exports = { GetUser,get_assets_total_value,  Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends};
+module.exports = { GetUser,get_assets_total_value,GetStockInfos,  Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends};

@@ -21,7 +21,7 @@ label {
     flex-direction: column;
 }
 
-input {
+input, select{
     font-size: 16px;
     padding: 0 10px;
     margin: 10px 0;

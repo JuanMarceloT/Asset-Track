@@ -20,7 +20,7 @@ const Selectable_menu = ({ id, stocks,stock_prices, transactions, Dividends, sto
 
   switch (selected) {
     case 0:
-      content = <Assets_menu stocks={stocks} setReload={setReload} id={id} stock_prices={stock_prices}/>
+      content = <Assets_menu stocks={stocks} setReload={setReload} id={id} stock_prices={stock_prices} stock_infos={stock_infos}/>
       break;
     case 1:
       content = <Transactions_menu  transactions={transactions} stock_infos={stock_infos} />
