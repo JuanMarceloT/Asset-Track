@@ -26,8 +26,7 @@ const Selectable_menu = ({ id, stocks,stock_prices, transactions, Dividends, sto
       content = <Transactions_menu  transactions={transactions} stock_infos={stock_infos} />
       break;
     case 2:
-      console.log(Dividends);
-      content = <Dividends_menu dividends={Dividends}/>
+      content = <Dividends_menu dividends={Dividends} stock_infos={stock_infos} />
       break;
     default:
       content = null;

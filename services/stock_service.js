@@ -98,7 +98,7 @@ async function get_User_dividends(user_id) {
             Object.keys(dividends).forEach(key => {
                 let date = new Date(key);
                 let year = date.getFullYear().toString();
-                let month = date.getMonth().toString();
+                let month = (date.getMonth() + 1).toString();
                 let day = date.getDate().toString();
 
                 if (!final[year]) {
@@ -118,13 +118,18 @@ async function get_User_dividends(user_id) {
 
                 if (!final[year]['months'][month][day]) {
                     final[year]['months'][month]["days"][day] = {
-                        total_earned: 0
+                        total_earned: 0,
+                        stocks: {}
                     };
                 }
 
-                if (!final[year]['months'][month]["days"][day][get_stock_code_by_id(stock.stock_id)]) {
-                    final[year]['months'][month]["days"][day][get_stock_code_by_id(stock.stock_id)] = dividends[key];
-                    let units = getStockQtdbyDate(stocks_units, stock.stock_id, date)
+                if (!final[year]['months'][month]["days"][day][stock.stock_id]) {
+                    let units = getStockQtdbyDate(stocks_units, stock.stock_id, date);
+                    
+                    final[year]['months'][month]["days"][day]['stocks'][stock.stock_id] = {
+                        div_per_share: dividends[key],
+                        total_div: dividends[key] * units
+                    };
                     final[year]['months'][month]["days"][day]["total_earned"] += dividends[key] * units;
                     final[year]['months'][month]["total_earned"] += dividends[key] * units;
                     final[year]['total_earned'] += dividends[key] * units;
@@ -229,7 +234,7 @@ async function getAssetValueByPeriod(user_id, time_period) {
         const stocks_prices = await getPortfolioStockDates(user_id);
         const stocks_units = await getPortfolioStockUnits(user_id);
         for (const transaction_date of stocks_prices) {
-            console.log(transaction_date);
+            // console.log(transaction_date);
 
             stock_price = await get_period_close_prices(get_stock_code_by_id(transaction_date.stock_id), transaction_date.initial_date, transaction_date.end_date, "1d");
             stock_price && stock_price.map(stock => {
@@ -279,4 +284,4 @@ async function calculateAssetsValue(stocks, month) {
 }
 
 
-module.exports = { get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_dividends_in_month, get_stock_price, calculateAssetsValue, calculateDividendsInMonth, get_User_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period }
+module.exports = { get_daily_close_price, get_period_close_prices, getPortfolioStockDates, get_stock_price, calculateAssetsValue, get_User_dividends, getAssetValueByPeriod, findLastTransactionIndex, get_stock_dividends_by_period }

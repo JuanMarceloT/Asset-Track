@@ -20,7 +20,7 @@ function Transactions_menu({ transactions , stock_infos}) {
                 <tbody>
                     {
                         transactions && transactions.map((transaction) => (
-                            <TransactionCard key={transaction.id} transaction={{ type: transaction.transaction_type, date: transaction.timestamp, units: transaction.units, price: transaction.price_in_real, stock_id: transaction.stock_id, img: stock_infos[transaction.stock_id].img,  stock_name: stock_infos[transaction.stock_id].stock_name  }} />
+                            <TransactionCard key={transaction.id} transaction={{ type: transaction.transaction_type, date: transaction.timestamp, units: transaction.units, price: transaction.price_in_real, stock_id: transaction.stock_id, img: stock_infos[transaction.stock_id].img_url,  stock_name: stock_infos[transaction.stock_id].stock_name  }} />
                         ))
                     }
                 </tbody>

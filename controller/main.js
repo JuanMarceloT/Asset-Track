@@ -86,7 +86,6 @@ app.get('/GetUserDividends', async(req,res)=>{
   try{
     const {user_id} = req.query;
     const Dividends = await get_User_dividends(user_id);
-    
     res.json(Dividends);
   }catch (error) {
     //console.error('Error:', error);

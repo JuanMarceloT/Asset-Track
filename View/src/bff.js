@@ -68,43 +68,6 @@ async function GetUser(id) {
   }
 }
 
-function get_stock_name_by_id(id){
-  switch(id){
-    case 1:
-      return "Itáu";
-    case 2:
-      return "Petrobrás";
-    default:
-      return "Non sei";
-  }
-}
-
-function get_stock_code_by_id(id){
-  switch(id){
-    case 1:
-      return "ITUB4";
-    case 2:
-      return "PETR4";
-    default:
-      return "Non sei";
-  }
-}
-
-function get_stock_img_by_id(id){
-  switch(id){
-    case 2:
-      return "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banco_Ita%C3%BA_logo.svg/1011px-Banco_Ita%C3%BA_logo.svg.png";
-    case 6:
-      return "https://cdn.worldvectorlogo.com/logos/petrobras-8.svg";
-    case 5: 
-      return "https://s3-symbol-logo.tradingview.com/vale--600.png";
-    case 1:
-      return "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png";
-    default:
-      return 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png'
-  }
-}
-
 async function get_stock_price_by_id(id){
   const price = await CallEndpointGet(`Stock_price?stock_id=${id}`);
   return price;
@@ -147,4 +110,4 @@ function get_ytd_dividends(dividend){
 }
 
 
-module.exports = { GetUser,get_assets_total_value,  Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_code_by_id, get_stock_name_by_id, get_stock_img_by_id, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends};
+module.exports = { GetUser,get_assets_total_value,  Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends};

@@ -152,11 +152,9 @@ async function GetUserStocks(id) {
   const StocksResult = await executeQuery(StocksQuery, [id]);
   StocksResult.forEach(x => {
     x.img_url = get_stock_img_by_id(x.stock_id);
-    
     x.img_url = get_stock_img_by_id(x.stock_id);
     x.stock_name = get_stock_name_by_id(x.stock_id);
     x.stock_code = get_stock_code_by_id(x.stock_id);
-    console.log(x);
   });
   return StocksResult;
 }
@@ -241,12 +239,29 @@ async function SelectUser(id) {
 
     const transactionsResult = await GetUserTransactions(id);
 
+    let stocks_infos_ids = [];
+
+    for (const transaction of Object.values(transactionsResult)) {
+      if (!stocks_infos_ids.includes(transaction.stock_id)) {
+        stocks_infos_ids.push(transaction.stock_id);
+      }
+    }
+
+    let stock_info = {};
+    stocks_infos_ids.forEach(x => {
+      stock_info[x] = {
+        img_url: get_stock_img_by_id(x),
+        stock_name: get_stock_name_by_id(x),
+        stock_code: get_stock_code_by_id(x),
+      }
+    });
 
     const userWithTransactions = {
       id: user.id,
       name: user.name,
       stocks: StocksResult,
-      transactions: transactionsResult
+      transactions: transactionsResult,
+      stocks_infos: stock_info
     };
 
     //console.log(userWithTransactions);

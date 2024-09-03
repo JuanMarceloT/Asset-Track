@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import styles from './Side_menu.module.css'
 import Selectable_menu from "./Selectable_menu"
 import Info_Card from "./../cards/Info_Card"
-import { GetUser , get_stock_price_by_id, get_assets_total_value } from '../../bff';
+import { GetUser , get_stock_price_by_id, get_assets_total_value, Get_Dividends } from '../../bff';
 
 
 function Side_menu({ user_id, setReload, Reload}) {
@@ -19,21 +19,16 @@ function Side_menu({ user_id, setReload, Reload}) {
         async function fetchData() {
             try {
                 let user = await GetUser(user_id);
-                console.log(user);
+                // console.log(user);
                 setstocks(user.stocks);
                 settransacitons(user.transactions);
+                setStockInfos(user.stocks_infos);
 
-                const newStockInfos = [];
+                let dividends = await Get_Dividends(user_id);
+                setDividends(dividends);
 
-                user && user.stocks.forEach(element => {
-                    newStockInfos[element.stock_id] = {
-                        img: element.img_url,
-                        stock_name: element.stock_name
-                    };
-                });
-
-                setStockInfos(newStockInfos);
-                console.log(newStockInfos);
+                let now = new Date();
+                setDividends_ytd(dividends[now.getFullYear()].total_earned);
 
             } catch (error) {
                 console.error('Error fetching user data:', error);
