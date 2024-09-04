@@ -95,7 +95,6 @@ app.get('/GetUserDividends', async(req,res)=>{
 app.get('/GetStocksInfo', async(req,res)=>{
 
   try{
-    console.log(get_all_stocks());
     res.json(get_all_stocks());
   }catch (error) {
     //console.error('Error:', error);

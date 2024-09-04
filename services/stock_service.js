@@ -211,7 +211,7 @@ async function getPortfolioStockUnits(user_id) {
 
     try {
         const stocksByTimePeriod = await Stocks_aggregated(user_id);
-        ;
+
         for (const transaction_date in stocksByTimePeriod) {
             let { date, stocks } = stocksByTimePeriod[transaction_date];
             let actual_date = date;
@@ -224,6 +224,10 @@ async function getPortfolioStockUnits(user_id) {
                 }
 
                 stocks_units[actual_date][stock.stock_id] = stock.total_qtd;
+            }
+
+            if(stocks.length == 0){
+                stocks_units[actual_date] = {};
             }
 
         }
@@ -290,7 +294,7 @@ async function getAssetValueByPeriod(user_id, time_period) {
             let formated_date = formatStockTimePeriod(time_period, date);
             assetByTimePeriod[formated_date] = 0;
         });
-        console.log(stocks_units);
+        // console.log(stocks_units);
         for (const transaction_date of stocks_prices) {
             stock_price = await get_prices_by_timeperiod(transaction_date, time_period);
             stock_price && stock_price.map(stock => {
