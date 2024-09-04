@@ -4,22 +4,29 @@ WebApp that centralizes the management of stock portfolios, enabling users to co
 
 ## Run Locally
 
-Clone the project
+To get the project running on your local machine, follow these steps:
+
+1. Clone the project
 
 ```bash
   git clone https://github.com/JuanMarceloT/Asset-Track.git
 ```
 
-Go to the project directory
+2. Go to the project directory
 
 ```bash
   cd Asset-Track
 ```
 
-This shell script installs the dependency and then executes it.
+3. Run the docker compose
 
 ```bash
-  ./setup_and_run.sh
+  docker compose up --build
 ```
+
+4. Then you can access in http://localhost:3000/
+
+
+
 
 
