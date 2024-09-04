@@ -3,16 +3,17 @@ import ReactDOM from 'react-dom';
 import Side_menu from './components/side_menu/Side_menu';
 import './index.css';
 import Graph from './components/graph/graph';
-import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividends, get_ytd_dividends} from './bff.js';
+import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividends, get_ytd_dividends, GetStockInfos} from './bff.js';
 
 import Dashboard_Section from './Dashboard_Section';
 import Top_Menu from './components/top_menu/Top_Menu';
 
 function App() {
-  const id = 3;
+  const id = 1;
 
-  const [Username,setusername] = useState(null);
+  // const [Username,setusername] = useState(null);
   const [Reload, setReload] = useState(true);
+  GetStockInfos().then(x => console.log(x));
 
   return (
     <React.StrictMode>

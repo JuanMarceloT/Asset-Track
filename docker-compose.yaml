@@ -1,0 +1,60 @@
+version: '3.9'
+
+volumes:
+  postgres_data: 
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: admin
+      POSTGRES_USER: postgres
+    ports:
+      - "5432" 
+    volumes:
+      - /var/lib/postgresql/data #Anonymous volume
+    # volumes:
+    #   - postgres_data:/var/lib/postgresql/data  Mount the volume
+
+
+  api:
+    build: .
+    ports:
+      - "3330:3330"
+    volumes:
+      - ./controller/:/app/controller
+      - ./repo/:/app/repo
+      - ./utils/:/app/utils
+      - ./services/:/app/services
+      - /node_modules
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_HOST: db
+      POSTGRES_USER: postgres
+    depends_on:
+      - db
+  
+  view:
+    build: ./View
+    volumes:
+      - ./View:/app
+      - /node_modules
+    command: npm start
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    
+
+      
+  external_services:
+    build: ./external_services
+    volumes:
+      - ./external_services:/app
+      - /venv
+    command: python yahoo-api.py
+    expose:
+    - "5000"
+
+    

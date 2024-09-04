@@ -1,7 +1,7 @@
 const api = 'http://localhost:3330';
 
 async function createNewUser(Username){
-  let result = await CallEndpointPost('user', {nome: `${Username}`});
+  let result = await CallEndpointPost('create_user', {nome: `${Username}`});
   return result;
 }
 

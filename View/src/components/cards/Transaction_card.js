@@ -5,7 +5,7 @@ import { get_stock_code_by_id, get_stock_img_by_id, get_stock_name_by_id, get_st
 const TransactionCard = ({ transaction }) => {
 
   let date = new Date(transaction.date);
-
+  
   return (
     <tr className={style.card}>
       <td>

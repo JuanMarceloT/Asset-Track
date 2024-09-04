@@ -6,7 +6,7 @@ const { get_stock_code_by_id } = require("../utils/stocks_hash_map");
 
 async function get_daily_close_price(stockName, date) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/stock/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`);
+        const response = await fetch(`http://external_services:5000/stock/${stockName}.SA/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay()}`);
         //console.log(date);
         if (!response.ok) {
             return undefined;
@@ -23,7 +23,7 @@ async function get_daily_close_price(stockName, date) {
 
 async function get_stock_price(stockName) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/stock_last_price/${stockName}.SA/`);
+        const response = await fetch(`http://external_services:5000/stock_last_price/${stockName}.SA/`);
         if (!response.ok) {
             return undefined;
         }
@@ -44,9 +44,9 @@ async function get_interval_close_prices(stockName, initial, end, time_period) {
         let response;
         if (!end) {
             let current_date = new Date().toISOString().slice(0, 10);
-            response = await fetch(`http://127.0.0.1:5000/stock_interval/${stockName}.SA/${initial}/${current_date}/${time_period}`);
+            response = await fetch(`http://external_services:5000/stock_interval/${stockName}.SA/${initial}/${current_date}/${time_period}`);
         } else {
-            response = await fetch(`http://127.0.0.1:5000/stock_interval/${stockName}.SA/${initial}/${end}/${time_period}`);
+            response = await fetch(`http://external_services:5000/stock_interval/${stockName}.SA/${initial}/${end}/${time_period}`);
         }
         //console.log(date);
         if (!response.ok) {
@@ -65,7 +65,7 @@ async function get_period_close_prices(stockName, time_period, time_interval) {
     try {
 
         let response;
-        response = await fetch(`http://127.0.0.1:5000/stock_period/${stockName}.SA/${time_period}/${time_interval}`);
+        response = await fetch(`http://external_services:5000/stock_period/${stockName}.SA/${time_period}/${time_interval}`);
 
         //console.log(date);
         if (!response.ok) {
@@ -82,7 +82,7 @@ async function get_period_close_prices(stockName, time_period, time_interval) {
 
 async function get_stock_dividends_by_period(stock_code, initial_date, end_date) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/dividends_period/${stock_code}.SA/${date_to_yyyy_mm_dd(initial_date)}/${date_to_yyyy_mm_dd(end_date)}`);
+        const response = await fetch(`http://external_services:5000/dividends_period/${stock_code}.SA/${date_to_yyyy_mm_dd(initial_date)}/${date_to_yyyy_mm_dd(end_date)}`);
         //console.log(date);
         if (!response.ok) {
             return undefined;

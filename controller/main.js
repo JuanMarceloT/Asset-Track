@@ -15,7 +15,6 @@ const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,New_Transaction} = re
 const { get_User_dividends, getAssetValueByPeriod,get_stock_price} = require( '../services/stock_service');
 
 const { formatDate} = require("../utils/date_utils");
-const { createNewUser } = require('../View/src/bff');
 const { get_stock_code_by_id, get_all_stocks} = require('../utils/stocks_hash_map');
 
 async function main() {
@@ -96,6 +95,7 @@ app.get('/GetUserDividends', async(req,res)=>{
 app.get('/GetStocksInfo', async(req,res)=>{
 
   try{
+    console.log(get_all_stocks());
     res.json(get_all_stocks());
   }catch (error) {
     //console.error('Error:', error);
@@ -104,7 +104,7 @@ app.get('/GetStocksInfo', async(req,res)=>{
 })
 
 // API endpoint to create a new user
-app.post('/users', async (req, res) => {
+app.post('/create_user', async (req, res) => {
   try {
     const { nome } = req.body;
     const id = await CriaUsuario(nome);
@@ -128,7 +128,7 @@ app.post('/transactions', async (req, res) => {
 
 
 app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
   inicializarDb();
-  //console.log(`Server running at http://localhost:${port}`);
 });
 

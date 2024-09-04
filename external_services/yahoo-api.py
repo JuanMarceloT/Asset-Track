@@ -115,4 +115,4 @@ def get_dividends_by_period(stock_name, ini_date, final_date):
         return jsonify({})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

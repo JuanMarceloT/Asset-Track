@@ -22,7 +22,7 @@ async function inicializarDb() {
     //const res = await pool.query(query);
     //const users = res.rows; // Array of objects containing retrieved data
   } catch (ex) {
-    //console.log(ex);
+    console.log(ex);
   }
 }
 
@@ -56,14 +56,7 @@ async function CriarTabelaUsuarios() {
       ID SERIAL PRIMARY KEY,
       NAME VARCHAR(255) NOT NULL,
       BALANCE INTEGER
-    ) WITH (OIDS=FALSE);  -- Avoid Object Identifier bloat
-    
-    ALTER TABLE USUARIO
-      ADD COLUMN IF NOT EXISTS NAME VARCHAR(255) NOT NULL;  -- Add NAME if missing
-    
-    ALTER TABLE USUARIO
-      ALTER COLUMN NAME SET DATA TYPE VARCHAR(255)  -- Update data type if necessary
-      USING NAME::VARCHAR(255);  -- Cast existing data to new type (if data type changed)
+    ) WITH (OIDS=FALSE)
     ;`
   executeQuery(query);
 }
