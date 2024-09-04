@@ -144,7 +144,7 @@ async function get_User_dividends(user_id) {
 
                 if (!final[year]['months'][month]["days"][day][stock.stock_id]) {
                     let units = getStockQtdbyDate(stocks_units, stock.stock_id, date);
-                    
+
                     final[year]['months'][month]["days"][day]['stocks'][stock.stock_id] = {
                         div_per_share: dividends[key],
                         total_div: dividends[key] * units
@@ -226,7 +226,7 @@ async function getPortfolioStockUnits(user_id) {
                 stocks_units[actual_date][stock.stock_id] = stock.total_qtd;
             }
 
-            if(stocks.length == 0){
+            if (stocks.length == 0) {
                 stocks_units[actual_date] = {};
             }
 
@@ -257,8 +257,8 @@ function getStockQtdbyDate(stocks_units, stock_id, date) {
     return stock_qtd;
 }
 
-async function get_prices_by_timeperiod(transaction_details, time_period){
-    switch (time_period){
+async function get_prices_by_timeperiod(transaction_details, time_period) {
+    switch (time_period) {
         case "1d":
             return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "1d", "30m");
         case "7d":
@@ -279,21 +279,33 @@ async function get_prices_by_timeperiod(transaction_details, time_period){
     return {};
 }
 
+let base_date_cache = {};
 
+async function get_base_date(time_period) {
 
+    let assetByTimePeriod = {};
+    if (base_date_cache[time_period]) {
+        return base_date_cache[time_period];
+    }
+    let base_date = await get_prices_by_timeperiod({ stock_id: 6 }, time_period);
+    base_date && base_date.map(stock => {
+        let date = new Date(stock.Date);
+        let formated_date = formatStockTimePeriod(time_period, date);
+        assetByTimePeriod[formated_date] = 0;
+    });
+
+    base_date_cache[time_period] = assetByTimePeriod;
+
+    return assetByTimePeriod
+}
 async function getAssetValueByPeriod(user_id, time_period) {
-    const assetByTimePeriod = {};
+    let assetByTimePeriod = {};
 
     try {
         const stocks_prices = await getPortfolioStockDates(user_id);
         const stocks_units = await getPortfolioStockUnits(user_id);
 
-        let base_date = await get_prices_by_timeperiod({stock_id: 6}, time_period);
-        base_date && base_date.map(stock => {
-            let date = new Date(stock.Date);
-            let formated_date = formatStockTimePeriod(time_period, date);
-            assetByTimePeriod[formated_date] = 0;
-        });
+        assetByTimePeriod = await get_base_date(time_period);
         // console.log(stocks_units);
         for (const transaction_date of stocks_prices) {
             stock_price = await get_prices_by_timeperiod(transaction_date, time_period);
@@ -305,7 +317,7 @@ async function getAssetValueByPeriod(user_id, time_period) {
             });
         }
 
-        if(time_period == "1d"){
+        if (time_period == "1d") {
             return assetByTimePeriod;
         }
 
@@ -319,25 +331,25 @@ async function getAssetValueByPeriod(user_id, time_period) {
 const sortByDate = (entries) => {
     return Object.fromEntries(
         Object.entries(entries).sort((a, b) => {
-          const [dateA] = a;
-          const [dateB] = b;
+            const [dateA] = a;
+            const [dateB] = b;
 
-          const [dayA, monthA, yearA] = dateA.split('/');
-          const [dayB, monthB, yearB] = dateB.split('/');
-      
-          const dateStrA = `${yearA.padStart(4, '0')}${monthA.padStart(
-            2,
-            '0'
-          )}${dayA.padStart(2, '0')}`;
-          const dateStrB = `${yearB.padStart(4, '0')}${monthB.padStart(
-            2,
-            '0'
-          )}${dayB.padStart(2, '0')}`;
-      
-          return dateStrA.localeCompare(dateStrB);
+            const [dayA, monthA, yearA] = dateA.split('/');
+            const [dayB, monthB, yearB] = dateB.split('/');
+
+            const dateStrA = `${yearA.padStart(4, '0')}${monthA.padStart(
+                2,
+                '0'
+            )}${dayA.padStart(2, '0')}`;
+            const dateStrB = `${yearB.padStart(4, '0')}${monthB.padStart(
+                2,
+                '0'
+            )}${dayB.padStart(2, '0')}`;
+
+            return dateStrA.localeCompare(dateStrB);
         })
-      );
-  };
+    );
+};
 
 function findLastTransactionIndex(stocksByMonth, currentIndex, month) {
     while (stocksByMonth[currentIndex + 1] &&
