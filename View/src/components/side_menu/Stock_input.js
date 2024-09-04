@@ -34,30 +34,41 @@ function StockInput({ user_id, setReload, stock_infos }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (date === " ") {
-      console.log("Coloque data");
-    } else {
+    if (date === "") {
+      console.log("Please select a date.");
+      return;
+    }
 
-      const type = tipo;
-      let year = date.split('-')[0];
-      let month = date.split('-')[1];
-      let day = date.split('-')[2];
+    if (stock_id === "") {
+      console.log("Please select a stock.");
+      return;
+    }
+
+    if (units === "") {
+      console.log("Units cannot be empty.");
+      return;
+    }
+
+    const type = tipo;
+    let year = date.split('-')[0];
+    let month = date.split('-')[1];
+    let day = date.split('-')[2];
 
 
 
-       HandleNewTransaction({
-         user_id: parseInt(user_id),
-         stock_id: parseInt(stock_id),
-         units: parseInt(units),
-         price: parseInt(parseFloat(price) * 100),  // Convert price to cents
-         type,
-         year: parseInt(year),
-         month: parseInt(month),
-         day: parseInt(day)
-       });
+    HandleNewTransaction({
+      user_id: parseInt(user_id),
+      stock_id: parseInt(stock_id),
+      units: parseInt(units),
+      price: parseInt(parseFloat(price) * 100),  // Convert price to cents
+      type,
+      year: parseInt(year),
+      month: parseInt(month),
+      day: parseInt(day)
+    });
 
-      setReload(true);
-    };
+    setReload(true);
+
   }
 
   return (
