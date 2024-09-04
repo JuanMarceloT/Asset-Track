@@ -31,7 +31,11 @@ const Graph = ({ user_id, Reload }) => {
 
     const updateGraph = async () => {
         try {
-            if (!cached_graph[onSelectTimePeriod] || Reload) {
+            if(Reload){
+                setCachedGraph({});
+            }
+
+            if (!cached_graph[onSelectTimePeriod]) {
                 const graph_params = await Get_Graph_Params(user_id, onSelectTimePeriod);
                 setCachedGraph(prevCache => ({ ...prevCache, [onSelectTimePeriod]: graph_params }));
                 setGraph(graph_params);

@@ -18,7 +18,7 @@ async function inicializarDb() {
     await CriarTabelaUsuarios();
     await CriarTabelaStocks();
     await CriarTabelaTransaçõess();
-    //await CriaUsuario("Juan");
+    await CriaUsuario("Juan");
     //const res = await pool.query(query);
     //const users = res.rows; // Array of objects containing retrieved data
   } catch (ex) {
@@ -58,7 +58,7 @@ async function CriarTabelaUsuarios() {
       BALANCE INTEGER
     ) WITH (OIDS=FALSE)
     ;`
-  executeQuery(query);
+  await executeQuery(query);
 }
 
 async function CriarTabelaStocks() {
@@ -69,7 +69,7 @@ async function CriarTabelaStocks() {
         UNITS INTEGER NOT NULL  
     )
     ;`
-  executeQuery(query);
+  await executeQuery(query);
 }
 
 async function CriarTabelaTransaçõess() {
@@ -85,7 +85,7 @@ async function CriarTabelaTransaçõess() {
       ALTER TABLE TRANSACTIONS
           ALTER COLUMN stock_id SET DATA TYPE INTEGER  -- Update data type if necessary;
     `;
-  executeQuery(query);
+  await executeQuery(query);
 }
 
 async function New_Transaction(user_id, stock_id, transaction_type, units, price, date) {
