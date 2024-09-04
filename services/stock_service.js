@@ -1,6 +1,6 @@
 const { Stocks_aggregated } = require("../repo/repository")
 const { formatStockTimePeriod, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd } = require("../utils/date_utils");
-const { get_stock_code_by_id } = require("../utils/stocks_hash_map");
+const { get_stock_code_by_id, get_stock_name_by_id } = require("../utils/stocks_hash_map");
 
 
 
@@ -268,7 +268,7 @@ async function get_prices_by_timeperiod(transaction_details, time_period){
         case "1y":
             return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "1y", "1mo");
         case "5y":
-            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "5y", "3mo");
+            return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "5y", "1mo");
         case "max":
             return await get_period_close_prices(get_stock_code_by_id(transaction_details.stock_id), "max", "3mo");
     }
@@ -283,27 +283,57 @@ async function getAssetValueByPeriod(user_id, time_period) {
     try {
         const stocks_prices = await getPortfolioStockDates(user_id);
         const stocks_units = await getPortfolioStockUnits(user_id);
+
+        let base_date = await get_prices_by_timeperiod({stock_id: 6}, time_period);
+        base_date && base_date.map(stock => {
+            let date = new Date(stock.Date);
+            let formated_date = formatStockTimePeriod(time_period, date);
+            assetByTimePeriod[formated_date] = 0;
+        });
+        console.log(stocks_units);
         for (const transaction_date of stocks_prices) {
-            // console.log(transaction_date);
             stock_price = await get_prices_by_timeperiod(transaction_date, time_period);
             stock_price && stock_price.map(stock => {
-                // console.log(getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date))
                 let date = new Date(stock.Date);
                 let formated_date = formatStockTimePeriod(time_period, date);
-                if (!assetByTimePeriod[formated_date]) {
-                    assetByTimePeriod[formated_date] = +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date);
-                } else {
-                    assetByTimePeriod[formated_date] += +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date);
-                }
+                // console.log(formated_date + " " + getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date) + " " + get_stock_name_by_id(transaction_date.stock_id));
+                assetByTimePeriod[formated_date] += +stock.Close.toFixed(2) * getStockQtdbyDate(stocks_units, transaction_date.stock_id, stock.Date);
             });
         }
 
-        //console.log(assetByTimePeriod)
-        return assetByTimePeriod;
+        if(time_period == "1d"){
+            return assetByTimePeriod;
+        }
+
+        return sortByDate(assetByTimePeriod);
     } catch (error) {
         console.error("Error:", error);
     }
 }
+
+
+const sortByDate = (entries) => {
+    return Object.fromEntries(
+        Object.entries(entries).sort((a, b) => {
+          const [dateA] = a;
+          const [dateB] = b;
+
+          const [dayA, monthA, yearA] = dateA.split('/');
+          const [dayB, monthB, yearB] = dateB.split('/');
+      
+          const dateStrA = `${yearA.padStart(4, '0')}${monthA.padStart(
+            2,
+            '0'
+          )}${dayA.padStart(2, '0')}`;
+          const dateStrB = `${yearB.padStart(4, '0')}${monthB.padStart(
+            2,
+            '0'
+          )}${dayB.padStart(2, '0')}`;
+      
+          return dateStrA.localeCompare(dateStrB);
+        })
+      );
+  };
 
 function findLastTransactionIndex(stocksByMonth, currentIndex, month) {
     while (stocksByMonth[currentIndex + 1] &&
