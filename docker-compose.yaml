@@ -14,6 +14,12 @@ services:
       - "5432" 
     volumes:
       - /var/lib/postgresql/data #Anonymous volume
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
     # volumes:
     #   - postgres_data:/var/lib/postgresql/data  Mount the volume
 
@@ -33,18 +39,20 @@ services:
       POSTGRES_HOST: db
       POSTGRES_USER: postgres
     depends_on:
-      - db
-  
+      db:
+        condition: service_healthy
   view:
     build: ./View
     volumes:
       - ./View:/app
       - /node_modules
-    command: npm start
+    
+    command:  bash -c "npm install && npm start"
     ports:
       - "3000:3000"
     depends_on:
       - api
+      - db
     
 
       
