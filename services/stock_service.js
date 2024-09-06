@@ -1,6 +1,21 @@
-const { Stocks_aggregated } = require("../repo/repository")
 const { formatStockTimePeriod, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd } = require("../utils/date_utils");
 const { get_stock_code_by_id, get_stock_name_by_id } = require("../utils/stocks_hash_map");
+
+const isTestEnv = process.env.NODE_ENV === 'test';
+
+let Stocks_aggregated;
+
+try {
+    if(isTestEnv){
+        console.log("Loading memrepository");
+        ({Stocks_aggregated} = require("../repo/memrepository"));
+    } else {
+        console.log("Loading repository");
+        ({Stocks_aggregated} = require("../repo/repository"));
+    }
+} catch (error) {
+    console.error("Error loading module:", error);
+}
 
 
 
@@ -173,7 +188,7 @@ async function getPortfolioStockDates(user_id) {
 
     try {
         const stocksByTimePeriod = await Stocks_aggregated(user_id);
-        ;
+        
         for (const transaction_date in stocksByTimePeriod) {
             let { date, stocks } = stocksByTimePeriod[transaction_date];
             let actual_date = date;
@@ -198,7 +213,6 @@ async function getPortfolioStockDates(user_id) {
                 }
             }
         }
-        // console.log(stocks_dates);
         return stocks_dates;
     } catch (ex) {
         console.error("Error:", ex);

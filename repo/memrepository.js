@@ -1,3 +1,6 @@
+
+const { get_stock_name_by_id, get_stock_img_by_id, get_stock_code_by_id } = require('../utils/stocks_hash_map.js');
+
 let users = [];
 let stocks = [];
 let transactions = [];
@@ -5,8 +8,10 @@ let transactions = [];
 const CriaUsuario = name => {
   const id = users.length ? users[users.length - 1].id + 1 : 1;
   const newUser = { id, name, balance: 0 };
-  users.push(newUser);
-  return newUser;
+  users[id] = newUser;
+  stocks = [];
+  transactions = [];
+  return [{id : id}];
 };
 const inicializarDb = () => {};
 
@@ -23,45 +28,57 @@ function New_Transaction(
   price,
   timestamp
 ) {
+  // console.log(transactions);
+  let efective_units = units;
+  let stock = stocks.find(x => x.stock_id == stockId);
 
-    let efective_units = units;
-  if (stocks[stockId]) {
+  let date = new Date(timestamp);
+
+  if (date > new Date()){
+    return;
+  }
+
+  if(!price){
+    return;
+  }
+
+  if (stock) {
     if (transactionType == 'BUY') {
-      stocks[stockId].avg_price_in_real =
-        (stocks[stockId].avg_price_in_real * stocks[stockId].units +
+      stock.avg_price_in_real =
+        (stock.avg_price_in_real * stock.units +
           price * units) /
-        (stocks[stockId].units + units);
-      stocks[stockId].units += units;
+        (stock.units + units);
+      stock.units += units;
     }
     if (transactionType == 'SELL') {
-      stocks[stockId].avg_price_in_real =
-        (stocks[stockId].avg_price_in_real * stocks[stockId].units -
+      stock.avg_price_in_real =
+        (stock.avg_price_in_real * stock.units -
           price * units) /
-        (stocks[stockId].units - units);
-      stocks[stockId].units -= units;
-      if (stocks[stockId].units <= 0) {
-          efective_units = efective_units + stocks[stockId].units;
-        stocks[stockId] = null;
+        (stock.units - units);
+      stock.units -= units;
+      if (stock.units <= 0) {
+          efective_units = efective_units + stock.units;
+        stock = null;
       }
     }
   } else {
-    stocks[stockId] = {
-      userId: userId,
-      avg_price_in_real: price,
+    stocks.push({
+      user_id: userId,
+      avg_price_in_real: price / 100,
       stock_id: stockId,
       units: units,
-      img_url:'https://yt3.googleusercontent.com/cxDKS7OTT2SB4CNFHlrAvCDivGJR70H8ne8607esi9q6ALGQClYZPa03qcAR0ynhCtYS5JNMBA=s900-c-k-c0x00ffffff-no-rj',
-      stock_name: 'MELIUZ',
-      stock_code: 'CASH3',
-    };
+      img_url: get_stock_img_by_id(stockId),
+      stock_name: get_stock_name_by_id(stockId),
+      stock_code: get_stock_code_by_id(stockId),
+    });
   }
 
   transactions.push({
     userId,
-    stockId,
-    transactionType,
-    efective_units,
-    price,
+    stock_id: stockId,
+    transaction_type: transactionType,
+    units: efective_units,
+    price_in_real: price,
     timestamp,
   });
 }
@@ -77,10 +94,10 @@ const Stocks_aggregated = id => {
         let formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
         // Update stock quantities based on the current transaction
-        if (transaction.transactionType === "BUY") {
-            stockState.set(transaction.stockId, (stockState.get(transaction.stockId) || 0) + transaction.efective_units);
-        } else if (transaction.transactionType === "SELL") {
-            stockState.set(transaction.stockId, (stockState.get(transaction.stockId) || 0) - transaction.efective_units);
+        if (transaction.transaction_type === "BUY") {
+            stockState.set(transaction.stock_id, (stockState.get(transaction.stock_id) || 0) + transaction.units);
+        } else if (transaction.transaction_type === "SELL") {
+            stockState.set(transaction.stock_id, (stockState.get(transaction.stock_id) || 0) - transaction.units);
         }
 
         // Create the stock array for the current date based on the global stock state
@@ -91,23 +108,20 @@ const Stocks_aggregated = id => {
             stocks: stocks
         });
     });
-
+    
     return result;
 };
 
 
 const GetUserTransactions = id => {
-  return transactions.filter(transaction => transaction.userId === id);
+  return transactions;
 };
 
 const GetUserStocks = id => {
-  return stocks.filter(stock => stock && stock.userId === id);
+  return stocks;
 };
 
 const SelectUser = id => {
-  const StocksResult = GetUserStocks(id);
-
-  const transactionsResult = GetUserTransactions(id);
 
   let stock_info = {};
   stock_info[1] = {
@@ -119,11 +133,13 @@ const SelectUser = id => {
 
   const userWithTransactions = {
     id: id,
-    name: 'juan',
-    stocks: StocksResult,
-    transactions: transactionsResult,
+    name: users[id].name ?? "",
+    stocks: stocks,
+    transactions: transactions,
     stocks_infos: stock_info,
   };
+
+  // console.log(userWithTransactions);
   return userWithTransactions;
 };
 
@@ -137,12 +153,11 @@ const Delete_User = () => {
   transactions = [];
 };
 
-let id = CriaUsuario('Juan').id;
 
-New_Transaction(id, 1, 'BUY', 10, 10, new Date("04/10/2019"));
-New_Transaction(id, 5, 'BUY', 50, 10, new Date("01/2/2020"));
-New_Transaction(id, 1, 'BUY', 50, 10, new Date("06/4/2021"));
-Stocks_aggregated(id);
+
+module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, New_Transaction, Stocks_aggregated};
+
+// Stocks_aggregated(id);
 // console.log(SelectUser(id));
 // console.log(Stocks_aggregated(id));
 // Stocks_aggregated(id).forEach(x => console.log(x.stocks))

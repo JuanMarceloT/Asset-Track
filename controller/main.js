@@ -10,7 +10,16 @@ const port = 3330;
 app.use(cors()); 
 app.use(bodyParser.json());
 
-const {inicializarDb, SelectUser, SelectUsers, CriaUsuario,New_Transaction} = require('../repo/repository');
+
+const isTestEnv = process.env.NODE_ENV === 'test';
+
+let inicializarDb, SelectUser, SelectUsers, CriaUsuario, New_Transaction;
+
+if (isTestEnv) {
+  ({ inicializarDb, SelectUser, SelectUsers, CriaUsuario, New_Transaction } = require('../repo/memrepository'));
+} else {
+  ({ inicializarDb, SelectUser, SelectUsers, CriaUsuario, New_Transaction } = require('../repo/repository'));
+}
 
 const { get_User_dividends, getAssetValueByPeriod,get_stock_price} = require( '../services/stock_service');
 

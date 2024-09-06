@@ -38,6 +38,7 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_HOST: db
       POSTGRES_USER: postgres
+      NODE_ENV: test  # or you can use as 'prod'
     depends_on:
       db:
         condition: service_healthy

@@ -1,5 +1,16 @@
 
-const { CriaUsuario, SelectUser, Delete_User, New_Transaction } = require("../repo/repository");
+const isTestEnv = process.env.NODE_ENV === 'test';
+
+let CriaUsuario, SelectUser, Delete_User, New_Transaction ;
+
+if(isTestEnv){
+    ({ CriaUsuario, SelectUser, Delete_User, New_Transaction }) = require("../repo/memrepository")
+}
+
+if(!isTestEnv){
+    ({ CriaUsuario, SelectUser, Delete_User, New_Transaction }) = require("../repo/repository")
+}
+
 const { getPortfolioStockDates } = require("./stock_service");
 
 test('getPortfolioStockDates test', async () => {
