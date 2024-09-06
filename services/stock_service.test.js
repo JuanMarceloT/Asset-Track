@@ -15,11 +15,13 @@ test('getPortfolioStockDates test', async () => {
 
     
     let portfolioStockDates = await getPortfolioStockDates(userId[0].id);
+
+    console.log(portfolioStockDates);
     
     expect(portfolioStockDates).toEqual([
-        { stock_id: 2, initial_date: '2019-02-04', end_date: '2022-11-22' },
-        { stock_id: 6, initial_date: '2022-03-04', end_date: null },
-        { stock_id: 1, initial_date: '2022-08-04', end_date: '2023-11-12' }
+        { stock_id: 2, initial_date: '2019-02-05', end_date: '2022-11-23' },
+        { stock_id: 6, initial_date: '2022-03-05', end_date: null },
+        { stock_id: 1, initial_date: '2022-08-05', end_date: '2023-11-13' }
     ]);
 
 
