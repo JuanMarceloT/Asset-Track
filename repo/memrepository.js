@@ -1,22 +1,20 @@
 
 const { get_stock_name_by_id, get_stock_img_by_id, get_stock_code_by_id } = require('../utils/stocks_hash_map.js');
 
-let users = [];
+let user = [];
 let stocks = [];
 let transactions = [];
 
 const CriaUsuario = name => {
-  const id = users.length ? users[users.length - 1].id + 1 : 1;
-  const newUser = { id, name, balance: 0 };
-  users[id] = newUser;
+  user = { id: 1, name: name ?? " ", balance: 0 };
   stocks = [];
   transactions = [];
-  return [{id : id}];
+  return [{ id: 1 }];
 };
-const inicializarDb = () => {};
+const inicializarDb = () => { };
 
 const deleteUser = name => {
-  users = users.filter(user => user.name !== name);
+  user = [];
 };
 
 
@@ -34,33 +32,42 @@ function New_Transaction(
 
   let date = new Date(timestamp);
 
-  if (date > new Date()){
+  if (date > new Date()) {
     return;
   }
 
-  if(!price){
+  if (!price) {
     return;
   }
 
   if (stock) {
+
+    // It's multiplied by 100 to perform all calculations in cents, and then converted back to reais.
     if (transactionType == 'BUY') {
       stock.avg_price_in_real =
-        (stock.avg_price_in_real * stock.units +
-          price * units) /
+        ((stock.avg_price_in_real * stock.units * 100) +
+          (price * units)) /
         (stock.units + units);
       stock.units += units;
     }
     if (transactionType == 'SELL') {
       stock.avg_price_in_real =
-        (stock.avg_price_in_real * stock.units -
-          price * units) /
+        ((stock.avg_price_in_real * stock.units * 100) -
+          (price * units)) /
         (stock.units - units);
       stock.units -= units;
       if (stock.units <= 0) {
-          efective_units = efective_units + stock.units;
-        stock = null;
+        efective_units = efective_units + stock.units;
+        const stockIndex = stocks.findIndex(stock => stock.stock_id === stockId);
+
+        if (stockIndex !== -1) {
+          stocks.splice(stockIndex, 1);
+        }
       }
     }
+
+    stock.avg_price_in_real = (stock.avg_price_in_real / 100).toFixed(2);
+
   } else {
     stocks.push({
       user_id: userId,
@@ -78,38 +85,57 @@ function New_Transaction(
     stock_id: stockId,
     transaction_type: transactionType,
     units: efective_units,
-    price_in_real: price,
+    price_in_real: price / 100,
     timestamp,
   });
+
 }
 const Stocks_aggregated = id => {
-    let result = [];
-    let stockState = new Map(); // To keep track of stock quantities globally
+  let result = [];
+  let stockState = new Map(); // To keep track of stock quantities globally
 
-    // Fetch user transactions
-    const transactions = GetUserTransactions(id);
+  // Fetch user transactions
+  const transactions = GetUserTransactions(id);
 
-    transactions.forEach(transaction => {
-        let date = new Date(transaction.timestamp);
-        let formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  transactions.forEach(transaction => {
+    let date = new Date(transaction.timestamp);
+    let formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
-        // Update stock quantities based on the current transaction
-        if (transaction.transaction_type === "BUY") {
-            stockState.set(transaction.stock_id, (stockState.get(transaction.stock_id) || 0) + transaction.units);
-        } else if (transaction.transaction_type === "SELL") {
-            stockState.set(transaction.stock_id, (stockState.get(transaction.stock_id) || 0) - transaction.units);
-        }
+    // Update stock quantities based on the current transaction
+    const currentUnits = stockState.get(transaction.stock_id) || 0;
 
-        // Create the stock array for the current date based on the global stock state
-        let stocks = Array.from(stockState, ([stock_id, total_qtd]) => ({ stock_id, total_qtd }));
+    if (transaction.transaction_type === "BUY") {
+      stockState.set(transaction.stock_id, currentUnits + transaction.units);
+    } else if (transaction.transaction_type === "SELL") {
+      const updatedUnits = currentUnits - transaction.units;
+      if (updatedUnits <= 0) {
+        stockState.delete(transaction.stock_id);
+      } else {
+        stockState.set(transaction.stock_id, updatedUnits);
+      }
+    }
 
-        result.push({
-            date: formattedDate,
-            stocks: stocks
-        });
-    });
-    
-    return result;
+
+    // Create the stock array for the current date based on the global stock state
+    let stocks = Array.from(stockState, ([stock_id, total_qtd]) => ({ stock_id, total_qtd }));
+
+    if (result.length > 0 && result[result.length - 1].date == formattedDate) {
+      result[result.length - 1].stocks = stocks;
+    } else {
+      result.push({
+        date: formattedDate,
+        stocks: stocks
+      });
+    }
+
+  });
+
+
+  // result.forEach(x => {
+  //   console.log(x.date);
+  //   console.log(x.stocks);
+  // })
+  return result;
 };
 
 
@@ -123,6 +149,7 @@ const GetUserStocks = id => {
 
 const SelectUser = id => {
 
+
   let stock_info = {};
   stock_info[1] = {
     img_url:
@@ -131,31 +158,34 @@ const SelectUser = id => {
     stock_code: 'CASH3',
   };
 
+
   const userWithTransactions = {
     id: id,
-    name: users[id].name ?? "",
+    name: user.name ?? "",
     stocks: stocks,
     transactions: transactions,
     stocks_infos: stock_info,
   };
 
-  // console.log(userWithTransactions);
+  // console.log(stocks);
+
+  console.log(userWithTransactions);
   return userWithTransactions;
 };
 
 const SelectUsers = () => {
-  return users;
+  return user;
 };
 
 const Delete_User = () => {
-  users = [];
+  user = [];
   stocks = [];
   transactions = [];
 };
 
 
 
-module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, New_Transaction, Stocks_aggregated};
+module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, New_Transaction, Stocks_aggregated };
 
 // Stocks_aggregated(id);
 // console.log(SelectUser(id));

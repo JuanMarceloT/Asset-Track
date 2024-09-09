@@ -1,6 +1,10 @@
 
+const isTestEnv = process.env.NODE_ENV === 'test';
 
-const { CriaUsuario, SelectUser, Delete_User, New_Transaction } = require("./repository");
+const { CriaUsuario, SelectUser, Delete_User, New_Transaction } = isTestEnv
+  ? require("../repo/memrepository")
+  : require("../repo/repository");
+  
 test('Create User', async () => {
     const nome = "John Doe";
     const userId = await CriaUsuario(nome);

@@ -198,7 +198,10 @@ async function Stocks_aggregated(id) {
       //Stocks_by_month[i].stocks[0].total_qtd += Stocks_by_month[i - 1].stocks[0].total_qtd;
     }
 
-    //console.log(Stocks_by_month);
+    Stocks_by_month.forEach(x => {
+      console.log(x.date);
+      console.log(x.stocks);
+    })
 
     //console.log("-------------------------------------------");
     return Stocks_by_month;
