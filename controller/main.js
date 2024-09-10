@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
-const isTestEnv = process.env.NODE_ENV === 'test';
+const isTestEnv = process.env.RUN_MODE === 'test';
 
 let inicializarDb, SelectUser, SelectUsers, CriaUsuario, New_Transaction;
 

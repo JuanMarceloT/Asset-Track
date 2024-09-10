@@ -13,16 +13,13 @@ services:
     ports:
       - "5432" 
     volumes:
-      - /var/lib/postgresql/data #Anonymous volume
+      - /var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 10s
       retries: 5
-      start_period: 10s
+      start_period: 5s
       timeout: 5s
-    # volumes:
-    #   - postgres_data:/var/lib/postgresql/data  Mount the volume
-
 
   api:
     build: .
@@ -38,32 +35,38 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_HOST: db
       POSTGRES_USER: postgres
-      NODE_ENV: test  # or you can use as 'prod'
+      RUN_MODE: ${RUN_MODE}
     depends_on:
       db:
         condition: service_healthy
+
   view:
     build: ./View
     volumes:
       - ./View:/app
       - /node_modules
-    
-    command:  bash -c "npm install && npm start"
+    command: >
+      sh -c "if [ \"$RUN_MODE\" = 'prod' ]; then
+               npm install &&
+               npm run build &&
+               npx serve -s build;
+             else
+               npm install &&
+               npm start;
+             fi"
+    environment:
+      REACT_APP_RUN_MODE: ${RUN_MODE}
     ports:
       - "3000:3000"
     depends_on:
       - api
       - db
-    
 
-      
   external_services:
     build: ./external_services
     volumes:
       - ./external_services:/app
       - /venv
-    command: python yahoo-api.py
+    command:  bash -c "pip install --no-cache-dir -r requirements.txt && python yahoo-api.py"
     expose:
-    - "5000"
-
-    
+      - "5000"

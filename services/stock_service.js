@@ -1,7 +1,7 @@
 const { formatStockTimePeriod, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd } = require("../utils/date_utils");
 const { get_stock_code_by_id, get_stock_name_by_id } = require("../utils/stocks_hash_map");
 
-const isTestEnv = process.env.NODE_ENV === 'test';
+const isTestEnv = process.env.RUN_MODE === 'test';
 
 let Stocks_aggregated;
 

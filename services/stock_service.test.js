@@ -1,5 +1,5 @@
 
-const isTestEnv = process.env.NODE_ENV === 'test';
+const isTestEnv = process.env.RUN_MODE === 'test';
 
 const { CriaUsuario, SelectUser, Delete_User, New_Transaction } = isTestEnv
   ? require("../repo/memrepository")

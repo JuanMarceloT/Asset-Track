@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  api:
+    build: .
+    ports:
+      - "3330:3330"
+    volumes:
+      - ./controller/:/app/controller
+      - ./repo/:/app/repo
+      - ./utils/:/app/utils
+      - ./services/:/app/services
+      - /node_modules
+    environment:
+      RUN_MODE: test
+    depends_on: []
+
+  view:
+    build: ./View
+    volumes:
+      - ./View:/app
+      - /node_modules
+    command: bash -c "npm install && npm start"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+  external_services:
+    build: ./external_services
+    volumes:
+      - ./external_services:/app
+      - /venv
+    command: python yahoo-api.py
+    expose:
+      - "5000"

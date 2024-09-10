@@ -11,6 +11,16 @@ import Top_Menu from './components/top_menu/Top_Menu';
 function App() {
   const id = 1;
 
+  const isProdEnv = process.env.REACT_APP_RUN_MODE === 'prod';
+
+
+
+  console.log(process.env);
+  if (isProdEnv) {
+    console.log = function() {};
+    console.error = function() {};
+    console.warn = function() {};
+  }
   // const [Username,setusername] = useState(null);
   const [Reload, setReload] = useState(true);
   GetStockInfos().then(x => console.log(x));
