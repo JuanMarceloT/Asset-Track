@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import '../../config.js';// Import the global configuration here
 import styles from './Side_menu.module.css'
 import Selectable_menu from "./Selectable_menu"
 import Info_Card from "./../cards/Info_Card"

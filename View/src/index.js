@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './config.js'; // Import the global configuration here
 import ReactDOM from 'react-dom';
 import Side_menu from './components/side_menu/Side_menu';
 import './index.css';
@@ -11,16 +12,6 @@ import Top_Menu from './components/top_menu/Top_Menu';
 function App() {
   const id = 1;
 
-  const isProdEnv = process.env.REACT_APP_RUN_MODE === 'prod';
-
-
-
-  console.log(process.env);
-  if (isProdEnv) {
-    console.log = function() {};
-    console.error = function() {};
-    console.warn = function() {};
-  }
   // const [Username,setusername] = useState(null);
   const [Reload, setReload] = useState(true);
   GetStockInfos().then(x => console.log(x));

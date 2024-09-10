@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../config.js';// Import the global configuration here
 import styles from './Info_Card.module.css'; 
 
 function Info_Card({content}) {

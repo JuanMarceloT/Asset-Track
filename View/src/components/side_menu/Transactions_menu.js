@@ -1,4 +1,5 @@
 import React from "react";
+import '../../config.js';// Import the global configuration here
 import styles from "./Transactions_menu.module.css";
 import ScrollableDivs from "../cards/ScrollableDivs";
 import TransactionCard from "../cards/Transaction_card";

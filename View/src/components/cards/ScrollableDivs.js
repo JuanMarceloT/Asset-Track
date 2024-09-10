@@ -1,4 +1,5 @@
 import React, { useRef, useState, useLayoutEffect } from 'react';
+import '../../config.js';// Import the global configuration here
 
 const ScrollableDivs = ({ children }) => {
     const containerRef = useRef(null);

@@ -1,4 +1,5 @@
 import React from "react";
+import '../../config.js';// Import the global configuration here
 import styles from "./Dividends_menu.module.css";
 import ScrollableDivs from "../cards/ScrollableDivs";
 import { get_stock_img_by_id, get_stock_name_by_id, formatMonthYear } from "../../bff";

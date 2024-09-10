@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './config'; // Import the global configuration here
 import styles from './Dashboard_Section.module.css';
 
 function Dashboard_Section({ children }) {

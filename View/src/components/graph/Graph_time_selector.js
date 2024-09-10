@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../config.js';// Import the global configuration here
 import styles from './Graph_time_selector.module.css';
 
 const Graph_time_selector = ({ onSelectTimePeriod ,SetonSelectTimePeriod }) => {

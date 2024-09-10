@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../config.js';// Import the global configuration here
 import ScrollableDivs from '../cards/ScrollableDivs';
 import Simple_stock_card from '../cards/Simple_stock_card';
 import styles from './selectable_menu.module.css';

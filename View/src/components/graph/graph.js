@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import '../../config.js';// Import the global configuration here
 import Chart from 'chart.js/auto';
 import styles from './Graph.module.css';
 
