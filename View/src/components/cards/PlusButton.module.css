@@ -16,10 +16,15 @@
   margin: 0 auto;
   justify-content: center;
   outline: none;
+  border: 0;
+  box-shadow: 15px 15px 10px rgba(0, 0, 0, 0.377);
+  transition: box-shadow 0.3s ease; /* Smooth shadow transition */
   }
   
   .plus:hover {
-    background-color:  var(--hover-button-color);
+    /* background-color:  var(--hover-button-color); */
+
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.377);
   }
   
   .plus:active {

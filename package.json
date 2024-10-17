@@ -8,6 +8,11 @@
     "jest": "^29.7.0"
   },
   "scripts": {
+    "start": "node controller/main.js",
+    "build": "echo 'No build step required'",
     "test": "jest"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }

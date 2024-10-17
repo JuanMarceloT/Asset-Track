@@ -12,13 +12,12 @@ const Graph_time_selector = ({ onSelectTimePeriod ,SetonSelectTimePeriod }) => {
 
   return (
     <div className={styles.container}>
-      <h1>Stock Portifolio</h1>
-      <button
+      {/* <button
         className={selectedPeriod === '1d' ? styles.selected : styles.btn}
         onClick={() => handleClick('1d')}
       >
         1D
-      </button>
+      </button> */}
       <button
         className={selectedPeriod === '7d' ? styles.selected : styles.btn}
         onClick={() => handleClick('7d')}

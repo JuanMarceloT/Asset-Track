@@ -1,14 +1,18 @@
+const isProdEnv = process.env.RUN_MODE === 'prod';
+const isDevEnv = process.env.RUN_MODE === 'dev';
 
-const isTestEnv = process.env.RUN_MODE === 'test';
+let CriaUsuario, SelectUser, Delete_User, New_Transaction;
 
-const { CriaUsuario, SelectUser, Delete_User, New_Transaction } = isTestEnv
-  ? require("../repo/memrepository")
-  : require("../repo/repository");
-  
+if (isProdEnv || isDevEnv) {
+  ({ CriaUsuario, SelectUser, Delete_User, New_Transaction } = require('../repo/repository'));
+} else {
+  ({ CriaUsuario, SelectUser, Delete_User, New_Transaction } = require('../repo/memrepository'));
+}
+
 test('Create User', async () => {
     const nome = "John Doe";
     const userId = await CriaUsuario(nome);
-  
+
     const search_user = await SelectUser(userId[0].id);
 
     expect(search_user.name).toBe(nome);
@@ -23,7 +27,7 @@ test('Create User', async () => {
 test('Create Transactions and stocks', async () => {
     const nome = "John Doe";
     const userId = await CriaUsuario(nome);
-  
+
     await New_Transaction(userId[0].id, 1, "BUY", 1, 14, new Date());
     await New_Transaction(userId[0].id, 1, "BUY", 1, 26, new Date());
     await New_Transaction(userId[0].id, 1, "BUY", 1, 20, new Date());
@@ -31,8 +35,13 @@ test('Create Transactions and stocks', async () => {
     await New_Transaction(userId[0].id, 2, "BUY", 1, 14, new Date());
     await New_Transaction(userId[0].id, 3, "BUY", 1, 14, new Date());
 
+    const second_user = await CriaUsuario("nome");
+    await New_Transaction(second_user[0].id, 1, "BUY", 1, 14, new Date("2017-08-05"));
+    await New_Transaction(second_user[0].id, 2, "BUY", 1, 14, new Date());
+    await New_Transaction(second_user[0].id, 3, "BUY", 1, 14, new Date());
+
     let search_user = await SelectUser(userId[0].id);
-    
+
     expect(search_user.transactions.length).toBe(6)
     expect(search_user.stocks.length).toBe(3)
 
@@ -50,14 +59,14 @@ test('Create Transactions and stocks', async () => {
 test('Avg price stock', async () => {
     const nome = "John Doe";
     const userId = await CriaUsuario(nome);
-  
+
     await New_Transaction(userId[0].id, 1, "BUY", 1, 14, new Date());
     await New_Transaction(userId[0].id, 1, "BUY", 1, 26, new Date());
     await New_Transaction(userId[0].id, 1, "BUY", 1, 20, new Date());
     await New_Transaction(userId[0].id, 1, "BUY", 1, 28, new Date());
 
     let search_user = await SelectUser(userId[0].id);
-    
+
     expect(search_user.stocks.length).toBe(1)
     expect(search_user.stocks[0].stock_id).toBe(1)
     expect(search_user.stocks[0].avg_price_in_real).toBe("0.22")

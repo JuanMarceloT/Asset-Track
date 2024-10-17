@@ -8,12 +8,14 @@ function Dashboard_Section({ children }) {
     const secondChild = childrenArray[1];
 
     return (
-        <div className={styles.container}>
-            <div className={styles.stocks}>
-                {firstChild}
-            </div>
-            <div className={styles.graph}>
-                {secondChild}
+        <div className={styles.background}>
+            <div className={styles.container}>
+                <div className={styles.stocks}>
+                    {firstChild}
+                </div>
+                <div className={styles.graph}>
+                    {secondChild}
+                </div>
             </div>
         </div>
     );

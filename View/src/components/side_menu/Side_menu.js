@@ -11,17 +11,65 @@ function Side_menu({ user_id, setReload, Reload}) {
     const [transactions, settransacitons] = useState(null);
     const [Dividends, setDividends] = useState(0);
     const [Dividends_ytd, setDividends_ytd] = useState(0);
+    const [DividendSubtitle, SetDividendSubtitle] = useState("");
+    const [InvestedSubtitle, SetInvestedSubtitle] = useState("");
     const [stock_infos, setStockInfos] = useState([]);
     const [stock_prices, setstock_prices] = useState({});
     const [total_assets_value, settotal_assets_value] = useState(0);
 
+    function DividendSubtitle_cal(div){
+
+        
+        if(total_assets_value == 0){
+            SetDividendSubtitle(`And soon, you’ll start earning dividends too!`);
+            return;
+        }
+        if(typeof div === 'object' && Object.keys(div).length === 0){
+            console.log(div);
+            SetDividendSubtitle(`Keep it up! Your dividends will be arriving soon.`);
+            return;
+        }
+        console.log(div);
+        let now = new Date();
+
+        if(div[now.getFullYear() - 1]){
+
+            let last_year_dividends = div[now.getFullYear() - 1].total_earned;
+            let this_year_increase = ((Dividends_ytd / last_year_dividends) - 1 ) * 100;
+
+            if(this_year_increase > 0){
+                SetDividendSubtitle(`+${this_year_increase.toFixed(2)}% this year`);
+            }
+            if(this_year_increase == 0){
+                SetDividendSubtitle(`You recived exactly the same amout of dividends as the last year`);
+            }
+
+            if(this_year_increase < 0){
+                SetDividendSubtitle(`${this_year_increase.toFixed(2)}% this year`);
+            }
+
+
+
+        }else{
+            SetDividendSubtitle("First year with dividends ;)");
+        }
+
+    }
+
+    function InvestedSubtitle_cal(){
+        if(total_assets_value == 0){
+            SetInvestedSubtitle("You can start to invest today ;)");
+            return;
+        }
+        SetInvestedSubtitle("You're on track! Keep building your portfolio.");
+    }
 
     useEffect(() => {
         async function fetchData() {
             
             try {
                 let user = await GetUser(user_id);
-                // console.log(user);
+                console.log(user);
                 setstocks(user.stocks);
                 settransacitons(user.transactions);
 
@@ -30,9 +78,11 @@ function Side_menu({ user_id, setReload, Reload}) {
 
                 let dividends = await Get_Dividends(user_id);
                 setDividends(dividends);
-
+                
+                DividendSubtitle_cal(dividends);
                 let now = new Date();
                 setDividends_ytd(dividends[now.getFullYear()].total_earned);
+
 
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -44,10 +94,17 @@ function Side_menu({ user_id, setReload, Reload}) {
     }, [Reload]);
 
 
+    useEffect(()=>{
+        DividendSubtitle_cal();
+        InvestedSubtitle_cal();
+    }, [])
+
+
     const prices = useMemo(() => {
         if(stocks){
             Get_prices(stocks);
             total_value(stocks);
+            InvestedSubtitle_cal();
         }
     }, [stocks]);
 
@@ -84,10 +141,10 @@ function Side_menu({ user_id, setReload, Reload}) {
             <div className={styles.stocks}>
                 <div className={styles.card}>
                     <div className={styles.cards}>
-                        <Info_Card content={{ title: "Investido", content: `R$ ${total_assets_value.toFixed(2)}`, subcontent: "+12% this month" }} />
+                        <Info_Card content={{ title: "Invested", content: `R$ ${total_assets_value.toFixed(2)}`, subcontent: InvestedSubtitle }} />
                     </div>
                     <div className={styles.cards}>
-                        <Info_Card content={{ title: "Dividendos deste ano", content: `R$ ${Dividends_ytd.toFixed(2)}`, subcontent: "+8% this year" }} />
+                        <Info_Card content={{ title: "Dividends this year", content: `R$ ${Dividends_ytd.toFixed(2)}`, subcontent: DividendSubtitle }} />
                     </div>
                 </div>
                 <div className={styles.input}>

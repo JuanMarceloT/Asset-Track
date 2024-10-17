@@ -1,142 +1,107 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../config.js';// Import the global configuration here
-import Chart from 'chart.js/auto';
 import styles from './Graph.module.css';
+import GraphFunction from './graph_function.js';
 
-import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividends, get_ytd_dividends } from '../../bff.js';
+import { GetUser, Create_New_Transaction, createNewUser, Get_Graph_Params, Get_Dividend_Graph_Params, Get_Percent_Graph_Params, Get_Index_Percent_Graph_Params, Get_Dividends, get_ytd_dividends } from '../../bff.js';
 
 import Graph_time_selector from './Graph_time_selector';
-
-function FormatToGraphData(Params) {
-    const formated_data = {
-        labels: [],
-        values: []
-    }
-
-    Object.keys(Params).map(key => {
-        // console.log(Params[);
-        formated_data.labels.push(key);
-        formated_data.values.push(Params[key]);
-    })
-
-    // console.log(formated_data);
-    return formated_data;
-}
 
 
 const Graph = ({ user_id, Reload }) => {
 
-    const [onSelectTimePeriod, SetonSelectTimePeriod] = useState('1d');
+    const [onSelectTimePeriod, SetonSelectTimePeriod] = useState('1m');
     const [graph, setGraph] = useState({});
-    const [cached_graph, setCachedGraph] = useState({}); 
+    const [cached_graph, setCachedGraph] = useState({});
+    const [graph_type, setgraph_type] = useState("stock");
+    const [Loading, setLoading] = useState(false);
 
     const updateGraph = async () => {
         try {
-            if(Reload){
+            if (Reload) {
                 setCachedGraph({});
             }
+            if (!cached_graph[graph_type]) {
+                cached_graph[graph_type] = {};
+            }
+            if (!cached_graph[graph_type][onSelectTimePeriod]) {
 
-            if (!cached_graph[onSelectTimePeriod]) {
-                const graph_params = await Get_Graph_Params(user_id, onSelectTimePeriod);
-                setCachedGraph(prevCache => ({ ...prevCache, [onSelectTimePeriod]: graph_params }));
+                let graph_params = [];  // Initialize an array to hold the graph parameters
+
+                switch (graph_type) {
+                    case "stock":
+                        graph_params.push({label: "My Stocks", data: await Get_Graph_Params(user_id, onSelectTimePeriod)});
+                        break;
+                    case "dividends":
+                        graph_params.push({label: "Dividends", data: await Get_Dividend_Graph_Params(user_id, onSelectTimePeriod)});
+                        break;
+                    case "ibov":
+                        graph_params.push({label: "My portfolio", data: await Get_Percent_Graph_Params(user_id, onSelectTimePeriod)});
+                        graph_params.push({label: "IBOV", data: await Get_Index_Percent_Graph_Params("ibov", onSelectTimePeriod)});
+                        console.log(graph_params);
+                        break;
+                    default:
+                        console.error("Invalid graph type:", graph_type);
+                }
+                
+                setCachedGraph(prevCache => ({
+                    ...prevCache,
+                    [graph_type]: {
+                        ...(prevCache[graph_type] || {}),
+                        [onSelectTimePeriod]: graph_params
+                    }
+                }));
                 setGraph(graph_params);
             } else {
-                setGraph(cached_graph[onSelectTimePeriod]);
+                setGraph(cached_graph[graph_type][onSelectTimePeriod]);
             }
         } catch (error) {
             console.error("Error fetching graph:", error);
+        } finally {
+            setLoading(false);
         }
     };
-    const chartRef = useRef(null);
 
     useEffect(() => {
+        setLoading(true);
         updateGraph();
-    }, [onSelectTimePeriod, Reload]);
+    }, [onSelectTimePeriod, Reload, graph_type]);
 
-    useEffect(() => {
-        const data = FormatToGraphData(graph);
-        // console.log(data);
-        let chartInstance = null;
+    const handleSelectChange = (event) => {
+        const selectedValue = event.target.value;
 
-        if (chartRef && chartRef.current) {
-            // Destroy the previous chart instance if it exists
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+        setgraph_type(selectedValue);
+    };
 
-            const ctx = chartRef.current.getContext('2d');
+    const selectRef = useRef(null); // Ref for the select element
 
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        data: data.values,
-                        borderColor: '#ffffff',
-                        backgroundColor: '#612af800',
-                        fill: true,
-                        pointRadius: 0,  // Remove the dots
-                        pointHoverRadius: 0  // Remove the dots on hover
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false  // Hide the legend
-                        },
-                        title: {
-                            display: false,
-                        },
-                        tooltip: {
-                            mode: 'index'
-                        },
-                    },
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x',
-                        intersect: false
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            stacked: true,
-                            title: {
-                                display: true,
-                                color: 'white' // Set y-axis title color to black
-                            },
-                            ticks: {
-                                color: 'white' // Set y-axis ticks color to black
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            stacked: true,
-                            title: {
-                                display: true,
-                                color: 'white' // Set y-axis title color to white
-                            },
-                            ticks: {
-                                color: 'white' // Set y-axis ticks color to white
-                            }
-                        }
-                    }
-                }
-            });
+    const resetSelect = () => {
+        if (selectRef.current) {
+            selectRef.current.value = ""; // Reset the select value
         }
-
-        return () => {
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-        };
-    }, [graph]);
+    };
 
     return <div className={styles.graph_dashboard}>
+        <div className={styles.graph_types}>
+            <button className={graph_type === 'stock' ? styles.selected : styles.btn} onClick={() => { setgraph_type("stock"); resetSelect() }}>Stocks</button>
+            <button className={graph_type === 'dividends' ? styles.selected : styles.btn} onClick={() => { setgraph_type("dividends"); resetSelect() }}>Dividendos</button>
+            <select id="itemSelect" ref={selectRef} onChange={handleSelectChange} className={graph_type == 'ibov' ? styles.selected : styles.btn}>
+                <option value="" disabled selected>Compare to..</option>
+                <option value="ibov" key="ibov" >Bovespa</option>
+                {/* {
+                        Object.keys(stock_infos).map(key => {
+                            return (
+                                <option key={key} value={key}>
+                                    {stock_infos[key].name}
+                                </option>
+                            );
+                        })
+                    } */}
+            </select>
+        </div>
         <Graph_time_selector SetonSelectTimePeriod={SetonSelectTimePeriod} onSelectTimePeriod={onSelectTimePeriod} />
-        <canvas ref={chartRef} />;
+        <GraphFunction graph={graph} Loading={Loading} />;
     </div>
 };
 
 export default React.memo(Graph);
-

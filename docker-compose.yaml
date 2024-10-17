@@ -36,6 +36,7 @@ services:
       POSTGRES_HOST: db
       POSTGRES_USER: postgres
       RUN_MODE: ${RUN_MODE}
+      EXTERNAL_SERVICES_URL: ${EXTERNAL_SERVICES_URL}
     depends_on:
       db:
         condition: service_healthy
@@ -56,6 +57,7 @@ services:
              fi"
     environment:
       REACT_APP_RUN_MODE: ${RUN_MODE}
+      REACT_APP_API_URL: ${API_URL}
     ports:
       - "3000:3000"
     depends_on:

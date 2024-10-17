@@ -37,8 +37,15 @@ function formatTime(date) {
 
 
 function date_to_yyyy_mm_dd(date){
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate() + 1}`
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 }
+
+const convertToDate = (dateStr) => {
+    const [day, month, year] = dateStr.split('/');
+    // Convert to format 'YYYY-MM-DD' and create a Date object
+    const dateISOFormat = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    return new Date(dateISOFormat);
+};
 
 function formatDate(year, month, day) {
     const formattedMonth = String(month).padStart(2, '0');
@@ -63,4 +70,4 @@ function compare_string_yyyy_mm_dd_dates(date1, date2) {
 
     return true;
 }
-module.exports = {getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd, formatTime, formatStockTimePeriod}
+module.exports = {getLastWeekdaysSince, formatDate, compare_string_yyyy_mm_dd_dates, date_to_yyyy_mm_dd, formatTime, formatStockTimePeriod, convertToDate}

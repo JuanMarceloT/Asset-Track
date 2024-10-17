@@ -13,6 +13,7 @@ services:
       - /node_modules
     environment:
       RUN_MODE: test
+      EXTERNAL_SERVICES_URL: ${EXTERNAL_SERVICES_URL}
     depends_on: []
 
   view:
@@ -21,10 +22,11 @@ services:
       - ./View:/app
       - /node_modules
     command: bash -c "npm install && npm start"
+    environment:
+      REACT_APP_RUN_MODE: test
+      REACT_APP_API_URL: ${API_URL}
     ports:
       - "3000:3000"
-    depends_on:
-      - api
 
   external_services:
     build: ./external_services

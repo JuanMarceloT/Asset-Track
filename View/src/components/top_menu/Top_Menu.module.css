@@ -1,6 +1,6 @@
 .app {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family:    manrope;
 }
 
 .topMenu {
@@ -11,6 +11,8 @@
     padding: 1vh 5vw;
     color: rgb(255, 255, 255);
     border-bottom: 1px solid var(--border-color);
+    min-height: 7vh;
+    max-height: 7vh;
 }
 
 .topMenu h1{
@@ -25,7 +27,7 @@
   }
   .logoContainer h1 {
     font-weight: 600;
-    font-family:    manrope;
+    font-family: manrope;
   }
   
   .companyLogo {
@@ -39,9 +41,9 @@
   }
   
   .userText {
-    margin-right: 3vw;
-    font-size: 100%;
-    font-weight: 200;
+    margin-right: 2vw;
+    font-size: 20px;
+    font-weight: 300;
   }
   
   .profileMenu {
@@ -52,9 +54,12 @@
   
   .profilePic {
     height: 30px;
+    width: 30px;
+    padding: 5px;
     border-radius: 50%;
     margin-right: 5px;
     background-color: aliceblue;
+    object-fit: cover; /* Maintain aspect ratio while covering the element */
   }
   
   .arrow {
@@ -78,10 +83,17 @@
   }
   
   .menuItem:hover {
-    background-color: #ddd;
+    background-color: #1b1b1b;
   }
   
   .arrowDown {
     transform: rotate(180deg);
   }
   
+
+
+@media screen and (max-width: 500px) {
+    .userText {
+        display: none; 
+    }
+}

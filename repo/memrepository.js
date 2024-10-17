@@ -1,22 +1,27 @@
-
 const { get_stock_name_by_id, get_stock_img_by_id, get_stock_code_by_id } = require('../utils/stocks_hash_map.js');
 
-let user = [];
-let stocks = [];
-let transactions = [];
+let users = new Map(); // A map to store users by ID
 
 const CriaUsuario = name => {
-  user = { id: 1, name: name ?? " ", balance: 0 };
-  stocks = [];
-  transactions = [];
-  return [{ id: 1 }];
+  const userId = parseInt(Date.now() * Math.random()); // unique ID
+  users.set(userId, {
+    id: userId,
+    name: name ?? " ",
+    balance: 0,
+    stocks: [],
+    transactions: [],
+    
+  });
+  return [{ id: userId }];
 };
-const inicializarDb = () => { };
 
-const deleteUser = name => {
-  user = [];
+const inicializarDb = () => {
+  users.clear();
 };
 
+const deleteUser = userId => {
+  users.delete(+userId);
+};
 
 function New_Transaction(
   userId,
@@ -26,9 +31,11 @@ function New_Transaction(
   price,
   timestamp
 ) {
-  // console.log(transactions);
+  const user = users.get(+userId);
+  if (!user) return; // User does not exist
+
   let efective_units = units;
-  let stock = stocks.find(x => x.stock_id == stockId);
+  let stock = user.stocks.find(x => x.stock_id === stockId);
 
   let date = new Date(timestamp);
 
@@ -41,16 +48,13 @@ function New_Transaction(
   }
 
   if (stock) {
-
-    // It's multiplied by 100 to perform all calculations in cents, and then converted back to reais.
-    if (transactionType == 'BUY') {
+    if (transactionType === 'BUY') {
       stock.avg_price_in_real =
         ((stock.avg_price_in_real * stock.units * 100) +
           (price * units)) /
         (stock.units + units);
       stock.units += units;
-    }
-    if (transactionType == 'SELL') {
+    } else if (transactionType === 'SELL') {
       stock.avg_price_in_real =
         ((stock.avg_price_in_real * stock.units * 100) -
           (price * units)) /
@@ -58,10 +62,10 @@ function New_Transaction(
       stock.units -= units;
       if (stock.units <= 0) {
         efective_units = efective_units + stock.units;
-        const stockIndex = stocks.findIndex(stock => stock.stock_id === stockId);
+        const stockIndex = user.stocks.findIndex(stock => stock.stock_id === stockId);
 
         if (stockIndex !== -1) {
-          stocks.splice(stockIndex, 1);
+          user.stocks.splice(stockIndex, 1);
         }
       }
     }
@@ -69,7 +73,7 @@ function New_Transaction(
     stock.avg_price_in_real = (stock.avg_price_in_real / 100).toFixed(2);
 
   } else {
-    stocks.push({
+    user.stocks.push({
       user_id: userId,
       avg_price_in_real: price / 100,
       stock_id: stockId,
@@ -80,7 +84,7 @@ function New_Transaction(
     });
   }
 
-  transactions.push({
+  user.transactions.push({
     userId,
     stock_id: stockId,
     transaction_type: transactionType,
@@ -88,14 +92,17 @@ function New_Transaction(
     price_in_real: price / 100,
     timestamp,
   });
-
 }
-const Stocks_aggregated = id => {
+
+const Stocks_aggregated = userId => {
+  const user = users.get(+userId);
+  if (!user) return []; // User does not exist
+
   let result = [];
   let stockState = new Map(); // To keep track of stock quantities globally
 
   // Fetch user transactions
-  const transactions = GetUserTransactions(id);
+  const transactions = user.transactions;
 
   transactions.forEach(transaction => {
     let date = new Date(transaction.timestamp);
@@ -115,11 +122,10 @@ const Stocks_aggregated = id => {
       }
     }
 
-
     // Create the stock array for the current date based on the global stock state
     let stocks = Array.from(stockState, ([stock_id, total_qtd]) => ({ stock_id, total_qtd }));
 
-    if (result.length > 0 && result[result.length - 1].date == formattedDate) {
+    if (result.length > 0 && result[result.length - 1].date === formattedDate) {
       result[result.length - 1].stocks = stocks;
     } else {
       result.push({
@@ -130,64 +136,37 @@ const Stocks_aggregated = id => {
 
   });
 
-
-  // result.forEach(x => {
-  //   console.log(x.date);
-  //   console.log(x.stocks);
-  // })
   return result;
 };
 
-
-const GetUserTransactions = id => {
-  return transactions;
-};
-
-const GetUserStocks = id => {
-  return stocks;
-};
-
-const SelectUser = id => {
-
+const SelectUser = userId => {
+  const user = users.get(+userId);
+  if (!user) return null; // User does not exist
 
   let stock_info = {};
-  stock_info[1] = {
-    img_url:
-      'https://yt3.googleusercontent.com/cxDKS7OTT2SB4CNFHlrAvCDivGJR70H8ne8607esi9q6ALGQClYZPa03qcAR0ynhCtYS5JNMBA=s900-c-k-c0x00ffffff-no-rj',
-    stock_name: 'MELIUZ',
-    stock_code: 'CASH3',
-  };
+  user.stocks.forEach(stock => {
+    stock_info[stock.stock_id] = {
+      img_url: stock.img_url,
+      stock_name: stock.stock_name,
+      stock_code: stock.stock_code,
+    };
+  });
 
-
-  const userWithTransactions = {
-    id: id,
-    name: user.name ?? "",
-    stocks: stocks,
-    transactions: transactions,
+  return {
+    id: userId,
+    name: user.name,
+    stocks: user.stocks,
+    transactions: user.transactions,
     stocks_infos: stock_info,
   };
-
-  // console.log(stocks);
-
-  console.log(userWithTransactions);
-  return userWithTransactions;
 };
 
 const SelectUsers = () => {
-  return user;
+  return Array.from(users.values());
 };
 
-const Delete_User = () => {
-  user = [];
-  stocks = [];
-  transactions = [];
+const Delete_User = userId => {
+  deleteUser(+userId);
 };
-
-
 
 module.exports = { inicializarDb, SelectUser, Delete_User, SelectUsers, CriaUsuario, New_Transaction, Stocks_aggregated };
-
-// Stocks_aggregated(id);
-// console.log(SelectUser(id));
-// console.log(Stocks_aggregated(id));
-// Stocks_aggregated(id).forEach(x => console.log(x.stocks))

@@ -1,4 +1,4 @@
-const api = 'http://localhost:3330';
+const api = process.env.REACT_APP_API_URL;
 
 async function createNewUser(Username){
   let result = await CallEndpointPost('create_user', {nome: `${Username}`});
@@ -12,12 +12,29 @@ async function Create_New_Transaction(args){
 async function Get_Graph_Params(id, TimePeriod){
   return await CallEndpointGet(`GetGraph?user_id=${id}&time_period=${TimePeriod}`);
 }
+
+async function Get_Dividend_Graph_Params(id, TimePeriod){
+  return await CallEndpointGet(`GetDividendGraph?user_id=${id}&time_period=${TimePeriod}`);
+}
+
+async function Get_Percent_Graph_Params(id, TimePeriod){
+  return await CallEndpointGet(`GetPercentGraph?user_id=${id}&time_period=${TimePeriod}`);
+}
+
+async function Get_Index_Percent_Graph_Params(index, TimePeriod){
+  return await CallEndpointGet(`GetIndexPercentGraph?index=${index}&time_period=${TimePeriod}`);
+}
+
 async function Get_Dividends(id){
   return await CallEndpointGet(`GetUserDividends?user_id=${id}`);
 }
 
 async function GetStockInfos(){
   return await CallEndpointGet(`GetStocksInfo`);
+}
+
+async function GetId(){
+  return await CallEndpointGet(`temp_user`);
 }
 
 
@@ -113,4 +130,4 @@ function get_ytd_dividends(dividend){
 }
 
 
-module.exports = { GetUser,get_assets_total_value,GetStockInfos,  Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends};
+module.exports = { GetUser,get_assets_total_value,Get_Percent_Graph_Params,GetStockInfos,Get_Dividend_Graph_Params,Get_Index_Percent_Graph_Params,  Create_New_Transaction, createNewUser, Get_Graph_Params, get_stock_price_by_id, Get_Dividends, formatMonthYear, get_ytd_dividends, GetId};

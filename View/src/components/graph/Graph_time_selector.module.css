@@ -10,18 +10,38 @@
     background-color: rgb(0, 0, 0);
     color: white;
     border: 0px;
-    margin: 5px;
-    padding: 10px;
+    margin:  1dvh;
+    padding: 1dvh;
     border-radius: 5px;
-    border: 1px solid var(--border-color);
+    width: 3vw;
+    /* border: 1px solid var(--border-color); */
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.562);
+    transition: box-shadow 0.3s ease; /* Smooth shadow transition */
+}
+
+.btn:hover{
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.562);
 }
 
 .selected {
     background-color: rgb(77, 77, 77);
     color: white;
     border: 0px;
-    margin: 5px;
-    padding: 10px;
+    margin:  1dvh;
+    width: 3vw;
+    padding: 1dvh;
     border-radius: 5px;
     border: 1px solid var(--border-color);
+    box-shadow: 2.5px 2.5px 5px rgba(0, 0, 0, 0.562);
+    transition: box-shadow 0.3s ease; /* Smooth shadow transition */
+}
+
+
+@media screen and (max-width: 1000px) and (max-height: 700px)  and (orientation: landscape) {
+    .container h1{
+        display: none;
+    }
+    .container {
+        height: max-content;
+    }
 }

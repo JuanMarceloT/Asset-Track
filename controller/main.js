@@ -5,23 +5,26 @@ const cors = require('cors');
 
 
 const app = express();
-const port = 3330;
+const port = process.env.PORT || 3330;
 
 app.use(cors()); 
 app.use(bodyParser.json());
 
 
-const isTestEnv = process.env.RUN_MODE === 'test';
+const isProdEnv = process.env.RUN_MODE === 'prod';
+const isDevEnv = process.env.RUN_MODE === 'dev';
 
 let inicializarDb, SelectUser, SelectUsers, CriaUsuario, New_Transaction;
 
-if (isTestEnv) {
-  ({ inicializarDb, SelectUser, SelectUsers, CriaUsuario, New_Transaction } = require('../repo/memrepository'));
-} else {
+if (isProdEnv || isDevEnv) {
   ({ inicializarDb, SelectUser, SelectUsers, CriaUsuario, New_Transaction } = require('../repo/repository'));
+} else {
+  ({ inicializarDb, SelectUser, SelectUsers, CriaUsuario, New_Transaction } = require('../repo/memrepository'));
 }
 
-const { get_User_dividends, getAssetValueByPeriod,get_stock_price} = require( '../services/stock_service');
+const { get_User_dividends, getAssetValueByPeriod, getDividendValueByPeriod, getAssetPercentByPeriod, get_index_percent} = require( '../services/stock_service');
+
+const {get_stock_price} = require("../services/data_service");
 
 const { formatDate} = require("../utils/date_utils");
 const { get_stock_code_by_id, get_all_stocks} = require('../utils/stocks_hash_map');
@@ -29,16 +32,37 @@ const { get_stock_code_by_id, get_all_stocks} = require('../utils/stocks_hash_ma
 async function main() {
     // const Graph = await get_stock_dividends_by_period("ITUB4", new Date("04/11/2019"));
     // console.log(Graph);
-    // const d = CriaUsuario("juan");
+    // const d = CriaUsuario("juan");z
 }
 
 main();
+
+
+app.get('/', async (req, res) => {
+  try {
+    const message = "running";
+    console.log(message)
+    res.json(message);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // API endpoint to get all users
 app.get('/users', async (req, res) => {
   try {
     const users = await SelectUsers();
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+app.get('/temp_user', async (req, res) => {
+  try {
+    let id = CriaUsuario("");
+    res.json(id[0].id);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
@@ -81,6 +105,39 @@ app.get('/GetGraph', async (req, res) => {
   try {
     const { user_id, time_period } = req.query;
     let graph = await getAssetValueByPeriod(user_id, time_period);
+    res.json(graph);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/GetPercentGraph', async (req, res) => {
+  try {
+    const { user_id, time_period } = req.query;
+    let percent = await getAssetPercentByPeriod(user_id, time_period);
+    res.json(percent);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/GetIndexPercentGraph', async (req, res) => {
+  try {
+    const { index, time_period } = req.query;
+    let percent = await get_index_percent(index, time_period);
+    res.json(percent);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+
+
+app.get('/GetDividendGraph', async (req, res) => {
+  try {
+    const { user_id, time_period } = req.query;
+    let graph = await getDividendValueByPeriod(user_id, time_period);
     // console.log(graph);
     res.json(graph);
   } catch (error) {
@@ -140,3 +197,4 @@ app.listen(port, () => {
   inicializarDb();
 });
 
+module.exports = app;
